@@ -24,16 +24,7 @@ CollapsibleSection {
         onToggled: checked => {
             rootPane.backgroundEnabled = checked;
             rootPane.saveConfig();
-        }
-    }
-
-    SwitchRow {
-        label: qsTr("Wallpaper enabled")
-        checked: rootPane.wallpaperEnabled
-        onToggled: checked => {
-            rootPane.wallpaperEnabled = checked;
-            rootPane.saveConfig();
-        }
+}
     }
 
     StyledText {
@@ -337,10 +328,36 @@ CollapsibleSection {
                 top: 2
             }
 
-            onValueModified: newValue => {
+onValueModified: newValue => {
                 rootPane.visualiserSpacing = newValue;
                 rootPane.saveConfig();
             }
         }
     }
+
+    StyledText {
+        Layout.topMargin: Tokens.spacing.medium
+        text: qsTr("Shimeji")
+        font: Tokens.font.body.builders.large.weight(Font.Medium).build()
+    }
+
+    SwitchRow {
+        label: qsTr("Shimeji enabled")
+        checked: rootPane.shimejiEnabled
+        onToggled: checked => {
+            rootPane.shimejiEnabled = checked;
+            rootPane.saveConfig();
+        }
+    }
+
+    SwitchRow {
+        label: qsTr("Shimeji auto hide")
+        checked: rootPane.shimejiAutoHide
+        onToggled: checked => {
+            rootPane.shimejiAutoHide = checked;
+            rootPane.saveConfig();
+        }
+    }
 }
+
+    
