@@ -93,6 +93,8 @@ Item {
                     } else if (text.startsWith(GlobalConfig.launcher.actionPrefix)) {
                         if (text.startsWith(`${GlobalConfig.launcher.actionPrefix}calc `))
                             currentItem.onClicked();
+                        else if (text.startsWith(`${GlobalConfig.launcher.actionPrefix}emoji `) || text.startsWith(`${GlobalConfig.launcher.actionPrefix}clipboard `))
+                            currentItem.clicked();
                         else
                             currentItem.modelData.onClicked(list.currentList);
                     } else {
