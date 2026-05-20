@@ -12,24 +12,27 @@ Item {
     id: root
 
     property string source: Wallpapers.current
-    property CachingImage current
+    property Item current
     property bool completed
 
-    onSourceChanged: {
-        if (!source)
+    function createWallpaperObject() {
+        if (!source) {
             current = null;
-        else
-            current = imgComp.createObject(this, {
+        } else {
+            const isGif = source.endsWith(".gif");
+            const comp = isGif ? gifComp : imgComp;
+            current = comp.createObject(root, {
                 path: source
             });
+        }
     }
+
+    onSourceChanged: createWallpaperObject()
 
     Component.onCompleted: {
         if (source)
             Qt.callLater(() => {
-                current = imgComp.createObject(this, {
-                    path: source
-                });
+                createWallpaperObject();
                 completed = true;
             });
     }
@@ -128,6 +131,38 @@ Item {
                 running: root.current !== img && root.current?.status === Image.Ready
                 interval: anim.duration
                 onTriggered: img.destroy()
+            }
+        }
+    }
+
+    Component {
+        id: gifComp
+
+        CachingAnimatedImage {
+            id: gifImg
+
+            anchors.fill: parent
+
+            opacity: 0
+
+            onStatusChanged: {
+                if (status === Image.Ready)
+                    anim.start();
+            }
+
+            Anim on opacity {
+                id: anim
+
+                type: Anim.SlowEffects
+                running: false
+                from: 0
+                to: 1
+            }
+
+            Timer {
+                running: root.current !== gifImg && root.current?.status === Image.Ready
+                interval: anim.duration
+                onTriggered: gifImg.destroy()
             }
         }
     }
