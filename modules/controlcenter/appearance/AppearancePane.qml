@@ -49,6 +49,7 @@ Item {
     property bool desktopClockInvertColors: Config.background.desktopClock.invertColors ?? false
     property bool backgroundEnabled: Config.background.enabled ?? true
     property bool wallpaperEnabled: Config.background.wallpaperEnabled ?? true
+    property bool videoWallpaperSoundEnabled: Config.background.videoWallpaperSoundEnabled ?? false
     property bool visualiserEnabled: Config.background.visualiser.enabled ?? false
     property bool visualiserAutoHide: Config.background.visualiser.autoHide ?? true
     property real visualiserRounding: Config.background.visualiser.rounding ?? 1
@@ -83,6 +84,7 @@ Item {
         GlobalConfig.background.desktopClock.invertColors = root.desktopClockInvertColors;
 
         GlobalConfig.background.wallpaperEnabled = root.wallpaperEnabled;
+        GlobalConfig.background.videoWallpaperSoundEnabled = root.videoWallpaperSoundEnabled;
 
         GlobalConfig.background.visualiser.enabled = root.visualiserEnabled;
         GlobalConfig.background.visualiser.autoHide = root.visualiserAutoHide;

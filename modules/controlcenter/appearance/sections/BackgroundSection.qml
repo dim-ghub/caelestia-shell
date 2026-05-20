@@ -36,6 +36,16 @@ CollapsibleSection {
         }
     }
 
+    SwitchRow {
+        label: qsTr("Video wallpaper sound")
+        checked: rootPane.videoWallpaperSoundEnabled
+        enabled: rootPane.backgroundEnabled
+        onToggled: checked => {
+            rootPane.videoWallpaperSoundEnabled = checked;
+            rootPane.saveConfig();
+        }
+    }
+
     StyledText {
         Layout.topMargin: Tokens.spacing.normal
         text: qsTr("Desktop Clock")

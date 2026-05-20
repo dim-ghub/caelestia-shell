@@ -1,6 +1,3 @@
-pragma ComponentBehavior: Bound
-
-import ".."
 import QtQuick
 import Caelestia.Config
 import Caelestia.Models
@@ -9,6 +6,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.images
 import qs.services
+import qs.utils
 
 GridView {
     id: root
@@ -66,6 +64,24 @@ GridView {
             layer.enabled: true
             layer.smooth: true
 
+            MaterialIcon {
+                anchors.centerIn: parent
+                text: "image"
+                color: Colours.tPalette.m3outline
+                font.pointSize: Tokens.font.size.extraLarge * 2
+                font.weight: 600
+                visible: !Images.isVideo(modelData.name)
+            }
+
+            MaterialIcon {
+                anchors.centerIn: parent
+                text: "videocam"
+                color: Colours.tPalette.m3outline
+                font.pointSize: Tokens.font.size.extraLarge * 2
+                font.weight: 600
+                visible: Images.isVideo(modelData.name)
+            }
+
             CachingImage {
                 id: cachingImage
 
@@ -73,7 +89,29 @@ GridView {
                 anchors.fill: parent
                 fillMode: Image.PreserveAspectCrop
                 cache: true
-                visible: opacity > 0
+                visible: opacity > 0 && !Images.isVideo(modelData.name)
+                antialiasing: true
+                smooth: true
+                sourceSize: Qt.size(width, height)
+
+                opacity: status === Image.Ready ? 1 : 0
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: 1000
+                        easing.type: Easing.OutQuad
+                    }
+                }
+            }
+
+            CachingImage {
+                id: videoThumbnail
+
+                path: Wallpapers.getThumbnailPath(modelData.path)
+                anchors.fill: parent
+                fillMode: Image.PreserveAspectCrop
+                cache: true
+                visible: opacity > 0 && Images.isVideo(modelData.name)
                 antialiasing: true
                 smooth: true
                 sourceSize: Qt.size(width, height)
@@ -93,7 +131,7 @@ GridView {
                 id: fallbackImage
 
                 anchors.fill: parent
-                source: fallbackTimer.triggered && cachingImage.status !== Image.Ready ? modelData.path : ""
+                source: fallbackTimer.triggered && cachingImage.status !== Image.Ready && !Images.isVideo(modelData.name) ? modelData.path : ""
                 asynchronous: true
                 fillMode: Image.PreserveAspectCrop
                 cache: true

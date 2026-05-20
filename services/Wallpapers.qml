@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import Caelestia
 import Caelestia.Config
 import Caelestia.Models
 import qs.services
@@ -16,9 +17,9 @@ Searcher {
 
     property bool showPreview: false
     readonly property string current: showPreview ? previewPath : actualCurrent
-    property string previewPath
-    property string actualCurrent
-    property bool previewColourLock
+    property string previewPath: ""
+    property string actualCurrent: ""
+    property bool previewColourLock: false
 
     function setWallpaper(path: string): void {
         actualCurrent = path;
@@ -37,6 +38,13 @@ Searcher {
         showPreview = false;
         if (!previewColourLock)
             Colours.showPreview = false;
+    }
+
+    function getThumbnailPath(path: string): string {
+        if (Images.isVideo(path)) {
+            return `${Paths.cache}/wallpapers/${CUtils.sha256(path)}/first_frame.png`;
+        }
+        return path;
     }
 
     list: wallpapers.entries
@@ -77,7 +85,8 @@ Searcher {
 
         recursive: true
         path: Paths.wallsdir
-        filter: FileSystemModel.Images
+        filter: FileSystemModel.NoFilter
+        nameFilters: Images.validImageExtensions.concat(Images.validVideoExtensions).map(e => `*.${e}`)
     }
 
     Process {

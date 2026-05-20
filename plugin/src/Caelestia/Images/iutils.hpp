@@ -15,6 +15,7 @@ public:
     static IUtils* create(QQmlEngine* engine, QJSEngine* jsEngine);
 
     Q_INVOKABLE static QUrl urlForPath(const QString& path, int fillMode);
+    Q_INVOKABLE static bool isVideo(const QString& path);
 
 private:
     explicit IUtils(QObject* parent = nullptr)

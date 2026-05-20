@@ -2,6 +2,8 @@
 
 #include "cachingimageprovider.hpp"
 
+#include <qfileinfo.h>
+
 namespace caelestia::images {
 
 IUtils* IUtils::create(QQmlEngine* engine, QJSEngine* jsEngine) {
@@ -37,6 +39,15 @@ QUrl IUtils::urlForPath(const QString& path, int fillMode) {
     url.setHost(prefix);
     url.setPath(path.startsWith(QLatin1Char('/')) ? path : QLatin1Char('/') + path);
     return url;
+}
+
+bool IUtils::isVideo(const QString& path) {
+    if (path.isEmpty())
+        return false;
+    
+    const QString suffix = QFileInfo(path).suffix().toLower();
+    static const QStringList videoExtensions = { "mp4", "webm", "mkv", "avi", "mov", "wmv", "flv" };
+    return videoExtensions.contains(suffix);
 }
 
 } // namespace caelestia::images
