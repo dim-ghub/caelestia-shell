@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Quickshell.Bluetooth
 import Caelestia.Components
 import Caelestia.Config
@@ -9,6 +10,8 @@ import qs.components
 import qs.components.controls
 import qs.services
 import qs.modules.bar.popouts as BarPopouts
+import qs.utils
+import "../../background"
 
 StyledRect {
     id: root
@@ -18,8 +21,9 @@ StyledRect {
 
     readonly property var quickToggles: {
         const seenIds = new Set();
+        const allToggles = [...Config.utilities.quickToggles, { id: "badapple", enabled: true }];
 
-        return Config.utilities.quickToggles.filter(item => {
+        return allToggles.filter(item => {
             if (!(item.enabled ?? true))
                 return false;
 
@@ -147,6 +151,20 @@ StyledRect {
                         isToggle: VPN.status.state !== "needs-auth" && VPN.status.state !== "error"
                         inactiveOnColour: Colours.palette.m3onSurfaceVariant
                         onClicked: VPN.toggle()
+                    }
+                }
+                DelegateChoice {
+                    roleValue: "badapple"
+                    delegate: Toggle {
+                        icon: "nutrition"
+                        toggle: false
+                        inactiveOnColour: Colours.palette.m3onSurfaceVariant
+                        onClicked: {
+                        if (BadApplePlayer.shouldPlay)
+                            BadApplePlayer.stop();
+                        else
+                            BadApplePlayer.play();
+                    }
                     }
                 }
             }
