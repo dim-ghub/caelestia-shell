@@ -15,12 +15,30 @@ Item {
     property Item current
     property bool completed
 
+    function isVideo(path: string): bool {
+        if (!path)
+            return false;
+        const ext = path.split('.').pop().toLowerCase();
+        return ["mp4", "webm", "mkv", "avi", "mov", "wmv", "flv"].includes(ext);
+    }
+
+    function isCurrentReady(): bool {
+        if (!current)
+            return false;
+        if (current.playing !== undefined)
+            return current.playing;
+        if (current.status !== undefined)
+            return current.status === Image.Ready;
+        return false;
+    }
+
     function createWallpaperObject() {
         if (!source) {
             current = null;
         } else {
+            const isVid = isVideo(source);
             const isGif = source.endsWith(".gif");
-            const comp = isGif ? gifComp : imgComp;
+            const comp = isVid ? videoComp : (isGif ? gifComp : imgComp);
             current = comp.createObject(root, {
                 path: source
             });
@@ -128,7 +146,7 @@ Item {
             }
 
             Timer {
-                running: root.current !== img && root.current?.status === Image.Ready
+                running: root.current !== img && root.isCurrentReady()
                 interval: anim.duration
                 onTriggered: img.destroy()
             }
@@ -160,9 +178,41 @@ Item {
             }
 
             Timer {
-                running: root.current !== gifImg && root.current?.status === Image.Ready
+                running: root.current !== gifImg && root.isCurrentReady()
                 interval: anim.duration
                 onTriggered: gifImg.destroy()
+            }
+        }
+    }
+
+    Component {
+        id: videoComp
+
+        CachingVideo {
+            id: video
+
+            anchors.fill: parent
+
+            opacity: 0
+
+            onPlayingChanged: {
+                if (playing)
+                    anim.start();
+            }
+
+            Anim on opacity {
+                id: anim
+
+                type: Anim.SlowEffects
+                running: false
+                from: 0
+                to: 1
+            }
+
+            Timer {
+                running: root.current !== video && root.isCurrentReady()
+                interval: anim.duration
+                onTriggered: video.destroy()
             }
         }
     }

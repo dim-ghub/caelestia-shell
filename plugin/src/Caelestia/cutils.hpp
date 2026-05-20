@@ -26,6 +26,7 @@ public:
     Q_INVOKABLE static QString toLocalFile(const QUrl& url);
 
     Q_INVOKABLE static qreal clamp(qreal value, qreal min, qreal max);
+    Q_INVOKABLE static QString sha256(const QString& path);
 };
 
 } // namespace caelestia
