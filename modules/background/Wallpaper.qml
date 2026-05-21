@@ -14,6 +14,7 @@ Item {
     property string source: Wallpapers.current
     property Item current
     property bool completed
+    property var screen: null
 
     function isVideo(path: string): bool {
         if (!path)
@@ -40,7 +41,8 @@ Item {
             const isGif = source.endsWith(".gif");
             const comp = isVid ? videoComp : (isGif ? gifComp : imgComp);
             current = comp.createObject(root, {
-                path: source
+                path: source,
+                screen: root.screen
             });
         }
     }
@@ -192,6 +194,7 @@ Item {
             id: video
 
             anchors.fill: parent
+            screen: root.screen
 
             opacity: 0
 
