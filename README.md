@@ -27,6 +27,8 @@ This fork adds the following features on top of the official caelestia shell:
 - **Video Wallpaper Support** - Use video files as animated wallpapers with configurable pause options.
 - **Wallpaper Quick Toggle** - Quick toggle for wallpaper picker.
 - **Pause Video Wallpapers Toggle** - Quick toggle to pause all video wallpapers with configurable auto-pause on fullscreen/tiled windows.
+- **Background Clock**
+- Background clock now follows fonts defined in your `shell.json`.
 
 ## Global Shortcuts
 
