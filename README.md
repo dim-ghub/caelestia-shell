@@ -23,9 +23,9 @@ This fork adds the following features on top of the official caelestia shell:
 - **Window Switcher** - Quickly switch between windows with live previews. Trigger with `>windows ` or the global shortcut.
 - **Keybinds** - Browse and search your Hyprland keybinds. Trigger with `>keybinds ` or the global shortcut.
 - **Shimeji Desktop Characters** - Animated desktop characters (like Pusheen) with per-screen configuration.
-- **GIF Wallpaper Support** - Use animated images as wallpapers with configurable playback speed.
-- **Video Wallpaper Support** - Use video files (like Bad Apple) as animated wallpapers with configurable pause options.
-- **Wallpaper Quick Toggle** - Quick toggle for wallpaper cycling between current and a default.
+- **GIF Wallpaper Support** - Use animated images as wallpapers .
+- **Video Wallpaper Support** - Use video files as animated wallpapers with configurable pause options.
+- **Wallpaper Quick Toggle** - Quick toggle for wallpaper picker.
 - **Pause Video Wallpapers Toggle** - Quick toggle to pause all video wallpapers with configurable auto-pause on fullscreen/tiled windows.
 
 ## Global Shortcuts
@@ -105,8 +105,6 @@ If you're migrating from the official caelestia shell to this fork, you may need
     ]
 }
 ```
-
-The emoji and clipboard features require `caelestia-cli` commands `cliphist` and access to `emojis.txt` at `/usr/lib/python3.14/site-packages/caelestia/data/emojis.txt`.
 
 ## Components
 
