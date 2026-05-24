@@ -27,8 +27,8 @@ This fork adds the following features on top of the official caelestia shell:
 - **Video Wallpaper Support** - Use video files as animated wallpapers with configurable pause options.
 - **Wallpaper Quick Toggle** - Quick toggle for wallpaper picker.
 - **Pause Video Wallpapers Toggle** - Quick toggle to pause all video wallpapers with configurable auto-pause on fullscreen/tiled windows.
-- **Background Clock**
-- Background clock now follows fonts defined in your `shell.json`.
+- **Background Clock** - Desktop clock with customizable positioning, scale, and shadow settings.
+- **Desktop Lyrics** - Display lyrics on the desktop with customizable positioning, scale, text alignment, colors, animations, and auto-hide when fullscreen windows are present.
 
 ## Global Shortcuts
 
@@ -97,7 +97,25 @@ If you're migrating from the official caelestia shell to this fork, you may need
     "videoWallpaperPauseOnFullscreen": false,
     "videoWallpaperPauseOnTiled": false,
     "videoWallpaperPauseOnAllDisplays": false,
-    "videoWallpaperMuteOnMedia": false
+    "videoWallpaperMuteOnMedia": false,
+    "desktopLyrics": {
+        "enabled": false,
+        "autoHide": true,
+        "scale": 1.0,
+        "position": "bottom-center",
+        "alignment": 1,
+        "invertColors": false,
+        "background": {
+            "enabled": false,
+            "opacity": 0.7,
+            "blur": true
+        },
+        "shadow": {
+            "enabled": true,
+            "opacity": 0.7,
+            "blur": 0.4
+        }
+    }
 },
 "utilities": {
     "quickToggles": [
@@ -449,16 +467,6 @@ For example, to disable the bar on DP-1:
         }
     },
     "background": {
-        "desktopClock": {
-            "enabled": false,
-            "scale": 1.0,
-            "position": "bottom-right",
-            "shadow": {
-                "enabled": true,
-                "opacity": 0.7,
-                "blur": 0.4
-            },
-"background": {
         "enabled": true,
         "wallpaperEnabled": true,
         "videoWallpaperPaused": false,
@@ -473,17 +481,40 @@ For example, to disable the bar on DP-1:
             "autoHide": true,
             "rounding": 1,
             "spacing": 1
-        }
-    },
-            "invertColors": false
         },
-        "enabled": true,
-        "visualiser": {
-            "blur": false,
+        "desktopClock": {
+            "enabled": false,
+            "scale": 1.0,
+            "position": "bottom-right",
+            "invertColors": false,
+            "background": {
+                "enabled": false,
+                "opacity": 0.7,
+                "blur": true
+            },
+            "shadow": {
+                "enabled": true,
+                "opacity": 0.7,
+                "blur": 0.4
+            }
+        },
+        "desktopLyrics": {
             "enabled": false,
             "autoHide": true,
-            "rounding": 1,
-            "spacing": 1
+            "scale": 1.0,
+            "position": "bottom-center",
+            "alignment": 1,
+            "invertColors": false,
+            "background": {
+                "enabled": false,
+                "opacity": 0.7,
+                "blur": true
+            },
+            "shadow": {
+                "enabled": true,
+                "opacity": 0.7,
+                "blur": 0.4
+            }
         }
     },
     "bar": {

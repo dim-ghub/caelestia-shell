@@ -168,5 +168,111 @@ Variants {
                 absY: clockLoader.y
             }
         }
+
+        Loader {
+            id: lyricsLoader
+
+            asynchronous: true
+            active: Config.background.desktopLyrics.enabled
+
+            anchors.margins: Tokens.padding.large * 2
+            anchors.leftMargin: Tokens.padding.large * 2 + Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.smaller, Config.border.thickness)
+
+            state: Config.background.desktopLyrics.position
+            states: [
+                State {
+                    name: "top-left"
+
+                    AnchorChanges {
+                        target: lyricsLoader
+                        anchors.top: parent.top
+                        anchors.left: parent.left
+                    }
+                },
+                State {
+                    name: "top-center"
+
+                    AnchorChanges {
+                        target: lyricsLoader
+                        anchors.top: parent.top
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+                },
+                State {
+                    name: "top-right"
+
+                    AnchorChanges {
+                        target: lyricsLoader
+                        anchors.top: parent.top
+                        anchors.right: parent.right
+                    }
+                },
+                State {
+                    name: "middle-left"
+
+                    AnchorChanges {
+                        target: lyricsLoader
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                    }
+                },
+                State {
+                    name: "middle-center"
+
+                    AnchorChanges {
+                        target: lyricsLoader
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+                },
+                State {
+                    name: "middle-right"
+
+                    AnchorChanges {
+                        target: lyricsLoader
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                    }
+                },
+                State {
+                    name: "bottom-left"
+
+                    AnchorChanges {
+                        target: lyricsLoader
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                    }
+                },
+                State {
+                    name: "bottom-center"
+
+                    AnchorChanges {
+                        target: lyricsLoader
+                        anchors.bottom: parent.bottom
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+                },
+                State {
+                    name: "bottom-right"
+
+                    AnchorChanges {
+                        target: lyricsLoader
+                        anchors.bottom: parent.bottom
+                        anchors.right: parent.right
+                    }
+                }
+            ]
+
+            transitions: Transition {
+                AnchorAnim {}
+            }
+
+            sourceComponent: DesktopLyrics {
+                screen: modelData
+                wallpaper: behindClock
+                absX: lyricsLoader.x
+                absY: lyricsLoader.y
+            }
+        }
     }
 }

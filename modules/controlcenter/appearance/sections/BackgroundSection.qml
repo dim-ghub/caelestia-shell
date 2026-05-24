@@ -19,7 +19,7 @@ CollapsibleSection {
     title: qsTr("Background")
     showBackground: true
 
-SwitchRow {
+    SwitchRow {
         label: qsTr("Background enabled")
         checked: rootPane.backgroundEnabled
         onToggled: checked => {
@@ -215,7 +215,6 @@ SwitchRow {
                 }
             }
 
-            // The signal from SplitButtonRow
             onSelected: item => posContainer.updateClockPos(item.val, posContainer.currentH)
         }
 
@@ -449,9 +448,333 @@ SwitchRow {
                 top: 2
             }
 
-onValueModified: newValue => {
+            onValueModified: newValue => {
                 rootPane.visualiserSpacing = newValue;
                 rootPane.saveConfig();
+            }
+        }
+    }
+
+
+    StyledText {
+        Layout.topMargin: Tokens.spacing.normal
+        text: qsTr("Desktop Lyrics")
+        font.pointSize: Tokens.font.size.larger
+        font.weight: 500
+    }
+
+    SwitchRow {
+        label: qsTr("Desktop Lyrics enabled")
+        checked: rootPane.desktopLyricsEnabled
+        onToggled: checked => {
+            rootPane.desktopLyricsEnabled = checked;
+            rootPane.saveConfig();
+        }
+    }
+
+    SwitchRow {
+        label: qsTr("Auto-hide")
+        checked: rootPane.desktopLyricsAutoHide
+        enabled: rootPane.desktopLyricsEnabled
+        onToggled: checked => {
+            rootPane.desktopLyricsAutoHide = checked;
+            rootPane.saveConfig();
+        }
+    }
+
+    SectionContainer {
+        id: lyricsPosContainer
+
+        readonly property var pos: (rootPane.desktopLyricsPosition || "bottom-center").split('-')
+        readonly property string currentV: pos[0]
+        readonly property string currentH: pos[1]
+
+        function updateLyricsPos(v, h) {
+            rootPane.desktopLyricsPosition = v + "-" + h;
+            rootPane.saveConfig();
+        }
+
+        contentSpacing: Tokens.spacing.small
+        z: 1
+
+        StyledText {
+            text: qsTr("Positioning")
+            font.pointSize: Tokens.font.size.larger
+            font.weight: 500
+        }
+
+        SplitButtonRow {
+            label: qsTr("Vertical Position")
+            enabled: rootPane.desktopLyricsEnabled
+
+            menuItems: [
+                MenuItem {
+                    property string val: "top"
+
+                    text: qsTr("Top")
+                    icon: "vertical_align_top"
+                },
+                MenuItem {
+                    property string val: "middle"
+
+                    text: qsTr("Middle")
+                    icon: "vertical_align_center"
+                },
+                MenuItem {
+                    property string val: "bottom"
+
+                    text: qsTr("Bottom")
+                    icon: "vertical_align_bottom"
+                }
+            ]
+
+            Component.onCompleted: {
+                for (let i = 0; i < menuItems.length; i++) {
+                    if (menuItems[i].val === lyricsPosContainer.currentV)
+                        active = menuItems[i];
+                }
+            }
+
+            onSelected: item => lyricsPosContainer.updateLyricsPos(item.val, lyricsPosContainer.currentH)
+        }
+
+        SplitButtonRow {
+            label: qsTr("Horizontal Position")
+            enabled: rootPane.desktopLyricsEnabled
+            expandedZ: 99
+
+            menuItems: [
+                MenuItem {
+                    property string val: "left"
+
+                    text: qsTr("Left")
+                    icon: "align_horizontal_left"
+                },
+                MenuItem {
+                    property string val: "center"
+
+                    text: qsTr("Center")
+                    icon: "align_horizontal_center"
+                },
+                MenuItem {
+                    property string val: "right"
+
+                    text: qsTr("Right")
+                    icon: "align_horizontal_right"
+                }
+            ]
+
+            Component.onCompleted: {
+                for (let i = 0; i < menuItems.length; i++) {
+                    if (menuItems[i].val === lyricsPosContainer.currentH)
+                        active = menuItems[i];
+                }
+            }
+
+            onSelected: item => lyricsPosContainer.updateLyricsPos(lyricsPosContainer.currentV, item.val)
+        }
+    }
+
+    SectionContainer {
+        contentSpacing: Tokens.spacing.small
+
+        StyledText {
+            text: qsTr("Text Alignment")
+            font.pointSize: Tokens.font.size.larger
+            font.weight: 500
+        }
+
+        SplitButtonRow {
+            label: qsTr("Alignment")
+            enabled: rootPane.desktopLyricsEnabled
+
+            menuItems: [
+                MenuItem {
+                    property int val: 0
+
+                    text: qsTr("Left")
+                    icon: "format_align_left"
+                },
+                MenuItem {
+                    property int val: 1
+
+                    text: qsTr("Center")
+                    icon: "format_align_center"
+                },
+                MenuItem {
+                    property int val: 2
+
+                    text: qsTr("Right")
+                    icon: "format_align_right"
+                }
+            ]
+
+            Component.onCompleted: {
+                for (let i = 0; i < menuItems.length; i++) {
+                    if (menuItems[i].val === rootPane.desktopLyricsAlignment)
+                        active = menuItems[i];
+                }
+            }
+
+            onSelected: item => {
+                rootPane.desktopLyricsAlignment = item.val;
+                rootPane.saveConfig();
+            }
+        }
+    }
+
+    SectionContainer {
+        contentSpacing: Tokens.spacing.normal
+
+        SliderInput {
+            Layout.fillWidth: true
+
+            label: qsTr("Scale")
+            value: rootPane.desktopLyricsScale * 100
+            from: 50
+            to: 200
+            suffix: "%"
+            validator: IntValidator {
+                bottom: 50
+                top: 200
+            }
+            formatValueFunction: val => Math.round(val).toString()
+            parseValueFunction: text => parseInt(text)
+
+            onValueModified: newValue => {
+                rootPane.desktopLyricsScale = newValue / 100;
+                rootPane.saveConfig();
+            }
+        }
+    }
+
+    SwitchRow {
+        label: qsTr("Invert colors")
+        checked: rootPane.desktopLyricsInvertColors
+        onToggled: checked => {
+            rootPane.desktopLyricsInvertColors = checked;
+            rootPane.saveConfig();
+        }
+    }
+
+    SectionContainer {
+        contentSpacing: Tokens.spacing.small
+
+        StyledText {
+            text: qsTr("Shadow")
+            font.pointSize: Tokens.font.size.larger
+            font.weight: 500
+        }
+
+        SwitchRow {
+            label: qsTr("Enabled")
+            checked: rootPane.desktopLyricsShadowEnabled
+            onToggled: checked => {
+                rootPane.desktopLyricsShadowEnabled = checked;
+                rootPane.saveConfig();
+            }
+        }
+
+        SectionContainer {
+            contentSpacing: Tokens.spacing.normal
+
+            SliderInput {
+                Layout.fillWidth: true
+
+                label: qsTr("Opacity")
+                value: rootPane.desktopLyricsShadowOpacity * 100
+                from: 0
+                to: 100
+                suffix: "%"
+                validator: IntValidator {
+                    bottom: 0
+                    top: 100
+                }
+                formatValueFunction: val => Math.round(val).toString()
+                parseValueFunction: text => parseInt(text)
+
+                onValueModified: newValue => {
+                    rootPane.desktopLyricsShadowOpacity = newValue / 100;
+                    rootPane.saveConfig();
+                }
+            }
+        }
+
+        SectionContainer {
+            contentSpacing: Tokens.spacing.normal
+
+            SliderInput {
+                Layout.fillWidth: true
+
+                label: qsTr("Blur")
+                value: rootPane.desktopLyricsShadowBlur * 100
+                from: 0
+                to: 100
+                suffix: "%"
+                validator: IntValidator {
+                    bottom: 0
+                    top: 100
+                }
+                formatValueFunction: val => Math.round(val).toString()
+                parseValueFunction: text => parseInt(text)
+
+                onValueModified: newValue => {
+                    rootPane.desktopLyricsShadowBlur = newValue / 100;
+                    rootPane.saveConfig();
+                }
+            }
+        }
+    }
+
+    SectionContainer {
+        contentSpacing: Tokens.spacing.small
+
+        StyledText {
+            text: qsTr("Background")
+            font.pointSize: Tokens.font.size.larger
+            font.weight: 500
+        }
+
+        SwitchRow {
+            label: qsTr("Enabled")
+            checked: rootPane.desktopLyricsBackgroundEnabled
+            onToggled: checked => {
+                rootPane.desktopLyricsBackgroundEnabled = checked;
+                rootPane.saveConfig();
+            }
+        }
+
+        SwitchRow {
+            label: qsTr("Blur enabled")
+            checked: rootPane.desktopLyricsBackgroundBlur
+            onToggled: checked => {
+                rootPane.desktopLyricsBackgroundBlur = checked;
+                rootPane.saveConfig();
+            }
+        }
+
+        SectionContainer {
+            contentSpacing: Tokens.spacing.normal
+
+            SliderInput {
+                Layout.fillWidth: true
+
+                label: qsTr("Opacity")
+                value: rootPane.desktopLyricsBackgroundOpacity * 100
+                from: 0
+                to: 100
+                suffix: "%"
+                validator: IntValidator {
+                    bottom: 0
+                    top: 100
+                }
+                formatValueFunction: val => Math.round(val).toString()
+                parseValueFunction: text => parseInt(text)
+
+                onValueModified: newValue => {
+                    rootPane.desktopLyricsBackgroundOpacity = newValue / 100;
+                    rootPane.saveConfig();
+                }
             }
         }
     }

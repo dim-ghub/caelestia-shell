@@ -65,6 +65,18 @@ Item {
     property bool visualiserAutoHide: Config.background.visualiser.autoHide ?? true
     property real visualiserRounding: Config.background.visualiser.rounding ?? 1
     property real visualiserSpacing: Config.background.visualiser.spacing ?? 1
+    property bool desktopLyricsEnabled: Config.background.desktopLyrics.enabled ?? false
+    property real desktopLyricsScale: Config.background.desktopLyrics.scale ?? 1
+    property string desktopLyricsPosition: Config.background.desktopLyrics.position ?? "bottom-center"
+    property int desktopLyricsAlignment: Config.background.desktopLyrics.alignment ?? 1
+    property bool desktopLyricsInvertColors: Config.background.desktopLyrics.invertColors ?? false
+    property bool desktopLyricsShadowEnabled: Config.background.desktopLyrics.shadow.enabled ?? true
+    property real desktopLyricsShadowOpacity: Config.background.desktopLyrics.shadow.opacity ?? 0.7
+    property real desktopLyricsShadowBlur: Config.background.desktopLyrics.shadow.blur ?? 0.4
+    property bool desktopLyricsBackgroundEnabled: Config.background.desktopLyrics.background.enabled ?? false
+    property real desktopLyricsBackgroundOpacity: Config.background.desktopLyrics.background.opacity ?? 0.7
+    property bool desktopLyricsBackgroundBlur: Config.background.desktopLyrics.background.blur ?? false
+    property bool desktopLyricsAutoHide: Config.background.desktopLyrics.autoHide ?? true
 
     function saveConfig() {
         GlobalConfig.appearance.anim.durations.scale = root.animDurationsScale;
@@ -112,6 +124,19 @@ Item {
         GlobalConfig.background.visualiser.autoHide = root.visualiserAutoHide;
         GlobalConfig.background.visualiser.rounding = root.visualiserRounding;
         GlobalConfig.background.visualiser.spacing = root.visualiserSpacing;
+
+        GlobalConfig.background.desktopLyrics.enabled = root.desktopLyricsEnabled;
+        GlobalConfig.background.desktopLyrics.scale = root.desktopLyricsScale;
+        GlobalConfig.background.desktopLyrics.position = root.desktopLyricsPosition;
+        GlobalConfig.background.desktopLyrics.alignment = root.desktopLyricsAlignment;
+        GlobalConfig.background.desktopLyrics.invertColors = root.desktopLyricsInvertColors;
+        GlobalConfig.background.desktopLyrics.shadow.enabled = root.desktopLyricsShadowEnabled;
+        GlobalConfig.background.desktopLyrics.shadow.opacity = root.desktopLyricsShadowOpacity;
+        GlobalConfig.background.desktopLyrics.shadow.blur = root.desktopLyricsShadowBlur;
+        GlobalConfig.background.desktopLyrics.background.enabled = root.desktopLyricsBackgroundEnabled;
+        GlobalConfig.background.desktopLyrics.background.opacity = root.desktopLyricsBackgroundOpacity;
+        GlobalConfig.background.desktopLyrics.background.blur = root.desktopLyricsBackgroundBlur;
+        GlobalConfig.background.desktopLyrics.autoHide = root.desktopLyricsAutoHide;
 
         GlobalConfig.border.rounding = root.borderRounding;
         GlobalConfig.border.thickness = root.borderThickness;

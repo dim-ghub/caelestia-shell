@@ -65,6 +65,52 @@ public:
         : ConfigObject(parent) {}
 };
 
+class DesktopLyricsBackground : public ConfigObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    CONFIG_PROPERTY(bool, enabled, false)
+    CONFIG_PROPERTY(qreal, opacity, 0.7)
+    CONFIG_PROPERTY(bool, blur, true)
+
+public:
+    explicit DesktopLyricsBackground(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
+class DesktopLyricsShadow : public ConfigObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    CONFIG_PROPERTY(bool, enabled, true)
+    CONFIG_PROPERTY(qreal, opacity, 0.7)
+    CONFIG_PROPERTY(qreal, blur, 0.4)
+
+public:
+    explicit DesktopLyricsShadow(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
+class DesktopLyrics : public ConfigObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    CONFIG_PROPERTY(bool, enabled, false)
+    CONFIG_PROPERTY(bool, autoHide, true)
+    CONFIG_PROPERTY(qreal, scale, 1.0)
+    CONFIG_PROPERTY(QString, position, QStringLiteral("bottom-center"))
+    CONFIG_PROPERTY(int, alignment, 1)
+    CONFIG_PROPERTY(bool, invertColors, false)
+    CONFIG_SUBOBJECT(DesktopLyricsBackground, background)
+    CONFIG_SUBOBJECT(DesktopLyricsShadow, shadow)
+
+public:
+    explicit DesktopLyrics(QObject* parent = nullptr)
+        : ConfigObject(parent)
+        , m_background(new DesktopLyricsBackground(this))
+        , m_shadow(new DesktopLyricsShadow(this)) {}
+};
+
 class BackgroundConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
@@ -78,12 +124,14 @@ class BackgroundConfig : public ConfigObject {
     CONFIG_PROPERTY(bool, videoWallpaperPauseOnAllDisplays, false)
     CONFIG_PROPERTY(bool, videoWallpaperMuteOnMedia, false)
     CONFIG_SUBOBJECT(DesktopClock, desktopClock)
+    CONFIG_SUBOBJECT(DesktopLyrics, desktopLyrics)
     CONFIG_SUBOBJECT(BackgroundVisualiser, visualiser)
 
 public:
     explicit BackgroundConfig(QObject* parent = nullptr)
         : ConfigObject(parent)
         , m_desktopClock(new DesktopClock(this))
+        , m_desktopLyrics(new DesktopLyrics(this))
         , m_visualiser(new BackgroundVisualiser(this)) {}
 };
 
