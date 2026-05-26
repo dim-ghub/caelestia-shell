@@ -14,8 +14,9 @@ Singleton {
     }
 
     function registerBar(screen: ShellScreen, barWrapper: var): void {
-        bars.set(screen, barWrapper);
-        bars = bars; // Trigger property change notification signal
+        console.log("Visibilities: registering bar for screen name:", screen.name, "bar:", barWrapper);
+        bars.set(screen.name, barWrapper);
+        bars = new Map(bars); // Force QML property change notification by changing the Map reference
     }
 
     function getForActive(): DrawerVisibilities {
