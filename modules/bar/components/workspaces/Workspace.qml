@@ -72,7 +72,7 @@ GridLayout {
         Layout.fillWidth: isHorizontal && enabled
         Layout.fillHeight: !isHorizontal && enabled
         Layout.topMargin: isHorizontal ? 0 : -Tokens.sizes.bar.innerWidth / 10
-        Layout.leftMargin: isHorizontal ? -Tokens.sizes.bar.innerWidth / 10 : 0
+        Layout.leftMargin: isHorizontal ? Tokens.spacing.small : 0
 
         visible: active
         active: root.hasWindows

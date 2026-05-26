@@ -69,7 +69,7 @@ StyledClippingRect {
             columns: isHorizontal ? -1 : 1
             rows: isHorizontal ? 1 : -1
             flow: isHorizontal ? GridLayout.LeftToRight : GridLayout.TopToBottom
-            columnSpacing: Math.floor(Tokens.spacing.small / 2)
+            columnSpacing: isHorizontal ? Tokens.spacing.smaller : Math.floor(Tokens.spacing.small / 2)
             rowSpacing: Math.floor(Tokens.spacing.small / 2)
 
             Repeater {
