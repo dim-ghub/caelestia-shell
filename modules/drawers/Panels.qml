@@ -160,6 +160,9 @@ Item {
         anchors.top: notifications.bottom
         anchors.bottom: utilities.top
         anchors.right: parent.right
+
+        anchors.topMargin: (Config.bar.position === "top" && popoutsWrapper.offsetScale < 1) ? (popoutsWrapper.implicitHeight + Tokens.spacing.normal) : 0
+        anchors.bottomMargin: (Config.bar.position === "bottom" && popoutsWrapper.offsetScale < 1) ? (popoutsWrapper.implicitHeight + Tokens.spacing.normal) : 0
     }
 
     states: [
