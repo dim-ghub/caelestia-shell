@@ -50,8 +50,7 @@ Item {
         id: osdWrapper
 
         anchors.verticalCenter: parent.verticalCenter
-        anchors.left: Config.bar.position === "right" ? parent.left : undefined
-        anchors.right: Config.bar.position !== "right" ? parent.right : undefined
+        anchors.right: parent.right
         anchors.leftMargin: Config.bar.position === "right" ? sidebar.width * (1 - sidebar.offsetScale) + session.width * (1 - session.offsetScale) : 0
         anchors.rightMargin: Config.bar.position !== "right" ? sidebar.width * (1 - sidebar.offsetScale) + session.width * (1 - session.offsetScale) : 0
         clip: sidebar.visible || session.visible
@@ -67,8 +66,7 @@ Item {
             sidebarOrSessionVisible: sidebar.visible || session.visible
 
             anchors.verticalCenter: parent.verticalCenter
-            anchors.left: Config.bar.position === "right" ? parent.left : undefined
-            anchors.right: Config.bar.position !== "right" ? parent.right : undefined
+            anchors.right: parent.right
         }
     }
 
@@ -81,16 +79,14 @@ Item {
         sessionPanel: sessionWrapper
 
         anchors.top: parent.top
-        anchors.left: Config.bar.position === "right" ? parent.left : undefined
-        anchors.right: Config.bar.position !== "right" ? parent.right : undefined
+        anchors.right: parent.right
     }
 
     Item {
         id: sessionWrapper
 
         anchors.verticalCenter: parent.verticalCenter
-        anchors.left: Config.bar.position === "right" ? parent.left : undefined
-        anchors.right: Config.bar.position !== "right" ? parent.right : undefined
+        anchors.right: parent.right
         anchors.leftMargin: Config.bar.position === "right" ? sidebar.width * (1 - sidebar.offsetScale) : 0
         anchors.rightMargin: Config.bar.position !== "right" ? sidebar.width * (1 - sidebar.offsetScale) : 0
         clip: sidebar.visible
@@ -105,8 +101,7 @@ Item {
             sidebarVisible: sidebar.visible
 
             anchors.verticalCenter: parent.verticalCenter
-            anchors.left: Config.bar.position === "right" ? parent.left : undefined
-            anchors.right: Config.bar.position !== "right" ? parent.right : undefined
+            anchors.right: parent.right
         }
     }
 
@@ -146,16 +141,14 @@ Item {
         popouts: popoutsWrapper.content
 
         anchors.bottom: parent.bottom
-        anchors.left: Config.bar.position === "right" ? parent.left : undefined
-        anchors.right: Config.bar.position !== "right" ? parent.right : undefined
+        anchors.right: parent.right
     }
 
     Toasts.Toasts {
         id: toasts
 
         anchors.bottom: sidebar.visible ? parent.bottom : utilities.top
-        anchors.left: Config.bar.position === "right" ? sidebar.right : undefined
-        anchors.right: Config.bar.position !== "right" ? sidebar.left : undefined
+        anchors.right: sidebar.left
         anchors.margins: Tokens.padding.normal
     }
 
@@ -166,7 +159,22 @@ Item {
 
         anchors.top: notifications.bottom
         anchors.bottom: utilities.top
-        anchors.left: Config.bar.position === "right" ? parent.left : undefined
-        anchors.right: Config.bar.position !== "right" ? parent.right : undefined
+        anchors.right: parent.right
     }
+
+    states: [
+        State {
+            name: "right"
+            Config.screen: root.screen.name
+            when: Config.bar.position === "right"
+            AnchorChanges { target: osdWrapper; anchors.left: parent.left; anchors.right: undefined }
+            AnchorChanges { target: osd; anchors.left: parent.left; anchors.right: undefined }
+            AnchorChanges { target: notifications; anchors.left: parent.left; anchors.right: undefined }
+            AnchorChanges { target: sessionWrapper; anchors.left: parent.left; anchors.right: undefined }
+            AnchorChanges { target: session; anchors.left: parent.left; anchors.right: undefined }
+            AnchorChanges { target: utilities; anchors.left: parent.left; anchors.right: undefined }
+            AnchorChanges { target: toasts; anchors.left: sidebar.right; anchors.right: undefined }
+            AnchorChanges { target: sidebar; anchors.left: parent.left; anchors.right: undefined }
+        }
+    ]
 }
