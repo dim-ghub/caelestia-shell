@@ -73,7 +73,6 @@ Item {
             fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).weight(Font.DemiBold).build()
             visible: Images.isVideo(root.modelData.name)
         }
-        }
 
         CachingImage {
             anchors.fill: parent

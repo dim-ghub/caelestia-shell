@@ -11,6 +11,17 @@ namespace caelestia::config {
 
 Q_LOGGING_CATEGORY(lcConfig, "caelestia.config", QtInfoMsg)
 
+namespace {
+
+ConfigObject* toConfigObject(const QVariant& value) {
+    if (!value.canConvert<QObject*>())
+        return nullptr;
+    return qobject_cast<ConfigObject*>(value.value<QObject*>());
+}
+
+} // namespace
+
+
 // ConfigObject
 
 ConfigObject::ConfigObject(QObject* parent)
@@ -37,7 +48,7 @@ void ConfigObject::loadFromJson(const QJsonObject& obj) {
 
         // Recurse into sub-objects
         auto current = prop.read(this);
-        auto* subObj = current.value<ConfigObject*>();
+        auto* subObj = toConfigObject(current);
 
         if (subObj) {
             qCDebug(lcConfig) << "  Recursing into sub-object" << key;
@@ -86,13 +97,10 @@ QJsonObject ConfigObject::toJsonObject() const {
         const auto value = prop.read(this);
 
         // Recurse into sub-objects — include only if they have loaded keys
-        if (value.canView<ConfigObject*>()) {
-            auto* const subObj = value.value<ConfigObject*>();
-            if (subObj) {
-                auto subJson = subObj->toJsonObject();
-                if (!subJson.isEmpty())
-                    obj.insert(key, subJson);
-            }
+        if (auto* const subObj = toConfigObject(value)) {
+            auto subJson = subObj->toJsonObject();
+            if (!subJson.isEmpty())
+                obj.insert(key, subJson);
             continue;
         }
 
@@ -132,7 +140,7 @@ void ConfigObject::clearLoadedKeys() {
         if (isGlobalOnly(QString::fromUtf8(prop.name())))
             continue;
         auto value = prop.read(this);
-        auto* subObj = value.value<ConfigObject*>();
+        auto* subObj = toConfigObject(value);
         if (subObj)
             subObj->clearLoadedKeys();
     }
@@ -156,11 +164,11 @@ void ConfigObject::syncFromGlobal(ConfigObject* global) {
             continue;
 
         auto current = prop.read(this);
-        auto* subObj = current.value<ConfigObject*>();
+        auto* subObj = toConfigObject(current);
 
         if (subObj) {
             auto globalVal = prop.read(global);
-            auto* globalSub = globalVal.value<ConfigObject*>();
+            auto* globalSub = toConfigObject(globalVal);
             if (globalSub)
                 subObj->syncFromGlobal(globalSub);
             continue;
@@ -193,7 +201,7 @@ void ConfigObject::resyncFromGlobal() {
             continue;
 
         auto current = prop.read(this);
-        auto* subObj = current.value<ConfigObject*>();
+        auto* subObj = toConfigObject(current);
 
         if (subObj) {
             subObj->resyncFromGlobal();

@@ -15,6 +15,12 @@ QString watchRoot() {
     return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation);
 }
 
+ConfigObject* toConfigObject(const QVariant& value) {
+    if (!value.canConvert<QObject*>())
+        return nullptr;
+    return qobject_cast<ConfigObject*>(value.value<QObject*>());
+}
+
 } // namespace
 
 RootConfig::RootConfig(QObject* parent)
@@ -40,7 +46,7 @@ QStringList RootConfig::collectUnknownKeys(const ConfigObject* obj, const QJsonO
             if (idx >= 0) {
                 auto prop = meta->property(idx);
                 auto value = prop.read(obj);
-                auto* subObj = value.value<ConfigObject*>();
+                auto* subObj = toConfigObject(value);
                 if (subObj) {
                     const auto subUnknown = collectUnknownKeys(subObj, it.value().toObject());
                     for (const auto& subKey : subUnknown)
@@ -129,7 +135,7 @@ void RootConfig::connectAutoSave(ConfigObject* obj) {
     for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
         auto prop = meta->property(i);
         auto value = prop.read(obj);
-        auto* subObj = value.value<ConfigObject*>();
+        auto* subObj = toConfigObject(value);
         if (subObj)
             connectAutoSave(subObj);
     }

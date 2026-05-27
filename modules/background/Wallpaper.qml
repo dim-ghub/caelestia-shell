@@ -40,10 +40,10 @@ Item {
             const isVid = isVideo(source);
             const isGif = source.endsWith(".gif");
             const comp = isVid ? videoComp : (isGif ? gifComp : imgComp);
-            current = comp.createObject(root, {
-                path: source,
-                screen: root.screen
-            });
+            const props = { path: source };
+            if (isVid)
+                props.screen = root.screen;
+            current = comp.createObject(root, props);
         }
     }
 

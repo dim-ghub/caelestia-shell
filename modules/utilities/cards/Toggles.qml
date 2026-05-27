@@ -163,7 +163,7 @@ StyledRect {
                     roleValue: "badapple"
                     delegate: Toggle {
                         icon: "nutrition"
-                        toggle: false
+                        isToggle: false
                         inactiveOnColour: Colours.palette.m3onSurfaceVariant
                         onClicked: {
                         if (BadApplePlayer.shouldPlay)
@@ -177,7 +177,7 @@ StyledRect {
                     roleValue: "wallpaper"
                     delegate: Toggle {
                         icon: "wallpaper"
-                        toggle: false
+                        isToggle: false
                         inactiveOnColour: Colours.palette.m3onSurfaceVariant
                         onClicked: {
                             Visibilities.launcherInitialSearch = `${GlobalConfig.launcher.actionPrefix}wallpaper `;
@@ -191,7 +191,7 @@ StyledRect {
                     delegate: Toggle {
                         id: pauseWallpaperToggle
                         icon: "pause"
-                        toggle: true
+                        isToggle: true
                         Component.onCompleted: checked = Qt.binding(() => GlobalConfig.background.videoWallpaperPaused)
                         onClicked: {
                             const newVal = !GlobalConfig.background.videoWallpaperPaused;

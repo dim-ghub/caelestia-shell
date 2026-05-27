@@ -157,6 +157,5 @@ QString CUtils::sha256(const QString& path) {
 
     return hash.result().toHex();
 }
-}
 
 } // namespace caelestia

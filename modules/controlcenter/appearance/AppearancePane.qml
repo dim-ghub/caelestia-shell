@@ -24,10 +24,10 @@ Item {
     required property Session session
 
     property real animDurationsScale: GlobalConfig.appearance.anim.durations.scale ?? 1
-    property string fontFamilyMaterial: Config.appearance.font.family.material ?? "Material Symbols Rounded"
-    property string fontFamilyMono: Config.appearance.font.family.mono ?? "CaskaydiaCove NF"
-    property string fontFamilySans: Config.appearance.font.family.sans ?? "Rubik"
-    property real fontSizeScale: Config.appearance.font.size.scale ?? 1
+    property string fontFamilyMaterial: Config.appearance.font.icon.family ?? "Material Symbols Rounded"
+    property string fontFamilyMono: Config.appearance.font.mono.family ?? "CaskaydiaCove NF"
+    property string fontFamilySans: Config.appearance.font.body.family ?? "Rubik"
+    property real fontSizeScale: Config.appearance.font.scale ?? 1
     property real paddingScale: Config.appearance.padding.scale ?? 1
     property real roundingScale: Config.appearance.rounding.scale ?? 1
     property real spacingScale: Config.appearance.spacing.scale ?? 1
@@ -81,10 +81,13 @@ Item {
     function saveConfig() {
         GlobalConfig.appearance.anim.durations.scale = root.animDurationsScale;
 
-        GlobalConfig.appearance.font.family.material = root.fontFamilyMaterial;
-        GlobalConfig.appearance.font.family.mono = root.fontFamilyMono;
-        GlobalConfig.appearance.font.family.sans = root.fontFamilySans;
-        GlobalConfig.appearance.font.size.scale = root.fontSizeScale;
+        GlobalConfig.appearance.font.icon.family = root.fontFamilyMaterial;
+        GlobalConfig.appearance.font.mono.family = root.fontFamilyMono;
+        GlobalConfig.appearance.font.body.family = root.fontFamilySans;
+        GlobalConfig.appearance.font.headline.family = root.fontFamilySans;
+        GlobalConfig.appearance.font.title.family = root.fontFamilySans;
+        GlobalConfig.appearance.font.label.family = root.fontFamilySans;
+        GlobalConfig.appearance.font.scale = root.fontSizeScale;
 
         GlobalConfig.appearance.padding.scale = root.paddingScale;
         GlobalConfig.appearance.rounding.scale = root.roundingScale;

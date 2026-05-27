@@ -47,7 +47,7 @@ Item {
             StyledText {
                 text: (modelData && modelData.bind) ? modelData.bind : qsTr("No keybinds")
                 font.weight: 500
-                font.family: Config.appearance.font.family.mono || "monospace"
+                font.family: Config.appearance.font.mono.family || "monospace"
                 color: Colours.palette.m3onSurface
                 elide: Text.ElideRight
             }
