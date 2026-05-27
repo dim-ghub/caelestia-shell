@@ -459,7 +459,7 @@ CollapsibleSection {
     StyledText {
         Layout.topMargin: Tokens.spacing.normal
         text: qsTr("Desktop Lyrics")
-        font.pointSize: Tokens.font.size.larger
+        font.pointSize: Tokens.font.body.large.pointSize
         font.weight: 500
     }
 
@@ -499,7 +499,7 @@ CollapsibleSection {
 
         StyledText {
             text: qsTr("Positioning")
-            font.pointSize: Tokens.font.size.larger
+            font.pointSize: Tokens.font.body.large.pointSize
             font.weight: 500
         }
 
@@ -580,7 +580,7 @@ CollapsibleSection {
 
         StyledText {
             text: qsTr("Text Alignment")
-            font.pointSize: Tokens.font.size.larger
+            font.pointSize: Tokens.font.body.large.pointSize
             font.weight: 500
         }
 
@@ -662,7 +662,7 @@ CollapsibleSection {
 
         StyledText {
             text: qsTr("Shadow")
-            font.pointSize: Tokens.font.size.larger
+            font.pointSize: Tokens.font.body.large.pointSize
             font.weight: 500
         }
 
@@ -731,7 +731,7 @@ CollapsibleSection {
 
         StyledText {
             text: qsTr("Background")
-            font.pointSize: Tokens.font.size.larger
+            font.pointSize: Tokens.font.body.large.pointSize
             font.weight: 500
         }
 

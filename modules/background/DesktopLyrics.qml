@@ -6,6 +6,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
 import Caelestia.Config
+import Caelestia.Services
 import qs.components
 import qs.services
 
@@ -31,14 +32,24 @@ Item {
     readonly property bool allWindowsFloating: Hypr.monitorFor(screen)?.activeWorkspace?.toplevels?.values.every(t => t.lastIpcObject?.floating) ?? true
     readonly property bool shouldHide: autoHide && !allWindowsFloating
 
-    readonly property bool hasLyrics: LyricsService.model.count > 0
-    readonly property int currentLyricIndex: LyricsService.currentIndex
+    readonly property bool hasLyrics: Lyrics.hasLyrics
+    readonly property int currentLyricIndex: Lyrics.indexForTime(currentTrackPosition)
     readonly property bool isCurrentActive: currentLyricIndex >= 0
 
     property var player: Players.active
     property string displayedLyric: ""
     property string previousLyricText: ""
     property string nextLyricText: ""
+    property real currentTrackPosition: 0
+
+    // Funny binding hack to make lyrics update
+    readonly property var _trackBinder: {
+        const p = Players.active;
+        if (p)
+            Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
+        else
+            Lyrics.clearTrack();
+    }
 
     // Dynamic Spacing Math
     property real lyricSpacing: Tokens.spacing.large * root.lyricsScale
@@ -49,11 +60,15 @@ Item {
 
     onCurrentLyricIndexChanged: {
         if (currentLyricIndex >= 0) {
-            displayedLyric = (LyricsService.model.get(currentLyricIndex)?.lyricLine ?? "").replace(/\u00A0/g, " ");
-            previousLyricText = currentLyricIndex > 0 ? (LyricsService.model.get(currentLyricIndex - 1)?.lyricLine ?? "").replace(/\u00A0/g, " ") : "";
-            nextLyricText = currentLyricIndex < LyricsService.model.count - 1 ? (LyricsService.model.get(currentLyricIndex + 1)?.lyricLine ?? "").replace(/\u00A0/g, " ") : "";
+            displayedLyric = (Lyrics.lyrics[currentLyricIndex] ?? "").replace(/\u00A0/g, " ");
+            previousLyricText = currentLyricIndex > 0 ? (Lyrics.lyrics[currentLyricIndex - 1] ?? "").replace(/\u00A0/g, " ") : "";
+            nextLyricText = currentLyricIndex < Lyrics.lyrics.length - 1 ? (Lyrics.lyrics[currentLyricIndex + 1] ?? "").replace(/\u00A0/g, " ") : "";
 
             lyricSlide.running = true;
+        } else {
+            displayedLyric = "";
+            previousLyricText = "";
+            nextLyricText = "";
         }
     }
 
@@ -102,37 +117,14 @@ Item {
 
     Timer {
         running: Players.active?.isPlaying ?? false
-        interval: GlobalConfig.dashboard.mediaUpdateInterval
+        interval: GlobalConfig.dashboard.mediaUpdateInterval || 500
         triggeredOnStart: true
         repeat: true
         onTriggered: {
-            if (!Players.active)
-                return;
-            LyricsService.updatePosition();
-            Players.active?.positionChanged();
+            if (Players.active) {
+                currentTrackPosition = Players.active.position;
+            }
         }
-    }
-
-    Connections {
-        function onActiveChanged() {
-            root.player = Players.active;
-            root.loadLyrics();
-        }
-
-        target: Players
-    }
-
-    Connections {
-        function onMetadataChanged() {
-            root.loadLyrics();
-        }
-
-        target: root.player
-        ignoreUnknownSignals: true
-    }
-
-    function loadLyrics() {
-        LyricsService.loadLyrics();
     }
 
     implicitWidth: 350 * root.lyricsScale
@@ -222,7 +214,7 @@ Item {
                     anchors.fill: parent
                     text: root.previousLyricText
                     font.family: root.sansFont
-                    font.pointSize: Tokens.font.size.normal * root.lyricsScale
+                    font.pointSize: Tokens.font.body.medium.pointSize * root.lyricsScale
                     color: root.safeSecondary
                     opacity: 0.6
                     wrapMode: Text.WordWrap
@@ -272,7 +264,7 @@ Item {
                     width: parent.width
                     text: root.displayedLyric
                     font.family: root.sansFont
-                    font.pointSize: Tokens.font.size.larger * 1.3 * root.lyricsScale
+                    font.pointSize: Tokens.font.body.large.pointSize * 1.3 * root.lyricsScale
                     font.weight: Font.Bold
                     color: Colours.palette.m3primary
                     wrapMode: Text.WordWrap
@@ -306,7 +298,7 @@ Item {
                     anchors.fill: parent
                     text: root.nextLyricText
                     font.family: root.sansFont
-                    font.pointSize: Tokens.font.size.normal * root.lyricsScale
+                    font.pointSize: Tokens.font.body.medium.pointSize * root.lyricsScale
                     color: root.safeSecondary
                     opacity: 0.6
                     wrapMode: Text.WordWrap
