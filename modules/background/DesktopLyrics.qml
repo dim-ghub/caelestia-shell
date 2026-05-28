@@ -32,8 +32,10 @@ Item {
     readonly property bool allWindowsFloating: Hypr.monitorFor(screen)?.activeWorkspace?.toplevels?.values.every(t => t.lastIpcObject?.floating) ?? true
     readonly property bool shouldHide: autoHide && !allWindowsFloating
 
-    readonly property bool hasLyrics: Lyrics.hasLyrics
-    readonly property int currentLyricIndex: Lyrics.indexForTime(currentTrackPosition)
+    // Stricter validations to prevent ghost state bleed-through
+    readonly property bool isValidMatch: Players.active && Lyrics.trackArtist === Players.active.trackArtist && Lyrics.trackTitle === Players.active.trackTitle
+    readonly property bool hasLyrics: Lyrics.hasLyrics && isValidMatch && root.lyricsReady
+    readonly property int currentLyricIndex: hasLyrics ? Lyrics.indexForTime(currentTrackPosition) : -1
     readonly property bool isCurrentActive: currentLyricIndex >= 0
 
     property var player: Players.active
@@ -41,57 +43,57 @@ Item {
     property string previousLyricText: ""
     property string nextLyricText: ""
     property real currentTrackPosition: 0
+    property bool flag: false  // For forcing updates
+    property string _lastTrackId: ""  // Track change detection
+    property bool lyricsReady: false // Track exact C++ load lifecycle
 
-    // Reactive binding for position updates
-    Binding {
-        target: root
-        property: "currentTrackPosition"
-        when: root.player
-        value: root.player?.position ?? 0
+    // Timer to detect track changes within the same player
+    Timer {
+        interval: 500
+        running: true
+        repeat: true
+        onTriggered: {
+            const p = Players.active;
+            if (!p) {
+                if (root._lastTrackId !== "") {
+                    Lyrics.clearTrack();
+                    root._lastTrackId = "";
+                }
+                return;
+            }
+            // Create unique track ID from artist + title
+            const trackId = (p.trackArtist || "") + "|" + (p.trackTitle || "");
+            if (trackId !== root._lastTrackId) {
+                // Track changed - immediately clear displayed lyrics
+                displayedLyric = "";
+                previousLyricText = "";
+                nextLyricText = "";
+                root._lastTrackId = trackId;
+                Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
+            }
+        }
     }
 
-    // Reactive track binding - updates when active player changes
-    // or when the active player's track metadata changes
+    // Consolidated connections to Lyrics service for UI updates and state locking
     Connections {
-        id: playerConnections
-        target: root.player
+        target: Lyrics
 
-        function onTrackTitleChanged() {
-            const p = Players.active;
-            if (p)
-                Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
+        function onTrackChanged() {
+            // Instantly kill the display the millisecond C++ acknowledges a new track
+            root.lyricsReady = false;
+            root.updateLyricText();
         }
 
-        function onTrackArtistChanged() {
-            const p = Players.active;
-            if (p)
-                Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
+        function onLyricsChanged() {
+            // Only allow display once C++ explicitly confirms new lyrics are loaded
+            root.lyricsReady = true;
+            root.flag = !root.flag;
+            root.updateLyricText();
         }
 
-        function onTrackAlbumChanged() {
-            const p = Players.active;
-            if (p)
-                Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
+        function onHasLyricsChanged() {
+            root.updateLyricText();
         }
-
-        function onLengthChanged() {
-            const p = Players.active;
-            if (p)
-                Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
-        }
-
-        function onIdentityChanged() {
-            const p = Players.active;
-            if (p)
-                Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
-        }
-    }
-
-    // Initial track setup when player becomes available
-    Component.onCompleted: {
-        const p = Players.active;
-        if (p)
-            Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
     }
 
     // Dynamic Spacing Math
@@ -101,8 +103,8 @@ Item {
     property real targetNextY: targetCenterY + lyricContainer.height + lyricSpacing
     property real startNextY: targetNextY + nextLyricItem.height + lyricSpacing
 
-    onCurrentLyricIndexChanged: {
-        if (currentLyricIndex >= 0) {
+    function updateLyricText() {
+        if (root.hasLyrics && currentLyricIndex >= 0) {
             displayedLyric = (Lyrics.lyrics[currentLyricIndex] ?? "").replace(/\u00A0/g, " ");
             previousLyricText = currentLyricIndex > 0 ? (Lyrics.lyrics[currentLyricIndex - 1] ?? "").replace(/\u00A0/g, " ") : "";
             nextLyricText = currentLyricIndex < Lyrics.lyrics.length - 1 ? (Lyrics.lyrics[currentLyricIndex + 1] ?? "").replace(/\u00A0/g, " ") : "";
@@ -114,6 +116,9 @@ Item {
             nextLyricText = "";
         }
     }
+
+    onCurrentLyricIndexChanged: root.updateLyricText()
+    // (Removed onHasLyricsChanged from here as it is now managed via Connections above)
 
     SequentialAnimation {
         id: lyricSlide
@@ -184,7 +189,6 @@ Item {
         id: lyricsContainer
 
         anchors.fill: parent
-        // Removed clip: true from here so the shadow doesn't get cut off
 
         layer.enabled: Config.background.desktopLyrics.shadow.enabled
         layer.effect: MultiEffect {
@@ -226,7 +230,6 @@ Item {
             layer.enabled: root.blurEnabled
         }
 
-        // --- NEW INNER CONTAINER FOR FADE MASK ---
         Item {
             id: fadeContainer
             anchors.fill: parent
@@ -236,7 +239,6 @@ Item {
             layer.effect: ShaderEffect {
                 required property Item source
 
-                // Tweak this value to make the fade taller or shorter
                 property real fadeMargin: 0.25
 
                 fragmentShader: Quickshell.shellPath("assets/shaders/fade.frag.qsb")
