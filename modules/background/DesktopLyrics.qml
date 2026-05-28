@@ -42,13 +42,56 @@ Item {
     property string nextLyricText: ""
     property real currentTrackPosition: 0
 
-    // Funny binding hack to make lyrics update
-    readonly property var _trackBinder: {
+    // Reactive binding for position updates
+    Binding {
+        target: root
+        property: "currentTrackPosition"
+        when: root.player
+        value: root.player?.position ?? 0
+    }
+
+    // Reactive track binding - updates when active player changes
+    // or when the active player's track metadata changes
+    Connections {
+        id: playerConnections
+        target: root.player
+
+        function onTrackTitleChanged() {
+            const p = Players.active;
+            if (p)
+                Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
+        }
+
+        function onTrackArtistChanged() {
+            const p = Players.active;
+            if (p)
+                Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
+        }
+
+        function onTrackAlbumChanged() {
+            const p = Players.active;
+            if (p)
+                Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
+        }
+
+        function onLengthChanged() {
+            const p = Players.active;
+            if (p)
+                Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
+        }
+
+        function onIdentityChanged() {
+            const p = Players.active;
+            if (p)
+                Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
+        }
+    }
+
+    // Initial track setup when player becomes available
+    Component.onCompleted: {
         const p = Players.active;
         if (p)
             Lyrics.setTrack(p.trackArtist, p.trackTitle, p.trackAlbum, p.length);
-        else
-            Lyrics.clearTrack();
     }
 
     // Dynamic Spacing Math
@@ -129,7 +172,7 @@ Item {
 
     implicitWidth: 350 * root.lyricsScale
     implicitHeight: 180 * root.lyricsScale
-    
+
     opacity: (root.hasLyrics && !root.shouldHide) ? 1 : 0
     visible: opacity > 0
 
@@ -192,9 +235,9 @@ Item {
             layer.enabled: true
             layer.effect: ShaderEffect {
                 required property Item source
-                
+
                 // Tweak this value to make the fade taller or shorter
-                property real fadeMargin: 0.25 
+                property real fadeMargin: 0.25
 
                 fragmentShader: Quickshell.shellPath("assets/shaders/fade.frag.qsb")
             }
@@ -202,7 +245,7 @@ Item {
             // --- Previous Lyric ---
             Item {
                 id: prevLyricItem
-                
+
                 width: parent.width
                 height: prevLyricLabel.implicitHeight
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -220,9 +263,12 @@ Item {
                     wrapMode: Text.WordWrap
                     horizontalAlignment: {
                         switch (root.alignment) {
-                            case 0: return Text.AlignLeft;
-                            case 2: return Text.AlignRight;
-                            default: return Text.AlignHCenter;
+                        case 0:
+                            return Text.AlignLeft;
+                        case 2:
+                            return Text.AlignRight;
+                        default:
+                            return Text.AlignHCenter;
                         }
                     }
                 }
@@ -270,9 +316,12 @@ Item {
                     wrapMode: Text.WordWrap
                     horizontalAlignment: {
                         switch (root.alignment) {
-                            case 0: return Text.AlignLeft;
-                            case 2: return Text.AlignRight;
-                            default: return Text.AlignHCenter;
+                        case 0:
+                            return Text.AlignLeft;
+                        case 2:
+                            return Text.AlignRight;
+                        default:
+                            return Text.AlignHCenter;
                         }
                     }
 
@@ -304,9 +353,12 @@ Item {
                     wrapMode: Text.WordWrap
                     horizontalAlignment: {
                         switch (root.alignment) {
-                            case 0: return Text.AlignLeft;
-                            case 2: return Text.AlignRight;
-                            default: return Text.AlignHCenter;
+                        case 0:
+                            return Text.AlignLeft;
+                        case 2:
+                            return Text.AlignRight;
+                        default:
+                            return Text.AlignHCenter;
                         }
                     }
                 }
