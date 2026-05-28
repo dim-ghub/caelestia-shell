@@ -30,6 +30,7 @@ This fork adds the following features on top of the official caelestia shell:
 - **Background Clock** - Desktop clock now follows fonts defined in user's shell.json.
 - **Desktop Lyrics** - Display lyrics on the desktop with customizable positioning, scale, text alignment, colors, animations, and auto-hide when fullscreen windows are present.
 - **Bezel Mode** - Makes the shell background pitch black and fully opaque, creating a seamless look where the shell blends with display bezels.
+- **Wallhaven Wallpaper Searcher** - Browse and search wallpapers from wallhaven.cc with filters, pagination, and direct download to your wallpaper folder. Available as a "wallhaven" tab in control center settings.
 
 ## Global Shortcuts
 
@@ -51,6 +52,7 @@ All keybinds are accessible via Hyprland [global shortcuts](https://wiki.hyprlan
 | `caelestia:keybinds` | Open keybinds list |
 | `caelestia:wallpaper` | Open wallpaper picker |
 | `caelestia:showall` | Toggle all UI elements |
+| `caelestia:wallhaven` | Open wallhaven wallpaper searcher |
 
 ### Hyprland Keybind Examples
 
@@ -68,6 +70,7 @@ bind = SUPER, V, global, caelestia:clipboard
 bind = SUPER, W, global, caelestia:windowSwitcher
 bind = SUPER, K, global, caelestia:keybinds
 bind = SUPER, B, global, caelestia:wallpaper
+bind = SUPER, H, global, caelestia:wallhaven
 
 # Other toggles
 bind = SUPER, D, global, caelestia:dashboard
@@ -361,7 +364,7 @@ For example, to disable the bar on DP-1:
 > - `utilities` (`toasts`, `vpn`)
 > - `services` (`weatherLocation`, `useFahrenheit`, `useFahrenheitPerformance`, `useTwelveHourClock`,
 >   `gpuType`, `visualiserBars`, `audioIncrement`, `brightnessIncrement`, `maxVolume`, `smartScheme`,
->   `defaultPlayer`, `playerAliases`, `showLyrics`, `lyricsBackend`)
+>   `defaultPlayer`, `playerAliases`, `showLyrics`, `lyricsBackend`, `wallhavenApiKey`)
 > - `paths` (`wallpaperDir`, `lyricsDir`)
 >
 > </details>
@@ -828,7 +831,8 @@ For example, to disable the bar on DP-1:
         "useFahrenheitPerformance": false,
         "useTwelveHourClock": false,
         "smartScheme": true,
-        "visualiserBars": 45
+        "visualiserBars": 45,
+        "wallhavenApiKey": ""
     },
     "session": {
         "dragThreshold": 30,
