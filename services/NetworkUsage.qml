@@ -40,6 +40,10 @@ Singleton {
     property real _initialTxBytes: 0
     property bool _initialized: false
 
+    // Store the last content to detect when /proc/net/dev hasn't changed yet
+    // (which happens during a pending async read — we skip recalculation then)
+    property string _lastContent: ""
+
     function formatBytes(bytes: real): var {
         // Handle negative or invalid values
         if (bytes < 0 || isNaN(bytes) || !isFinite(bytes)) {
@@ -163,8 +167,11 @@ Singleton {
         onTriggered: {
             netDevFile.reload();
             const content = netDevFile.text();
-            if (!content)
+            // Skip recalculating while reading is still pending (empty) or
+            // content hasn't changed (data not written yet after reload).
+            if (!content || content === root._lastContent)
                 return;
+            root._lastContent = content;
 
             const data = root.parseNetDev(content);
             const now = Date.now();
@@ -225,5 +232,12 @@ Singleton {
             root._prevTxBytes = data.tx;
             root._prevTimestamp = now;
         }
+    }
+
+    // Self-register so network data starts loading before any component
+    // reads it, preventing empty sparklines during the initial tab render.
+    Component.onCompleted: {
+        if (root.refCount === 0)
+            root.refCount = 1;
     }
 }

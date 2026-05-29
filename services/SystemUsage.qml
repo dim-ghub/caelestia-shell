@@ -92,6 +92,14 @@ Singleton {
         }
     }
 
+    // Self-register so the first data load and first CPU tick happen even if no Ref
+    // component has been created yet. This guarantees cpuPerc is never NaN when
+    // Performance.qml first reads it.
+    Component.onCompleted: {
+        if (root.refCount === 0)
+            root.refCount = 1;
+    }
+
     // One-time CPU info detection (name)
     FileView {
         id: cpuinfoInit
