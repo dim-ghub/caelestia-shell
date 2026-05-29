@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Shapes
-import QtQuick.FilterEffect
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Services.Mpris
 import Caelestia.Config
@@ -416,6 +416,7 @@ Item {
                 anchors.fill: gif
                 source: gif
 
+                visible: Config.dashboard.colorizeMediaGif
                 colorization: 1
                 colorizationColor: Colours.palette.m3primary
             }

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Shapes
+import QtQuick.Effects
 import Quickshell
 import Caelestia.Config
 import Caelestia.Services
@@ -211,6 +212,15 @@ Item {
         source: Paths.absolutePath(Config.paths.mediaGif)
         asynchronous: true
         fillMode: AnimatedImage.PreserveAspectFit
+    }
+
+    MultiEffect {
+        anchors.fill: bongocat
+        source: bongocat
+
+        visible: Config.dashboard.colorizeMediaGif
+        colorization: 1
+        colorizationColor: Colours.palette.m3primary
     }
 
     component PlayerControl: StyledRect {
