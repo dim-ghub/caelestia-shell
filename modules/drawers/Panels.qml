@@ -80,6 +80,9 @@ Item {
 
         anchors.top: parent.top
         anchors.right: parent.right
+
+        anchors.topMargin: (Config.bar.position === "top" && popoutsWrapper.offsetScale < 1) ? (popoutsWrapper.implicitHeight - Tokens.padding.large * 2 + 10) : 0
+        anchors.bottomMargin: (Config.bar.position === "bottom" && popoutsWrapper.offsetScale < 1) ? (popoutsWrapper.implicitHeight - Tokens.padding.large * 2 + 10) : 0
     }
 
     Item {
@@ -161,8 +164,8 @@ Item {
         anchors.bottom: utilities.top
         anchors.right: parent.right
 
-        anchors.topMargin: (Config.bar.position === "top" && popoutsWrapper.offsetScale < 1) ? (popoutsWrapper.implicitHeight + Tokens.spacing.normal) : 0
-        anchors.bottomMargin: (Config.bar.position === "bottom" && popoutsWrapper.offsetScale < 1) ? (popoutsWrapper.implicitHeight + Tokens.spacing.normal) : 0
+        anchors.topMargin: 0
+        anchors.bottomMargin: 0
     }
 
     states: [
