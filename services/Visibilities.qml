@@ -8,6 +8,8 @@ Singleton {
     property var screens: new Map()
     property var bars: new Map()
     property string launcherInitialSearch: ""
+    property var activeDashboard: null
+    property bool switchToTerminalOnOpen: false
 
     function load(screen: ShellScreen, visibilities: DrawerVisibilities): void {
         screens.set(Hypr.monitorFor(screen), visibilities);

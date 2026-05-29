@@ -29,16 +29,12 @@ if [ ! -f "CMakeLists.txt" ] || [ ! -d "plugin/src/Caelestia" ]; then
     exit 1
 fi
 
-# 2. Ask for sudo permissions early
-echo -e "${YELLOW}Please authenticate to allow system-wide cleanup and installation:${NC}"
-sudo -v
-
-# 3. Clean up the build directory for a clean state
-echo -e "${BLUE}[1/5] Cleaning up old build files...${NC}"
+# 2. Clean up the build directory for a clean state
+echo -e "${BLUE}[1/4] Cleaning up old build files...${NC}"
 rm -rf build
 
-# 4. Configure the project with proper root prefix
-echo -e "${BLUE}[2/5] Configuring CMake with system prefix (/)...${NC}"
+# 3. Configure the project with proper root prefix
+echo -e "${BLUE}[2/4] Configuring CMake with system prefix (/)...${NC}"
 
 CMAKE_ARGS=(
     -G Ninja
@@ -54,12 +50,12 @@ fi
 
 cmake -B build "${CMAKE_ARGS[@]}"
 
-# 5. Build the project
-echo -e "${BLUE}[3/5] Compiling QML and C++ plugins...${NC}"
+# 4. Build the project
+echo -e "${BLUE}[3/4] Compiling QML and C++ plugins...${NC}"
 cmake --build build
 
-# 6. Clean up hijacked legacy dynamic libraries from /usr/lib
-echo -e "${BLUE}[4/5] Cleaning up legacy hijacked dynamic libraries...${NC}"
+# 5. Clean up hijacked legacy dynamic libraries from /usr/lib
+echo -e "${BLUE}[4/4] Cleaning legacy libs and installing system-wide...${NC}"
 # In old versions, backing .so libraries were installed directly to component dirs,
 # which hijacks the loading of the newly compiled libraries located under Caelestia/lib.
 legacy_libs=(
@@ -80,8 +76,6 @@ for lib in "${legacy_libs[@]}"; do
     fi
 done
 
-# 7. Install to system QML directories
-echo -e "${BLUE}[5/5] Installing plugins and assets system-wide...${NC}"
 sudo cmake --install build
 
 echo -e "${GREEN}===================================================${NC}"

@@ -179,6 +179,44 @@ Scope {
         }
     }
 
+    // qmllint disable unresolved-type
+    CustomShortcut {
+        // qmllint enable unresolved-type
+        name: "terminal"
+        description: "Toggle terminal drawer"
+        onPressed: {
+            if (root.hasFullscreen)
+                return;
+            const visibilities = Visibilities.getForActive();
+            
+            let isTerminalActive = false;
+            if (visibilities.dashboard && Visibilities.activeDashboard) {
+                let tabs = Visibilities.activeDashboard.dashboardTabs;
+                let currentIndex = Visibilities.activeDashboard.dashState.currentTab;
+                if (currentIndex >= 0 && currentIndex < tabs.length && tabs[currentIndex].iconName === "terminal") {
+                    isTerminalActive = true;
+                }
+            }
+
+            if (isTerminalActive) {
+                visibilities.dashboard = false;
+            } else {
+                visibilities.dashboard = true;
+                if (Visibilities.activeDashboard) {
+                    let tabs = Visibilities.activeDashboard.dashboardTabs;
+                    for (let i = 0; i < tabs.length; i++) {
+                        if (tabs[i].iconName === "terminal") {
+                            Visibilities.activeDashboard.dashState.currentTab = i;
+                            break;
+                        }
+                    }
+                } else {
+                    Visibilities.switchToTerminalOnOpen = true;
+                }
+            }
+        }
+    }
+
     IpcHandler {
         function toggle(drawer: string): void {
             if (list().split("\n").includes(drawer)) {

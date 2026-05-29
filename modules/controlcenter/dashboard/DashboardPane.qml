@@ -31,6 +31,7 @@ Item {
     property bool showMedia: Config.dashboard.showMedia ?? true
     property bool showPerformance: Config.dashboard.showPerformance ?? true
     property bool showWeather: Config.dashboard.showWeather ?? true
+    property bool showTerminal: Config.dashboard.showTerminal ?? true
     property bool colorizeMediaGif: Config.dashboard.colorizeMediaGif ?? true
 
     // Performance Resources
@@ -51,6 +52,7 @@ Item {
         GlobalConfig.dashboard.showMedia = root.showMedia;
         GlobalConfig.dashboard.showPerformance = root.showPerformance;
         GlobalConfig.dashboard.showWeather = root.showWeather;
+        GlobalConfig.dashboard.showTerminal = root.showTerminal;
         GlobalConfig.dashboard.colorizeMediaGif = root.colorizeMediaGif;
         GlobalConfig.dashboard.performance.showBattery = root.showBattery;
         GlobalConfig.dashboard.performance.showGpu = root.showGpu;

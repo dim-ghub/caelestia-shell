@@ -31,6 +31,7 @@ This fork adds the following features on top of the official caelestia shell:
 - **Desktop Lyrics** - Display lyrics on the desktop with customizable positioning, scale, text alignment, colors, animations, and auto-hide when fullscreen windows are present.
 - **Bezel Mode** - Makes the shell background pitch black and fully opaque, creating a seamless look where the shell blends with display bezels.
 - **Wallhaven Wallpaper Searcher** - Browse and search wallpapers from wallhaven.cc with filters, pagination, and direct download to your wallpaper folder.
+- **Premium Developer Console (Terminal Tab)** - Beautifully enhanced dashboard terminal tab with zsh/fish-style inline ghost autocomplete, Up/Down arrow-key scrollback history, dynamic path resolver (`cd`), smooth auto-scrolling, monospace whitespace preservation (Cowsay/ASCII art support), and a dedicated global toggle shortcut (`caelestia:terminal`).
 
 ## Global Shortcuts
 
@@ -52,6 +53,7 @@ All keybinds are accessible via Hyprland [global shortcuts](https://wiki.hyprlan
 | `caelestia:keybinds` | Open keybinds list |
 | `caelestia:wallpaper` | Open wallpaper picker |
 | `caelestia:showall` | Toggle all UI elements |
+| `caelestia:terminal` | Toggle terminal drawer |
 
 ### Hyprland Keybind Examples
 
@@ -69,6 +71,7 @@ bind = SUPER, V, global, caelestia:clipboard
 bind = SUPER, W, global, caelestia:windowSwitcher
 bind = SUPER, K, global, caelestia:keybinds
 bind = SUPER, B, global, caelestia:wallpaper
+bind = SUPER, T, global, caelestia:terminal
 
 # Other toggles
 bind = SUPER, D, global, caelestia:dashboard
