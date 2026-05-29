@@ -58,7 +58,7 @@ Item {
                 const popouts = root.bar.popouts;
                 if (popouts.hasCurrent) {
                     popouts.hasCurrent = false;
-                } else if (Hypr.activeToplevel) {
+                } else if (Hypr.activeToplevel && !root.bar.visibilities.launcher) {
                     popouts.currentName = "activewindow";
                     popouts.currentCenter = bar.isHorizontal ? root.mapToItem(null, root.implicitWidth / 2, 0).x : root.mapToItem(null, 0, root.implicitHeight / 2).y;
                     popouts.hasCurrent = true;
