@@ -50,6 +50,7 @@ Column {
         height: Tokens.sizes.session.button
         sourceSize.width: width * ((QsWindow.window as QsWindow)?.devicePixelRatio ?? 1)
 
+        visible: (Config.paths.sessionGif ?? "").length > 0
         playing: visible
         asynchronous: true
         speed: Config.general.sessionGifSpeed
