@@ -37,31 +37,52 @@ GridLayout {
     columnSpacing: 0
     rowSpacing: 0
 
-    StyledText {
+    Loader {
         id: indicator
 
         Layout.alignment: isHorizontal ? (Qt.AlignVCenter | Qt.AlignLeft) : (Qt.AlignHCenter | Qt.AlignTop)
         Layout.preferredWidth: isHorizontal ? (Tokens.sizes.bar.innerWidth - Tokens.padding.small * 2) : -1
         Layout.preferredHeight: isHorizontal ? -1 : (Tokens.sizes.bar.innerWidth - Tokens.padding.small * 2)
-        Layout.leftMargin: isHorizontal ? Math.floor(Tokens.spacing.small / 2) + 1 : 0
+        Layout.leftMargin: 0
 
-        animate: true
-        text: {
-            const ws = Hypr.workspaces.values.find(w => w.id === root.ws);
-            const wsName = !ws || ws.name == root.ws ? root.ws : ws.name[0];
-            let displayName = wsName.toString();
-            if (Config.bar.workspaces.capitalisation.toLowerCase() === "upper") {
-                displayName = displayName.toUpperCase();
-            } else if (Config.bar.workspaces.capitalisation.toLowerCase() === "lower") {
-                displayName = displayName.toLowerCase();
+        asynchronous: true
+
+        sourceComponent: Config.bar.workspaces.useIcon ? iconComponent : textComponent
+    }
+
+    Component {
+        id: textComponent
+
+        StyledText {
+            animate: true
+            text: {
+                const ws = Hypr.workspaces.values.find(w => w.id === root.ws);
+                const wsName = !ws || ws.name == root.ws ? root.ws : ws.name[0];
+                let displayName = wsName.toString();
+                if (Config.bar.workspaces.capitalisation.toLowerCase() === "upper") {
+                    displayName = displayName.toUpperCase();
+                } else if (Config.bar.workspaces.capitalisation.toLowerCase() === "lower") {
+                    displayName = displayName.toLowerCase();
+                }
+                const label = Config.bar.workspaces.label || displayName;
+                const occupiedLabel = Config.bar.workspaces.occupiedLabel || label;
+                const activeLabel = Config.bar.workspaces.activeLabel || (root.isOccupied ? occupiedLabel : label);
+                return root.activeWsId === root.ws ? activeLabel : root.isOccupied ? occupiedLabel : label;
             }
-            const label = Config.bar.workspaces.label || displayName;
-            const occupiedLabel = Config.bar.workspaces.occupiedLabel || label;
-            const activeLabel = Config.bar.workspaces.activeLabel || (root.isOccupied ? occupiedLabel : label);
-            return root.activeWsId === root.ws ? activeLabel : root.isOccupied ? occupiedLabel : label;
+            color: Config.bar.workspaces.occupiedBg || root.isOccupied || root.activeWsId === root.ws ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
+            verticalAlignment: Qt.AlignVCenter
         }
-        color: Config.bar.workspaces.occupiedBg || root.isOccupied || root.activeWsId === root.ws ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
-        verticalAlignment: Qt.AlignVCenter
+    }
+
+    Component {
+        id: iconComponent
+
+        MaterialIcon {
+            text: root.activeWsId === root.ws ? "check_box" : "check_box_outline_blank"
+            color: Config.bar.workspaces.occupiedBg || root.isOccupied || root.activeWsId === root.ws ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
+            horizontalAlignment: StyledText.AlignHCenter
+            verticalAlignment: Qt.AlignVCenter
+        }
     }
 
     Loader {

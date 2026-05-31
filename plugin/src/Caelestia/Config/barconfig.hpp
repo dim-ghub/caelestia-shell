@@ -48,9 +48,10 @@ class BarWorkspaces : public ConfigObject {
     CONFIG_PROPERTY(int, maxWindowIcons, 5)
     CONFIG_PROPERTY(bool, activeTrail, false)
     CONFIG_GLOBAL_PROPERTY(bool, perMonitorWorkspaces, true)
-    CONFIG_PROPERTY(QString, label, u"  "_s)
-    CONFIG_PROPERTY(QString, occupiedLabel, u"󰮯"_s)
-    CONFIG_PROPERTY(QString, activeLabel, u"󰮯"_s)
+    CONFIG_PROPERTY(bool, useIcon, false)
+    CONFIG_PROPERTY(QString, label, u"1"_s)
+    CONFIG_PROPERTY(QString, occupiedLabel, u"1"_s)
+    CONFIG_PROPERTY(QString, activeLabel, u"1"_s)
     CONFIG_PROPERTY(QString, capitalisation, u"preserve"_s)
     CONFIG_GLOBAL_PROPERTY(QVariantList, specialWorkspaceIcons)
     CONFIG_GLOBAL_PROPERTY(QVariantList, windowIcons,
@@ -58,6 +59,7 @@ class BarWorkspaces : public ConfigObject {
             { u"regex"_s, u"steam(_app_(default|[0-9]+))?"_s },
             { u"icon"_s, u"sports_esports"_s },
         }) })
+    CONFIG_GLOBAL_PROPERTY(QVariantList, wsIcons)
 
 public:
     explicit BarWorkspaces(QObject* parent = nullptr)

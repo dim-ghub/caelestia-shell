@@ -46,6 +46,7 @@ Item {
     property bool workspacesShowWindows: Config.bar.workspaces.showWindows ?? false
     property int workspacesMaxWindowIcons: Config.bar.workspaces.maxWindowIcons ?? 0
     property bool workspacesPerMonitor: GlobalConfig.bar.workspaces.perMonitorWorkspaces ?? true
+    property bool workspacesUseIcon: Config.bar.workspaces.useIcon ?? false
     property bool scrollWorkspaces: Config.bar.scrollActions.workspaces ?? true
     property bool scrollVolume: Config.bar.scrollActions.volume ?? true
     property bool scrollBrightness: Config.bar.scrollActions.brightness ?? true
@@ -82,6 +83,7 @@ Item {
         GlobalConfig.bar.workspaces.showWindows = root.workspacesShowWindows;
         GlobalConfig.bar.workspaces.maxWindowIcons = root.workspacesMaxWindowIcons;
         GlobalConfig.bar.workspaces.perMonitorWorkspaces = root.workspacesPerMonitor;
+        GlobalConfig.bar.workspaces.useIcon = root.workspacesUseIcon;
         GlobalConfig.bar.scrollActions.workspaces = root.scrollWorkspaces;
         GlobalConfig.bar.scrollActions.volume = root.scrollVolume;
         GlobalConfig.bar.scrollActions.brightness = root.scrollBrightness;
@@ -492,6 +494,40 @@ Item {
                                         checked: root.workspacesPerMonitor
                                         onToggled: {
                                             root.workspacesPerMonitor = checked;
+                                            root.saveConfig();
+                                        }
+                                    }
+                                }
+                            }
+
+                            StyledRect {
+                                Layout.fillWidth: true
+                                implicitHeight: workspacesUseIconRow.implicitHeight + Tokens.padding.large * 2
+                                radius: Tokens.rounding.normal
+                                color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+
+                                Behavior on implicitHeight {
+                                    Anim {}
+                                }
+
+                                RowLayout {
+                                    id: workspacesUseIconRow
+
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.margins: Tokens.padding.large
+                                    spacing: Tokens.spacing.normal
+
+                                    StyledText {
+                                        Layout.fillWidth: true
+                                        text: qsTr("Use icon")
+                                    }
+
+                                    StyledSwitch {
+                                        checked: root.workspacesUseIcon
+                                        onToggled: {
+                                            root.workspacesUseIcon = checked;
                                             root.saveConfig();
                                         }
                                     }
