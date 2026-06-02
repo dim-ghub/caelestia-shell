@@ -6,12 +6,18 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-Column {
+Item {
     id: root
 
-    spacing: Tokens.spacing.normal
     width: Tokens.sizes.bar.batteryWidth
     implicitWidth: Tokens.sizes.bar.batteryWidth
+    implicitHeight: layout.implicitHeight
+
+    Column {
+        id: layout
+
+        width: parent.width
+        spacing: Tokens.spacing.normal
 
     StyledText {
         x: Tokens.padding.small
@@ -247,4 +253,5 @@ Column {
             }
         }
     }
+}
 }
