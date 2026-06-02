@@ -70,11 +70,18 @@ StackView {
             menu: menu.handle
         }
 
+        Repeater {
+            id: childrenTracker
+            model: menuOpener.children
+            delegate: QtObject {}
+        }
+
         readonly property var entryGroups: {
+            const count = childrenTracker.count;
             if (!menuOpener.children) return [];
             let groups = [];
             let currentGroup = [];
-            for (let i = 0; i < menuOpener.children.length; i++) {
+            for (let i = 0; i < count; i++) {
                 let child = menuOpener.children[i];
                 if (child.isSeparator) {
                     if (currentGroup.length > 0) {
@@ -112,7 +119,7 @@ StackView {
                     spacing: Tokens.spacing.small
 
                     Repeater {
-                        model: container.modelData
+                        model: container.modelData || []
 
                         StyledRect {
                             id: item
@@ -191,7 +198,7 @@ StackView {
                                         font.family: label.font.family
 
                                         elide: Text.ElideRight
-                                        elideWidth: root.Tokens.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + root.Tokens.spacing.normal : 0)
+                                        elideWidth: Tokens.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + Tokens.spacing.normal : 0)
                                     }
 
                                     Loader {
