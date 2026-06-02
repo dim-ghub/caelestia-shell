@@ -63,7 +63,7 @@ MouseArea {
             fadeAnim.start();
     }
 
-    onCircleRadiusChanged: {
+    onRadio_button_uncheckedRadiusChanged: {
         if (!pressed && radio_button_uncheckedRadius > endRadiusAtPress * 0.99 && !fadeAnim.running)
             fadeAnim.start();
     }
