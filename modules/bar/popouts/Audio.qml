@@ -14,8 +14,9 @@ Item {
 
     required property PopoutState popouts
 
-    implicitWidth: layout.implicitWidth + Tokens.padding.normal * 2
-    implicitHeight: layout.implicitHeight + Tokens.padding.normal * 2
+    width: 300
+    implicitWidth: 300
+    implicitHeight: layout.implicitHeight
 
     ButtonGroup {
         id: sinks
@@ -30,9 +31,7 @@ Item {
 
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.leftMargin: Tokens.padding.normal
-        anchors.rightMargin: Tokens.padding.normal
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.top: parent.top
         spacing: Tokens.spacing.normal
 
         StyledText {
@@ -43,8 +42,7 @@ Item {
 
         StyledRect {
             Layout.fillWidth: true
-            implicitWidth: cardLayout.implicitWidth + Tokens.padding.large * 2
-            implicitHeight: cardLayout.implicitHeight + Tokens.padding.large * 2
+            implicitHeight: cardLayout.implicitHeight + Tokens.padding.normal * 2
             radius: Tokens.rounding.normal
             color: Colours.tPalette.m3surfaceContainer
             clip: true
@@ -55,7 +53,7 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                anchors.margins: Tokens.padding.large
+                anchors.margins: Tokens.padding.normal
                 spacing: Tokens.spacing.normal
 
                 StyledText {
