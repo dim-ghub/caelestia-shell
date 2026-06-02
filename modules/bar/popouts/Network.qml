@@ -21,6 +21,7 @@ ColumnLayout {
 
     spacing: Tokens.spacing.small
     width: Tokens.sizes.bar.networkWidth
+    implicitWidth: Tokens.sizes.bar.networkWidth
 
     // Wireless section
     StyledText {

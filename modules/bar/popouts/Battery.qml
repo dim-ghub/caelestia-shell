@@ -11,6 +11,7 @@ Column {
 
     spacing: Tokens.spacing.normal
     width: Tokens.sizes.bar.batteryWidth
+    implicitWidth: Tokens.sizes.bar.batteryWidth
 
     StyledText {
         x: Tokens.padding.small

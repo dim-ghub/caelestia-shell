@@ -12,6 +12,7 @@ ColumnLayout {
     required property PopoutState popouts
 
     width: 300
+    implicitWidth: 300
     spacing: Tokens.spacing.small
 
     StyledText {
