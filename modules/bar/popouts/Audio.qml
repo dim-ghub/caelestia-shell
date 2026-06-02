@@ -14,8 +14,7 @@ Item {
 
     required property PopoutState popouts
 
-    width: 300
-    implicitWidth: 300
+    implicitWidth: layout.implicitWidth
     implicitHeight: layout.implicitHeight
 
     ButtonGroup {
@@ -42,6 +41,7 @@ Item {
 
         StyledRect {
             Layout.fillWidth: true
+            implicitWidth: cardLayout.implicitWidth + Tokens.padding.normal * 2
             implicitHeight: cardLayout.implicitHeight + Tokens.padding.normal * 2
             radius: Tokens.rounding.normal
             color: Colours.tPalette.m3surfaceContainer
