@@ -46,9 +46,7 @@ Item {
     clip: true
     visible: (isHorizontal ? height : width) > 0
 
-    onHeightChanged: console.log("BarWrapper height:", height, "shouldBeVisible:", shouldBeVisible, "visible:", visible, "state:", state)
-    onWidthChanged: console.log("BarWrapper width:", width, "shouldBeVisible:", shouldBeVisible, "visible:", visible, "state:", state)
-    Component.onCompleted: console.log("BarWrapper loaded. w:", width, "h:", height, "shouldBeVisible:", shouldBeVisible, "state:", state)
+    onShouldBeVisibleChanged: state = shouldBeVisible ? "visible" : "hidden"
     implicitWidth: isHorizontal ? 0 : (fullscreen ? 0 : Config.border.thickness)
     implicitHeight: isHorizontal ? (fullscreen ? 0 : Config.border.thickness) : 0
 

@@ -46,20 +46,45 @@ Item {
             Anim { type: Anim.DefaultSpatial }
         }
 
-        Grid {
+        Item {
             id: layout
             
             anchors.centerIn: parent
-            columns: bar.isHorizontal ? 999 : 1
-            rows: bar.isHorizontal ? 1 : 999
-            flow: bar.isHorizontal ? Grid.LeftToRight : Grid.TopToBottom
-            spacing: root.spacing
+            implicitWidth: bar.isHorizontal ? rowLayout.implicitWidth : colLayout.implicitWidth
+            implicitHeight: bar.isHorizontal ? rowLayout.implicitHeight : colLayout.implicitHeight
 
-            Repeater {
-                id: repeater
+            Row {
+                id: rowLayout
+                visible: bar.isHorizontal
+                anchors.centerIn: parent
+                spacing: root.spacing
 
-                delegate: Item {
-                    id: delegateItem
+                Repeater {
+                    id: repeaterHoriz
+                    model: bar.isHorizontal ? root.modelDataArray : null
+                    delegate: dockDelegate
+                }
+            }
+
+            Column {
+                id: colLayout
+                visible: !bar.isHorizontal
+                anchors.centerIn: parent
+                spacing: root.spacing
+
+                Repeater {
+                    id: repeaterVert
+                    model: !bar.isHorizontal ? root.modelDataArray : null
+                    delegate: dockDelegate
+                }
+            }
+        }
+
+        Component {
+            id: dockDelegate
+
+            Item {
+                id: delegateItem
                     width: Tokens.sizes.bar.innerWidth * 0.8
                     height: Tokens.sizes.bar.innerWidth * 0.8
                     implicitWidth: width
@@ -173,7 +198,6 @@ Item {
                 }
             }
         }
-    }
 
     function handleHover(relPos: real, isHorizontal: bool): void {
         // Don't close dock context menu
@@ -190,7 +214,8 @@ Item {
         }
         
         const index = Math.floor(adjustedPos / itemWidthWithSpacing);
-        const item = repeater.itemAt(index);
+        const activeRepeater = isHorizontal ? repeaterHoriz : repeaterVert;
+        const item = activeRepeater.itemAt(index);
         
         if (item) {
             bar.popouts.currentName = "dockhover";
@@ -204,11 +229,6 @@ Item {
 
     function rebuildModel(): void {
         const apps = [];
-        
-        console.log("rebuildModel triggered! Total windows in Hyprland.toplevels:", root._toplevels.length);
-        for (const t of root._toplevels) {
-            console.log(" - Window:", t.address, "ipc:", !!t.lastIpcObject, "class:", t.lastIpcObject ? t.lastIpcObject.class : "N/A", "initialClass:", t.lastIpcObject ? t.lastIpcObject.initialClass : "N/A");
-        }
 
         const pinnedIds = GlobalConfig.launcher.favouriteApps || [];
         
@@ -274,8 +294,10 @@ Item {
         
         if (changed) {
             root.modelDataArray = apps;
-            repeater.model = null;
-            repeater.model = apps;
+            repeaterHoriz.model = null;
+            repeaterVert.model = null;
+            repeaterHoriz.model = bar.isHorizontal ? apps : null;
+            repeaterVert.model = !bar.isHorizontal ? apps : null;
         }
         
         root.modelUpdateTrigger += 1;
@@ -296,11 +318,6 @@ Item {
     
     property var activeTop: Hyprland.activeToplevel
     onActiveTopChanged: {
-        if (activeTop && activeTop.lastIpcObject) {
-            console.log("activeTop changed! class:", activeTop.lastIpcObject.class, "initialClass:", activeTop.lastIpcObject.initialClass);
-        } else {
-            console.log("activeTop changed! No IPC object or null activeTop");
-        }
         root.rebuildModel()
         delayedRebuildTimer.restart()
     }

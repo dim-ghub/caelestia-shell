@@ -22,6 +22,7 @@ Item {
     readonly property alias content: content
     readonly property alias winfo: winfo
     readonly property alias controlCenter: controlCenter
+    readonly property var wrapperRoot: root
 
     readonly property real nonAnimWidth: content.shouldBeActive ? content.implicitWidth :
                                          winfo.shouldBeActive ? winfo.implicitWidth :
@@ -42,6 +43,7 @@ Item {
     property string detachedMode
     property string queuedMode
     property alias dockModel: popoutState.dockModel
+    property alias selectedClientAddress: popoutState.selectedClientAddress
 
     // Dummy object so Tokens attached prop resolves to global config
     // Anim configs are not per-monitor
@@ -135,8 +137,14 @@ Item {
         anchors.centerIn: parent
 
         sourceComponent: WindowInfo {
-            screen: root.screen
-            client: Hypr.activeToplevel
+            screen: wrapperRoot.screen
+            clientAddress: wrapperRoot.selectedClientAddress
+        }
+        
+        onShouldBeActiveChanged: {
+            if (!shouldBeActive) {
+                wrapperRoot.selectedClientAddress = "";
+            }
         }
     }
 

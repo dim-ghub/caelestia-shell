@@ -50,7 +50,6 @@ Variants {
 
                 sourceComponent: Wallpaper {
                     screen: win.modelData
-                    Component.onCompleted: console.log("Wallpaper instance created, screen:", screen)
                 }
             }
 

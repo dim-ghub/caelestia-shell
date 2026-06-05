@@ -10,7 +10,18 @@ Item {
     id: root
 
     required property ShellScreen screen
-    required property HyprlandToplevel client
+    property string clientAddress: ""
+
+    property HyprlandToplevel client: {
+        if (clientAddress !== "") {
+            for (const t of Hyprland.toplevels.values) {
+                if (t.address === clientAddress) {
+                    return t;
+                }
+            }
+        }
+        return Hypr.activeToplevel;
+    }
 
     implicitWidth: child.implicitWidth
     implicitHeight: screen.height * Tokens.sizes.winfo.heightMult

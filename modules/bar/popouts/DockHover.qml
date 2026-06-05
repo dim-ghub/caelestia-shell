@@ -116,8 +116,9 @@ RowLayout {
                             StateLayer {
                                 anchors.fill: parent
                                 radius: Tokens.rounding.small
-                                // Currently detaches the whole popout, could be modified to pass specific client
+                                // Set the specific client to be used by the window info popout
                                 onClicked: {
+                                    root.popouts.selectedClientAddress = modelData.address;
                                     root.popouts.detachRequested("winfo");
                                 }
                             }
