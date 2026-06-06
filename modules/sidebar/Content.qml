@@ -13,7 +13,7 @@ Item {
     required property var popoutsWrapper
 
     readonly property bool isBarHorizontal: Config.bar.position === "top" || Config.bar.position === "bottom"
-    readonly property bool showPopoutSeparator: isBarHorizontal && popouts.hasCurrent && popouts.currentName !== "dockhover" && popouts.currentName !== "dockcontext"
+    readonly property bool showPopoutSeparator: isBarHorizontal && sidebar.visible && popouts.hasCurrent && popouts.currentName !== "dockhover" && popouts.currentName !== "dockcontext"
 
     GridLayout {
         id: layout
