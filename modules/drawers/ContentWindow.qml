@@ -193,9 +193,11 @@ StyledWindow {
             panel: panels.sidebar
             deformAmount: 0.03
             implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + 2
+            readonly property real offsetScale: panels.sidebar.offsetScale
+            readonly property bool sidebarShouldFlat: layoutContainer.sidebarShouldFlatCorner || (offsetScale <= 0.08 && (Config.bar.position === "bottom" || Config.bar.position === "top"))
             exclude: {
                 const list = [];
-                if (panels.sidebar.offsetScale <= 0.08) {
+                if (offsetScale <= 0.08) {
                     list.push(utilsBg);
                     if (layoutContainer.sidebarShouldFlatCorner && (Config.bar.position === "bottom" || Config.bar.position === "top")) {
                         list.push(popoutBg);
@@ -205,7 +207,7 @@ StyledWindow {
             }
             topLeftRadius: {
                 if (Config.bar.position === "bottom") {
-                    return Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius;
+                    return (sidebarShouldFlat || offsetScale > 0.3) ? radius : Math.max(0, Math.min(1, offsetScale / 0.3)) * radius;
                 } else if (Config.bar.position === "top") {
                     return (layoutContainer.sidebarShouldFlatCorner ? 0 : radius);
                 } else {
@@ -214,7 +216,7 @@ StyledWindow {
             }
             topRightRadius: {
                 if (Config.bar.position === "bottom") {
-                    return Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius;
+                    return (sidebarShouldFlat || offsetScale > 0.3) ? radius : Math.max(0, Math.min(1, offsetScale / 0.3)) * radius;
                 } else if (Config.bar.position === "top") {
                     return (layoutContainer.sidebarShouldFlatCorner ? 0 : radius);
                 } else {
@@ -223,10 +225,10 @@ StyledWindow {
             }
             bottomLeftRadius: Config.bar.position === "bottom"
                 ? (layoutContainer.sidebarShouldFlatCorner ? 0 : radius)
-                : (Config.bar.position === "right" ? radius : Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius)
+                : (sidebarShouldFlat || offsetScale > 0.3) ? radius : Math.max(0, Math.min(1, offsetScale / 0.3)) * radius
             bottomRightRadius: Config.bar.position === "bottom"
                 ? (layoutContainer.sidebarShouldFlatCorner ? 0 : radius)
-                : (Config.bar.position === "right" ? Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius : radius)
+                : (sidebarShouldFlat || offsetScale > 0.3) ? radius : Math.max(0, Math.min(1, offsetScale / 0.3)) * radius
         }
 
         PanelBg {
