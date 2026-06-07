@@ -66,7 +66,7 @@ StyledRect {
 
         StyledText {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-            text: isHorizontal ? Time.format(GlobalConfig.services.useTwelveHourClock ? "hh:mm" : "HH:mm") : Time.hourStr
+            text: isHorizontal ? Time.format(GlobalConfig.services.useTwelveHourClock ? "h:mm ap" : "HH:mm") : Time.hourStr
             font: root.font.build()
             color: root.colour
 
@@ -81,6 +81,7 @@ StyledRect {
         StyledText {
             Layout.topMargin: -parent.spacing - 4
             Layout.alignment: Qt.AlignHCenter
+            visible: !isHorizontal
             text: Time.minuteStr
             font: {
                 const scale = text === "11" ? 1.15 : Math.min(1.05, Math.max(hourMetrics.width, minMetrics.width) / minMetrics.width);
@@ -100,7 +101,7 @@ StyledRect {
             Layout.topMargin: -parent.spacing - 4
             Layout.alignment: Qt.AlignHCenter
             asynchronous: true
-            active: GlobalConfig.services.useTwelveHourClock
+            active: GlobalConfig.services.useTwelveHourClock && !isHorizontal
             visible: active
 
             sourceComponent: StyledText {
