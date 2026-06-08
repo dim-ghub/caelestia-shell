@@ -17,7 +17,7 @@ Item {
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
     }
 
     Item {
@@ -30,7 +30,7 @@ Item {
             id: icon
 
             text: "keyboard"
-            font.pointSize: Tokens.font.size.extraLarge
+            fontStyle: Tokens.font.icon.large
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left

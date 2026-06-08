@@ -18,7 +18,7 @@ Item {
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         onClicked: root.clicked()
     }
 

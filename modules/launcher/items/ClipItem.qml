@@ -20,7 +20,7 @@ Item {
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         onClicked: root.clicked()
     }
 
@@ -42,7 +42,7 @@ Item {
             id: icon
 
             text: (root.modelData?.isImage ?? false) ? "image" : "content_paste"
-            font.pointSize: Tokens.font.size.extraLarge
+            fontStyle: Tokens.font.icon.large
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
