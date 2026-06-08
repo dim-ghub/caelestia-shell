@@ -157,6 +157,7 @@ Item {
         id: sidebar
 
         visibilities: root.visibilities
+        popouts: popoutsWrapper.content
 
         anchors.top: notifications.bottom
         anchors.bottom: utilities.top
