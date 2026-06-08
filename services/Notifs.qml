@@ -99,6 +99,9 @@ Singleton {
                 notification: notif
             });
             root.list = [comp, ...root.list];
+
+            if (comp.popup)
+                Audio.playNotification();
         }
     }
 

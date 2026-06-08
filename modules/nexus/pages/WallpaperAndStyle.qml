@@ -194,6 +194,7 @@ PageBase {
         }
 
         ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
             Layout.fillWidth: true
             text: qsTr("Pause video wallpapers")
             checked: Config.background.videoWallpaperPaused
@@ -201,6 +202,7 @@ PageBase {
         }
 
         ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
             Layout.fillWidth: true
             text: qsTr("Enable video audio")
             checked: Config.background.videoWallpaperSoundEnabled
@@ -208,6 +210,7 @@ PageBase {
         }
 
         ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
             Layout.fillWidth: true
             text: qsTr("Pause video on fullscreen")
             checked: Config.background.videoWallpaperPauseOnFullscreen
@@ -215,6 +218,7 @@ PageBase {
         }
 
         ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
             Layout.fillWidth: true
             last: true
             text: qsTr("Mute video when media plays")
@@ -227,12 +231,57 @@ PageBase {
         ToggleRow {
             Layout.fillWidth: true
             first: true
+            text: qsTr("Desktop clock")
+            checked: Config.background.desktopClock.enabled
+            onToggled: GlobalConfig.background.desktopClock.enabled = checked
+        }
+
+        ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+            Layout.fillWidth: true
             text: qsTr("Desktop lyrics")
             checked: Config.background.desktopLyrics.enabled
             onToggled: GlobalConfig.background.desktopLyrics.enabled = checked
         }
 
         ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+            Layout.fillWidth: true
+            text: qsTr("Auto-hide lyrics")
+            subtext: qsTr("Hide lyrics when a window is open")
+            checked: Config.background.desktopLyrics.autoHide
+            onToggled: GlobalConfig.background.desktopLyrics.autoHide = checked
+            enabled: Config.background.desktopLyrics.enabled
+        }
+
+        ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+            Layout.fillWidth: true
+            text: qsTr("Background visualiser")
+            checked: Config.background.visualiser.enabled
+            onToggled: GlobalConfig.background.visualiser.enabled = checked
+        }
+
+        ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+            Layout.fillWidth: true
+            text: qsTr("Auto-hide visualiser")
+            subtext: qsTr("Hide visualiser when a window is open")
+            checked: Config.background.visualiser.autoHide
+            onToggled: GlobalConfig.background.visualiser.autoHide = checked
+            enabled: Config.background.visualiser.enabled
+        }
+
+        ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+            Layout.fillWidth: true
+            text: qsTr("Sound effects")
+            checked: Config.audio.sounds.enabled
+            onToggled: GlobalConfig.audio.sounds.enabled = checked
+        }
+
+        ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
             Layout.fillWidth: true
             text: qsTr("Shimeji characters")
             checked: Config.shimeji.enabled
@@ -240,6 +289,7 @@ PageBase {
         }
 
         ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
             Layout.fillWidth: true
             text: qsTr("Bezel mode (Pitch black)")
             subtext: qsTr("Make the shell pitch black to blend with display bezels")
@@ -248,6 +298,7 @@ PageBase {
         }
 
         ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
             Layout.fillWidth: true
             text: qsTr("Transparency")
             subtext: qsTr("Base %1, layers %2").arg(Colours.transparency.base).arg(Colours.transparency.layers)
@@ -256,6 +307,7 @@ PageBase {
         }
 
         ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
             Layout.fillWidth: true
             last: true
             text: qsTr("Dark theme")
