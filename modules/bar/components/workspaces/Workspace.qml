@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import M3Shapes
 import Caelestia.Config
 import qs.components
 import qs.services
@@ -76,19 +77,93 @@ GridLayout {
     Component {
         id: iconComponent
 
-        MaterialIcon {
-            text: {
-                const icons = Config.bar.workspaces.wsIcons;
-                if (icons && icons.length > 0) {
-                    const wIcon = icons.find(i => i.ws === root.ws || i.ws === root.ws.toString());
-                    if (wIcon && wIcon.icon)
-                        return wIcon.icon;
+        Item {
+            id: iconRoot
+
+            implicitWidth: Tokens.sizes.bar.innerWidth - Tokens.padding.small
+            implicitHeight: Tokens.sizes.bar.innerWidth - Tokens.padding.small
+
+            readonly property bool active: root.activeWsId === root.ws
+            property int randShape: MaterialShape.Slanted
+            property int prevActiveWsId: -1
+
+            onActiveChanged: {
+                const wasActive = prevActiveWsId === root.ws;
+                if (active && !wasActive) {
+                    const shapes = [MaterialShape.Slanted, MaterialShape.Arch, MaterialShape.Oval, MaterialShape.Pill, MaterialShape.Triangle, MaterialShape.Arrow, MaterialShape.Diamond, MaterialShape.Pentagon, MaterialShape.Gem, MaterialShape.VerySunny, MaterialShape.Sunny, MaterialShape.Cookie4Sided, MaterialShape.Cookie6Sided, MaterialShape.Cookie7Sided, MaterialShape.Cookie9Sided, MaterialShape.Cookie12Sided, MaterialShape.Clover4Leaf, MaterialShape.Clover8Leaf, MaterialShape.SoftBurst, MaterialShape.Ghostish];
+                    const shuffled = [...shapes].sort(() => Math.random() - 0.5);
+                    randShape = shuffled[0];
+                    activateAnim.running = true;
+                } else if (!active && wasActive) {
+                    deactivateAnim.running = true;
                 }
-                return root.activeWsId === root.ws ? "radio_button_checked" : "radio_button_unchecked";
+                prevActiveWsId = root.activeWsId;
             }
-            color: Config.bar.workspaces.occupiedBg || root.isOccupied || root.activeWsId === root.ws ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
-            horizontalAlignment: StyledText.AlignHCenter
-            verticalAlignment: Qt.AlignVCenter
+
+            MaterialShape {
+                id: wsShape
+
+                anchors.centerIn: parent
+                implicitSize: iconRoot.width
+                scale: iconRoot.active ? 2 / 3 : 1 / 3
+                shape: iconRoot.active ? iconRoot.randShape : (root.isOccupied ? MaterialShape.Square : MaterialShape.Circle)
+                color: Config.bar.workspaces.occupiedBg || root.isOccupied || root.activeWsId === root.ws ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
+
+                Behavior on color {
+                    CAnim {}
+                }
+
+                Behavior on scale {
+                    enabled: !activateAnim.running && !deactivateAnim.running
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
+                }
+
+                SequentialAnimation {
+                    id: activateAnim
+
+                    Anim {
+                        target: wsShape
+                        property: "scale"
+                        from: 1 / 3
+                        to: 2 / 3
+                        type: Anim.FastSpatial
+                    }
+                    PropertyAction {
+                        target: wsShape
+                        property: "shape"
+                        value: iconRoot.randShape
+                    }
+                    PropertyAction {
+                        targets: [activateAnim, deactivateAnim]
+                        property: "running"
+                        value: false
+                    }
+                }
+
+                SequentialAnimation {
+                    id: deactivateAnim
+
+                    Anim {
+                        target: wsShape
+                        property: "scale"
+                        from: 2 / 3
+                        to: 1 / 3
+                        type: Anim.FastSpatial
+                    }
+                    PropertyAction {
+                        target: wsShape
+                        property: "shape"
+                        value: root.isOccupied ? MaterialShape.Square : MaterialShape.Circle
+                    }
+                    PropertyAction {
+                        targets: [activateAnim, deactivateAnim]
+                        property: "running"
+                        value: false
+                    }
+                }
+            }
         }
     }
 
