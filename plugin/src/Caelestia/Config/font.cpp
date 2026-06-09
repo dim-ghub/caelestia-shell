@@ -1,6 +1,5 @@
 #include "font.hpp"
 #include "appearanceconfig.hpp"
-#include "tokens.hpp"
 
 namespace caelestia::config {
 
@@ -210,6 +209,10 @@ FontBuilder FontTokens::clock() const {
     return FontBuilder(m_clock);
 }
 
+QString FontTokens::workspaces() const {
+    return m_font ? m_font->workspaces() : QString();
+}
+
 void FontTokens::bindFont(AppearanceFont* font) {
     if (m_font == font)
         return;
@@ -230,8 +233,7 @@ void FontTokens::bindFont(AppearanceFont* font) {
 
         connect(font, &AppearanceFont::clockChanged, this, &FontTokens::rebuildClock);
         connect(font, &AppearanceFont::scaleChanged, this, &FontTokens::rebuildScale);
-
-        applyMonoTokenSizes();
+        connect(font, &AppearanceFont::workspacesChanged, this, &FontTokens::workspacesChanged);
     } else {
         rebuildScale();
         m_headline->bind(nullptr);
@@ -243,21 +245,7 @@ void FontTokens::bindFont(AppearanceFont* font) {
     }
 
     rebuildClock();
-}
-
-void FontTokens::bindTokens(AppearanceTokens* tokens) {
-    m_tokens = tokens;
-    if (m_font)
-        applyMonoTokenSizes();
-}
-
-void FontTokens::applyMonoTokenSizes() {
-    if (!m_tokens || !m_font)
-        return;
-
-    m_font->mono()->small()->set_size(m_tokens->fontSize()->monoSmall());
-    m_font->mono()->medium()->set_size(m_tokens->fontSize()->monoMedium());
-    m_font->mono()->large()->set_size(m_tokens->fontSize()->monoLarge());
+    emit workspacesChanged();
 }
 
 void FontTokens::rebuildScale() {
