@@ -20,7 +20,9 @@ Item {
     implicitHeight: container.implicitHeight
 
     required property var bar
+
     property int modelUpdateTrigger: 0
+
     property var launchingApps: ({})
 
     ListModel { id: dockModel }
@@ -54,6 +56,7 @@ Item {
         if (changed) {
             GlobalConfig.launcher.favouriteApps = newFavs;
         }
+
         root.modelDataArray = newArr;
     }
 
@@ -72,22 +75,27 @@ Item {
         implicitHeight: bar.isHorizontal ? Tokens.sizes.bar.innerWidth : layout.implicitHeight + padding * 2
 
         property bool monitorCenter: Config.bar.dock.monitorCenter ?? true
+
         property real preferredX: bar.isHorizontal ? (bar.width / 2 - width / 2 - (root.parent ? root.parent.x : 0)) : (root.width / 2 - width / 2)
+
         property real preferredY: bar.isHorizontal ? (root.height / 2 - height / 2) : (bar.height / 2 - height / 2 - (root.parent ? root.parent.y : 0))
-        
+
         // Clamp only if root is larger than container, otherwise just center it
         x: monitorCenter ? (root.width > width ? Math.max(0, Math.min(preferredX, root.width - width)) : root.width / 2 - width / 2) : root.width / 2 - width / 2
         y: monitorCenter ? (root.height > height ? Math.max(0, Math.min(preferredY, root.height - height)) : root.height / 2 - height / 2) : root.height / 2 - height / 2
 
         property var _appsValues: DesktopEntries.applications.values
         on_AppsValuesChanged: root.rebuildModel()
-        
+
         Behavior on implicitWidth {
             enabled: bar.isHorizontal
+
             Anim { type: Anim.DefaultSpatial }
         }
+
         Behavior on implicitHeight {
             enabled: !bar.isHorizontal
+
             Anim { type: Anim.DefaultSpatial }
         }
 
@@ -100,6 +108,7 @@ Item {
 
             ListView {
                 id: listView
+
                 anchors.centerIn: parent
                 width: bar.isHorizontal ? contentWidth : Tokens.sizes.bar.innerWidth * 0.8
                 height: bar.isHorizontal ? Tokens.sizes.bar.innerWidth * 0.8 : contentHeight
@@ -123,6 +132,7 @@ Item {
                 
                 model: DelegateModel {
                     id: visualModel
+
                     model: dockModel
                     delegate: dockDelegate
                 }
@@ -134,12 +144,14 @@ Item {
 
             Item {
                 id: delegateContainer
+
                 width: Tokens.sizes.bar.innerWidth * 0.8
                 height: Tokens.sizes.bar.innerWidth * 0.8
                 implicitWidth: width
                 implicitHeight: height
 
                 property var modelData: root.modelDataArray[index]
+
                 required property int index
 
                 DropArea {
@@ -161,9 +173,10 @@ Item {
 
                 Item {
                     id: delegateItem
+
                     width: delegateContainer.width
                     height: delegateContainer.height
-                    
+
                     property int delegateIndex: delegateContainer.index
 
                     Drag.active: dragArea.held
@@ -173,14 +186,15 @@ Item {
 
                     StateLayer {
                         id: stateLayer
+
                         anchors.fill: parent
                         radius: Tokens.rounding.medium
-                        
+
                         color: delegateItem.isActive ? Colours.palette.m3onSurface : "transparent"
                         opacity: delegateItem.isActive ? 0.1 : 0
-                        
+
                         acceptedButtons: Qt.NoButton
-                        
+
                         onEntered: {
                             if (bar.popouts.hasCurrent && bar.popouts.currentName === "dockcontext") return;
                             bar.popouts.currentName = "dockhover";
@@ -192,7 +206,9 @@ Item {
 
                     MouseArea {
                         id: dragArea
+
                         property bool held: false
+
                         anchors.fill: parent
                         drag.target: held ? delegateItem : null
                         drag.axis: bar.isHorizontal ? Drag.XAxis : Drag.YAxis
@@ -249,6 +265,7 @@ Item {
                     states: [
                         State {
                             when: dragArea.held
+
                             ParentChange {
                                 target: delegateItem
                                 parent: listView
@@ -288,6 +305,7 @@ Item {
 
                     IconImage {
                         id: icon
+
                         anchors.centerIn: parent
                         implicitSize: Math.round(((delegateItem.width || 0) * 0.7) / 2) * 2 || 0
                         source: {
@@ -301,6 +319,7 @@ Item {
                         
                         SequentialAnimation {
                             id: bounceAnim
+
                             NumberAnimation { target: delegateItem; property: "scale"; to: 0.7; duration: 100; easing.type: Easing.OutQuad }
                             NumberAnimation { target: delegateItem; property: "scale"; to: 1.0; duration: 400; easing.type: Easing.OutElastic }
                         }
@@ -352,8 +371,9 @@ Item {
                         }
                         
                         delegate: Rectangle {
-                                required property int index
-                                width: (index === 0 && delegateItem.isActive) ? 16 : 2
+                            required property int index
+
+                            width: (index === 0 && delegateItem.isActive) ? 16 : 2
     
                                 height: 2
     
@@ -410,7 +430,9 @@ Item {
     }
 
     property var modelDataArray: []
+
     property var currentOrder: []
+
     onModelDataArrayChanged: currentOrder = [...modelDataArray]
 
     function rebuildModel(): void {
@@ -569,19 +591,22 @@ Item {
     }
 
     property var _toplevels: Hyprland.toplevels.values
+
     on_ToplevelsChanged: {
         root.rebuildModel()
         delayedRebuildTimer.restart()
     }
-    
+
     Timer {
         id: delayedRebuildTimer
+
         interval: 100
         repeat: false
         onTriggered: root.rebuildModel()
     }
-    
+
     property var activeTop: Hyprland.activeToplevel
+
     onActiveTopChanged: {
         root.rebuildModel()
         delayedRebuildTimer.restart()
@@ -589,6 +614,7 @@ Item {
 
     Connections {
         target: GlobalConfig.launcher
+
         function onFavouriteAppsChanged(): void {
             root.rebuildModel();
         }
