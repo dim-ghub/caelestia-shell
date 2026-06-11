@@ -18,7 +18,7 @@ Item {
     required property FileDialog facePicker
 
     property color pfpFallbackColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
-    property var hyprlandSplashLines: []
+    property string hyprlandSplashText: ""
 
     anchors.fill: parent
     anchors.margins: Tokens.padding.large
@@ -32,8 +32,7 @@ Item {
         command: ["hyprctl", "splash"]
         stdout: StdioCollector {
             onStreamFinished: {
-                // Limit to 2 lines max
-                hyprlandSplashLines = text.trim().split("\n").slice(0, 2);
+                hyprlandSplashText = text.trim();
             }
         }
     }
@@ -267,34 +266,24 @@ Item {
             MaterialIcon {
                 id: wmIcon
 
+                visible: !Config.dashboard.showHyprlandSplash
                 anchors.verticalCenter: parent.verticalCenter
                 text: "select_window"
                 color: Colours.palette.m3onSecondaryContainer
                 fontStyle: wmText.font
             }
 
-            Column {
+            StyledText {
+                id: wmText
+
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 0
-
-                StyledText {
-                    id: wmText
-
-                    text: Config.dashboard.showHyprlandSplash && hyprlandSplashLines.length > 0 ? hyprlandSplashLines[0] : SysInfo.wm + "..."
-                    color: Colours.palette.m3onSecondaryContainer
-                    font: Tokens.font.body.builders.small.vaxis("slnt", -4).build()
-                    width: Math.min(implicitWidth, Tokens.sizes.dashboard.userWidth - wmContainer.x - Tokens.padding.medium * 2 - wmIcon.implicitWidth - wmLabel.spacing - Tokens.padding.extraLarge)
-                    elide: Text.ElideRight
-                }
-
-                StyledText {
-                    visible: Config.dashboard.showHyprlandSplash && hyprlandSplashLines.length > 1
-                    text: hyprlandSplashLines[1] || ""
-                    color: Colours.palette.m3onSecondaryContainer
-                    font: Tokens.font.body.builders.small.vaxis("slnt", -4).build()
-                    width: wmText.width
-                    elide: Text.ElideRight
-                }
+                text: Config.dashboard.showHyprlandSplash && hyprlandSplashText !== "" ? hyprlandSplashText : SysInfo.wm + "..."
+                color: Colours.palette.m3onSecondaryContainer
+                font: Tokens.font.body.builders.small.vaxis("slnt", -4).build()
+                width: Math.min(implicitWidth, Tokens.sizes.dashboard.userWidth - wmContainer.x - Tokens.padding.medium * 2 - (wmIcon.visible ? wmIcon.implicitWidth + wmLabel.spacing : 0) - Tokens.padding.extraLarge)
+                wrapMode: Config.dashboard.showHyprlandSplash ? Text.WordWrap : Text.NoWrap
+                maximumLineCount: Config.dashboard.showHyprlandSplash ? 2 : 1
+                elide: Text.ElideRight
             }
         }
     }
