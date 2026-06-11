@@ -36,89 +36,107 @@ ColumnLayout {
 
     StyledRect {
         Layout.fillWidth: true
-        implicitWidth: cardLayout.implicitWidth + Tokens.padding.medium * 2
-        implicitHeight: cardLayout.implicitHeight + Tokens.padding.medium * 2
+        implicitWidth: outputLayout.implicitWidth + Tokens.padding.medium * 2
+        implicitHeight: outputLayout.implicitHeight + Tokens.padding.medium * 2
         radius: Tokens.rounding.medium
         color: Colours.tPalette.m3surfaceContainer
         clip: true
 
         ColumnLayout {
-            id: cardLayout
+            id: outputLayout
 
             width: parent.width - Tokens.padding.medium * 2
             x: Tokens.padding.medium
             y: Tokens.padding.medium
             spacing: Tokens.spacing.medium
 
-        StyledText {
-            text: qsTr("Output device")
-            font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
-        }
-
-        Repeater {
-            model: Audio.sinks
-
-            StyledRadioButton {
-                id: control
-
-                required property PwNode modelData
-
-                ButtonGroup.group: sinks
-                checked: Audio.sink?.id === modelData.id
-                onClicked: Audio.setAudioSink(modelData)
-                text: modelData.description
-            }
-        }
-
-        StyledText {
-            Layout.topMargin: Tokens.spacing.medium
-            text: qsTr("Input device")
-            font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
-        }
-
-        Repeater {
-            model: Audio.sources
-
-            StyledRadioButton {
-                required property PwNode modelData
-
-                ButtonGroup.group: sources
-                checked: Audio.source?.id === modelData.id
-                onClicked: Audio.setAudioSource(modelData)
-                text: modelData.description
-            }
-        }
-
-        StyledText {
-            Layout.topMargin: Tokens.spacing.medium
-            text: qsTr("Volume (%1)").arg(Audio.muted ? qsTr("Muted") : `${Math.round(Audio.volume * 100)}%`)
-            font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
-        }
-
-        CustomMouseArea {
-            Layout.fillWidth: true
-            implicitHeight: Tokens.padding.medium * 3
-
-            onWheel: event => {
-                if (event.angleDelta.y > 0)
-                    Audio.incrementVolume();
-                else if (event.angleDelta.y < 0)
-                    Audio.decrementVolume();
+            StyledText {
+                text: qsTr("Output device")
+                font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
             }
 
-            StyledSlider {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                implicitHeight: parent.implicitHeight
+            Repeater {
+                model: Audio.sinks
 
-                value: Audio.volume
-                onInteraction: value => {
-                    Audio.setVolume(value);
-                    Audio.playEffectTick();
+                StyledRadioButton {
+                    id: outputControl
+
+                    required property PwNode modelData
+
+                    ButtonGroup.group: sinks
+                    checked: Audio.sink?.id === modelData.id
+                    onClicked: Audio.setAudioSink(modelData)
+                    text: modelData.description
                 }
             }
         }
+    }
 
+    StyledRect {
+        Layout.fillWidth: true
+        implicitWidth: inputLayout.implicitWidth + Tokens.padding.medium * 2
+        implicitHeight: inputLayout.implicitHeight + Tokens.padding.medium * 2
+        radius: Tokens.rounding.medium
+        color: Colours.tPalette.m3surfaceContainer
+        clip: true
+
+        ColumnLayout {
+            id: inputLayout
+
+            width: parent.width - Tokens.padding.medium * 2
+            x: Tokens.padding.medium
+            y: Tokens.padding.medium
+            spacing: Tokens.spacing.medium
+
+            StyledText {
+                text: qsTr("Input device")
+                font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+            }
+
+            Repeater {
+                model: Audio.sources
+
+                StyledRadioButton {
+                    id: inputControl
+
+                    required property PwNode modelData
+
+                    ButtonGroup.group: sources
+                    checked: Audio.source?.id === modelData.id
+                    onClicked: Audio.setAudioSource(modelData)
+                    text: modelData.description
+                }
+            }
+        }
+    }
+
+    StyledText {
+        Layout.topMargin: Tokens.spacing.medium
+        text: qsTr("Volume (%1)").arg(Audio.muted ? qsTr("Muted") : `${Math.round(Audio.volume * 100)}%`)
+        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+    }
+
+    CustomMouseArea {
+        Layout.fillWidth: true
+        implicitHeight: Tokens.padding.medium * 3
+
+        onWheel: event => {
+            if (event.angleDelta.y > 0)
+                Audio.incrementVolume();
+            else if (event.angleDelta.y < 0)
+                Audio.decrementVolume();
+        }
+
+        StyledSlider {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            implicitHeight: parent.implicitHeight
+
+            value: Audio.volume
+            onInteraction: value => {
+                Audio.setVolume(value);
+                Audio.playEffectTick();
+            }
         }
     }
 
