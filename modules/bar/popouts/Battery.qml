@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell.Services.UPower
 import Caelestia.Config
 import qs.components
@@ -73,65 +74,63 @@ ColumnLayout {
                         anchors.left: parent.left
                         anchors.right: parent.right
 
-                        Item {
-                            id: liquidContainer
-                            anchors.bottom: parent.bottom
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            
-                            height: parent.height * (UPower.displayDevice.isLaptopBattery ? UPower.displayDevice.percentage : 0)
-                            
-                            Behavior on height {
-                                NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
-                            }
+                        Rectangle {
+                            id: liquidMask
+                            anchors.fill: parent
+                            radius: Tokens.rounding.medium
+                            visible: false
+                        }
 
-                            Rectangle {
-                                anchors.fill: parent
-                                anchors.topMargin: waveLayer.opacity * 10
-                                
-                                color: Colours.palette.m3primary
-                                
-                                bottomLeftRadius: Tokens.rounding.medium - 3
-                                bottomRightRadius: Tokens.rounding.medium - 3
-                                topLeftRadius: height >= parent.height - 3 ? Tokens.rounding.medium - 3 : 0
-                                topRightRadius: height >= parent.height - 3 ? Tokens.rounding.medium - 3 : 0
-                            }
+                        Item {
+                            id: liquidUnclipped
+                            anchors.fill: parent
+                            visible: false
 
                             Item {
-                                id: waveLayer
-                                anchors.top: parent.top
+                                id: liquidContainer
+                                anchors.bottom: parent.bottom
                                 anchors.left: parent.left
                                 anchors.right: parent.right
-                                height: 15
-                                clip: true
                                 
-                                opacity: {
-                                    if (UPower.onBattery) return 0;
-                                    if (parent.height <= 25) return 0;
-                                    if (parent.height >= 95) return 0;
-                                    if (parent.height < 35) return (parent.height - 25) / 10.0;
-                                    if (parent.height > 85) return (95 - parent.height) / 10.0;
-                                    return 1.0;
+                                height: parent.height * (UPower.displayDevice.isLaptopBattery ? UPower.displayDevice.percentage : 0)
+                                
+                                Behavior on height {
+                                    NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
                                 }
-                                
-                                Behavior on opacity { NumberAnimation { duration: 300 } }
-                                
+
                                 Rectangle {
-                                    width: 140; height: 140
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    y: -(height / 2) + 7
-                                    
+                                    anchors.fill: parent
+                                    anchors.topMargin: 15
                                     color: Colours.palette.m3primary
-                                    radius: 65
+                                }
+
+                                Item {
+                                    anchors.fill: parent
+                                    visible: !UPower.onBattery
                                     
-                                    RotationAnimation on rotation {
-                                        loops: Animation.Infinite
-                                        from: 0; to: 360
-                                        duration: 5000
-                                        running: waveLayer.opacity > 0
+                                    Rectangle {
+                                        width: 140; height: 140
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        y: -(height / 2) + 12
+                                        
+                                        color: Colours.palette.m3primary
+                                        radius: 60
+                                        
+                                        RotationAnimation on rotation {
+                                            loops: Animation.Infinite
+                                            from: 0; to: 360
+                                            duration: 5000
+                                        }
                                     }
                                 }
                             }
+                        }
+
+                        MultiEffect {
+                            anchors.fill: parent
+                            source: liquidUnclipped
+                            maskEnabled: true
+                            maskSource: liquidMask
                         }
 
                         Rectangle {
