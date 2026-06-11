@@ -20,8 +20,31 @@ ColumnLayout {
     property bool showPasswordDialog: false
     property bool _isSidebarOpen: popouts.sidebarOpen && popouts.isHorizontal
 
-    spacing: Tokens.spacing.small
-    width: Math.max(Tokens.sizes.bar.networkWidth, _isSidebarOpen ? Tokens.sizes.sidebar.width - Tokens.padding.extraLargeIncreased : 0)
+    spacing: Tokens.spacing.medium
+    width: Math.max(300, _isSidebarOpen ? Tokens.sizes.sidebar.width - Tokens.padding.extraLargeIncreased : 0)
+
+    StyledText {
+        Layout.topMargin: Tokens.padding.medium
+        Layout.leftMargin: Tokens.padding.small
+        text: qsTr("Network")
+        font.weight: 500
+    }
+
+    StyledRect {
+        Layout.fillWidth: true
+        implicitWidth: cardLayout.implicitWidth + Tokens.padding.medium * 2
+        implicitHeight: cardLayout.implicitHeight + Tokens.padding.medium * 2
+        radius: Tokens.rounding.medium
+        color: Colours.tPalette.m3surfaceContainer
+        clip: true
+
+        ColumnLayout {
+            id: cardLayout
+
+            width: parent.width - Tokens.padding.medium * 2
+            x: Tokens.padding.medium
+            y: Tokens.padding.medium
+            spacing: Tokens.spacing.small
 
     // Wireless section
     StyledText {
@@ -338,6 +361,9 @@ ColumnLayout {
                     }
                 }
             }
+        }
+    }
+
         }
     }
 

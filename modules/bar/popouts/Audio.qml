@@ -9,15 +9,15 @@ import qs.components
 import qs.components.controls
 import qs.services
 
-Item {
+ColumnLayout {
     id: root
 
     required property PopoutState popouts
 
     property bool _isSidebarOpen: popouts.sidebarOpen && popouts.isHorizontal
 
-    implicitWidth: Math.max(layout.implicitWidth + Tokens.padding.medium * 2, _isSidebarOpen ? Tokens.sizes.sidebar.width - Tokens.padding.extraLargeIncreased : 0)
-    implicitHeight: layout.implicitHeight + Tokens.padding.medium * 2
+    implicitWidth: Math.max(300, _isSidebarOpen ? Tokens.sizes.sidebar.width - Tokens.padding.extraLargeIncreased : 0)
+    spacing: Tokens.spacing.medium
 
     ButtonGroup {
         id: sinks
@@ -27,12 +27,28 @@ Item {
         id: sources
     }
 
-    ColumnLayout {
-        id: layout
+    StyledText {
+        Layout.topMargin: Tokens.padding.medium
+        Layout.leftMargin: Tokens.padding.small
+        text: qsTr("Audio")
+        font.weight: 500
+    }
 
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-        spacing: Tokens.spacing.medium
+    StyledRect {
+        Layout.fillWidth: true
+        implicitWidth: cardLayout.implicitWidth + Tokens.padding.medium * 2
+        implicitHeight: cardLayout.implicitHeight + Tokens.padding.medium * 2
+        radius: Tokens.rounding.medium
+        color: Colours.tPalette.m3surfaceContainer
+        clip: true
+
+        ColumnLayout {
+            id: cardLayout
+
+            width: parent.width - Tokens.padding.medium * 2
+            x: Tokens.padding.medium
+            y: Tokens.padding.medium
+            spacing: Tokens.spacing.medium
 
         StyledText {
             text: qsTr("Output device")
@@ -103,16 +119,17 @@ Item {
             }
         }
 
-        IconTextButton {
-            Layout.fillWidth: true
-            Layout.topMargin: Tokens.spacing.medium
-            inactiveColour: Colours.palette.m3primaryContainer
-            inactiveOnColour: Colours.palette.m3onPrimaryContainer
-            verticalPadding: Tokens.padding.extraSmall
-            text: qsTr("Open settings")
-            icon: "settings"
-
-            onClicked: root.popouts.detachRequested("audio")
         }
+    }
+
+    IconTextButton {
+        Layout.fillWidth: true
+        inactiveColour: Colours.palette.m3primaryContainer
+        inactiveOnColour: Colours.palette.m3onPrimaryContainer
+        verticalPadding: Tokens.padding.small
+        text: qsTr("Open settings")
+        icon: "settings"
+
+        onClicked: root.popouts.detachRequested("audio")
     }
 }

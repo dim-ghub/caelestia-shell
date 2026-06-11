@@ -22,10 +22,26 @@ ColumnLayout {
 
     StyledText {
         Layout.topMargin: Tokens.padding.medium
-        Layout.rightMargin: Tokens.padding.extraSmall
+        Layout.leftMargin: Tokens.padding.small
         text: qsTr("Bluetooth")
-        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+        font.weight: 500
     }
+
+    StyledRect {
+        Layout.fillWidth: true
+        implicitWidth: cardLayout.implicitWidth + Tokens.padding.medium * 2
+        implicitHeight: cardLayout.implicitHeight + Tokens.padding.medium * 2
+        radius: Tokens.rounding.medium
+        color: Colours.tPalette.m3surfaceContainer
+        clip: true
+
+        ColumnLayout {
+            id: cardLayout
+
+            width: parent.width - Tokens.padding.medium * 2
+            x: Tokens.padding.medium
+            y: Tokens.padding.medium
+            spacing: Tokens.spacing.small
 
     Toggle {
         label: qsTr("Enabled")
@@ -173,12 +189,14 @@ ColumnLayout {
         }
     }
 
+        }
+    }
+
     IconTextButton {
         Layout.fillWidth: true
-        Layout.topMargin: Tokens.spacing.medium
         inactiveColour: Colours.palette.m3primaryContainer
         inactiveOnColour: Colours.palette.m3onPrimaryContainer
-        verticalPadding: Tokens.padding.extraSmall
+        verticalPadding: Tokens.padding.small
         text: qsTr("Open settings")
         icon: "settings"
 

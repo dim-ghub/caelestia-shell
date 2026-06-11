@@ -2,24 +2,50 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Caelestia.Config
 import qs.components
 import qs.services
 
-StackView {
+ColumnLayout {
     id: root
 
     required property PopoutState popouts
     required property QsMenuHandle trayItem
 
-    implicitWidth: currentItem?.implicitWidth ?? 0
-    implicitHeight: currentItem?.implicitHeight ?? 0
+    implicitWidth: Math.max(300, stack.implicitWidth + Tokens.padding.medium * 2)
+    spacing: Tokens.spacing.medium
 
-    initialItem: SubMenu {
-        handle: root.trayItem
+    StyledText {
+        Layout.topMargin: Tokens.padding.medium
+        Layout.leftMargin: Tokens.padding.small
+        text: qsTr("System Tray")
+        font.weight: 500
     }
+
+    StyledRect {
+        Layout.fillWidth: true
+        implicitWidth: stack.implicitWidth + Tokens.padding.medium * 2
+        implicitHeight: stack.implicitHeight + Tokens.padding.medium * 2
+        radius: Tokens.rounding.medium
+        color: Colours.tPalette.m3surfaceContainer
+        clip: true
+
+        StackView {
+            id: stack
+
+            x: Tokens.padding.medium
+            y: Tokens.padding.medium
+            width: parent.width - Tokens.padding.medium * 2
+
+            implicitWidth: currentItem?.implicitWidth ?? 0
+            implicitHeight: currentItem?.implicitHeight ?? 0
+
+            initialItem: SubMenu {
+                handle: root.trayItem
+            }
 
     pushEnter: NoAnim {}
     pushExit: NoAnim {}
@@ -109,7 +135,7 @@ StackView {
                             onClicked: {
                                 const entry = item.modelData;
                                 if (entry.hasChildren)
-                                    root.push(subMenuComp.createObject(null, {
+                                    stack.push(subMenuComp.createObject(null, {
                                         handle: entry,
                                         isSubMenu: true
                                     }));
@@ -153,7 +179,7 @@ StackView {
                             font: label.font
 
                             elide: Text.ElideRight
-                            elideWidth: root.Tokens.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + root.Tokens.spacing.medium : 0)
+                            elideWidth: root.popouts.isHorizontal ? Tokens.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + Tokens.spacing.medium : 0) : 200
                         }
 
                         Loader {
@@ -200,7 +226,7 @@ StackView {
                         StateLayer {
                             radius: parent.radius
                             color: Colours.palette.m3onSecondaryContainer
-                            onClicked: root.pop()
+                            onClicked: stack.pop()
                         }
                     }
 
@@ -224,5 +250,7 @@ StackView {
                 }
             }
         }
+        }
     }
+}
 }

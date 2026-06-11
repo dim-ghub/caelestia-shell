@@ -1,19 +1,43 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Layouts
 import Quickshell.Services.UPower
 import Caelestia.Config
 import qs.components
 import qs.services
 
-Column {
+ColumnLayout {
     id: root
 
     required property PopoutState popouts
     property bool _isSidebarOpen: popouts.sidebarOpen && popouts.isHorizontal
 
+    width: Math.max(300, _isSidebarOpen ? Tokens.sizes.sidebar.width - Tokens.padding.extraLargeIncreased : 0)
     spacing: Tokens.spacing.medium
-    width: Math.max(Tokens.sizes.bar.batteryWidth, _isSidebarOpen ? Tokens.sizes.sidebar.width - Tokens.padding.extraLargeIncreased : 0)
+
+    StyledText {
+        Layout.topMargin: Tokens.padding.medium
+        Layout.leftMargin: Tokens.padding.small
+        text: qsTr("Battery")
+        font.weight: 500
+    }
+
+    StyledRect {
+        Layout.fillWidth: true
+        implicitWidth: cardLayout.implicitWidth + Tokens.padding.medium * 2
+        implicitHeight: cardLayout.implicitHeight + Tokens.padding.medium * 2
+        radius: Tokens.rounding.medium
+        color: Colours.tPalette.m3surfaceContainer
+        clip: true
+
+        Column {
+            id: cardLayout
+
+            width: parent.width - Tokens.padding.medium * 2
+            x: Tokens.padding.medium
+            y: Tokens.padding.medium
+            spacing: Tokens.spacing.medium
 
     StyledText {
         text: UPower.displayDevice.isLaptopBattery ? qsTr("Remaining: %1%").arg(Math.round(UPower.displayDevice.percentage * 100)) : qsTr("No battery detected")
@@ -183,6 +207,8 @@ Column {
             profile: PowerProfile.Performance
             icon: "rocket_launch"
         }
+    }
+    }
     }
 
     component Fill: AnchorChanges {
