@@ -27,7 +27,7 @@ Item {
         anchors.centerIn: parent
         implicitSize: root.implicitWidth
 
-        shape: Config.general.circleProfilePic ? MaterialShape.Circle : MaterialShape.ClamShell
+        shape: GlobalConfig.lock.circleProfilePic ? MaterialShape.Circle : MaterialShape.ClamShell
         color: Qt.alpha(root.bgColour, 1)
         opacity: root.bgColour.a
         layer.enabled: true

@@ -33,6 +33,7 @@ class DashboardConfig : public ConfigObject {
     CONFIG_PROPERTY(bool, showTerminal, true)
     CONFIG_PROPERTY(bool, showHyprlandSplash, false)
     CONFIG_PROPERTY(bool, colorizeMediaGif, true)
+    CONFIG_GLOBAL_PROPERTY(bool, circleProfilePic, true)
     CONFIG_GLOBAL_PROPERTY(int, mediaUpdateInterval, 500)
     CONFIG_GLOBAL_PROPERTY(int, resourceUpdateInterval, 1000)
     CONFIG_PROPERTY(int, dragThreshold, 50)

@@ -11,6 +11,7 @@ class LockConfig : public ConfigObject {
     CONFIG_PROPERTY(bool, recolourLogo, true)
     CONFIG_GLOBAL_PROPERTY(bool, enableFprint, true)
     CONFIG_GLOBAL_PROPERTY(int, maxFprintTries, 3)
+    CONFIG_GLOBAL_PROPERTY(bool, circleProfilePic, true)
     CONFIG_PROPERTY(bool, hideNotifs, false)
 
 public:

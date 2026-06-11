@@ -34,11 +34,21 @@ PageBase {
 
         ToggleRow {
             Layout.fillWidth: true
-            last: true
             text: qsTr("Show on hover")
             subtext: qsTr("Reveal when the cursor reaches the screen edge")
             checked: Config.dashboard.showOnHover
             onToggled: GlobalConfig.dashboard.showOnHover = checked
+        }
+
+        ToggleRow {
+            Layout.fillWidth: true
+            last: true
+            text: qsTr("Circular profile picture")
+            checked: GlobalConfig.dashboard.circleProfilePic
+            onToggled: {
+                GlobalConfig.dashboard.circleProfilePic = checked
+                GlobalConfig.lock.circleProfilePic = checked
+            }
         }
 
         // Tabs

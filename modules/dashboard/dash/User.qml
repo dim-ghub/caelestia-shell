@@ -51,7 +51,7 @@ Item {
 
             anchors.centerIn: parent
             implicitSize: parent.height
-            shape: Config.general.circleProfilePic ? MaterialShape.Circle : MaterialShape.Pill
+            shape: GlobalConfig.dashboard.circleProfilePic ? MaterialShape.Circle : MaterialShape.Pill
             color: Qt.alpha(root.pfpFallbackColour, 1)
             opacity: root.pfpFallbackColour.a
             layer.enabled: true
