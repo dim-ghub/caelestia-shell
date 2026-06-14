@@ -190,11 +190,9 @@ StyledWindow {
         ColumnLayout {
             id: dialogContent
 
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: Tokens.padding.large
-            anchors.verticalCenter: parent.verticalCenter
-            
+            width: dialogContainer.targetWidth - Tokens.padding.large * 2
+            anchors.centerIn: parent
+
             opacity: 0
             scale: 0
             spacing: Tokens.spacing.extraLarge
