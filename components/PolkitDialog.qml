@@ -32,7 +32,7 @@ StyledWindow {
         let pkexecMatch = msg.match(/Authentication is needed to run `(.+?)' as the super user/);
         if (pkexecMatch) {
             cmd = pkexecMatch[1];
-            msg = "Superuser privileges are required to execute:";
+            msg = "Root privileges are required to execute:";
         } else if (msg.includes('\n')) {
             let parts = msg.split('\n').filter(s => s.trim().length > 0);
             if (parts.length > 1) {
