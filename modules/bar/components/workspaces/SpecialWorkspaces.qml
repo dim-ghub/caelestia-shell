@@ -347,8 +347,8 @@ Item {
             asynchronous: true
 
             Layout.alignment: isHorizontal ? (Qt.AlignVCenter | Qt.AlignLeft) : (Qt.AlignHCenter | Qt.AlignTop)
-            Layout.preferredWidth: isHorizontal ? (Tokens.sizes.bar.innerWidth - Tokens.padding.small) : -1
-            Layout.preferredHeight: isHorizontal ? -1 : (Tokens.sizes.bar.innerWidth - Tokens.padding.small)
+            Layout.preferredWidth: isHorizontal ? Tokens.sizes.bar.innerWidth : -1
+            Layout.preferredHeight: isHorizontal ? -1 : Tokens.sizes.bar.innerWidth
 
             sourceComponent: ws.icon.length === 1 ? letterComp : iconComp
 
@@ -356,9 +356,11 @@ Item {
                 id: iconComp
 
                 MaterialIcon {
+                    anchors.fill: parent
                     fill: 1
                     text: ws.icon
                     verticalAlignment: Qt.AlignVCenter
+                    horizontalAlignment: Qt.AlignHCenter
                 }
             }
 
@@ -366,8 +368,10 @@ Item {
                 id: letterComp
 
                 StyledText {
+                    anchors.fill: parent
                     text: ws.icon
                     verticalAlignment: Qt.AlignVCenter
+                    horizontalAlignment: Qt.AlignHCenter
                 }
             }
         }
