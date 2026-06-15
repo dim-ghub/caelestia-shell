@@ -79,6 +79,17 @@ Variants {
             anchors.topMargin: Config.bar.position === "top" ? clockBaseMargin + clockBarZone : clockBaseMargin
             anchors.bottomMargin: Config.bar.position === "bottom" ? clockBaseMargin + clockBarZone : clockBaseMargin
 
+            anchors.horizontalCenterOffset: {
+                if (Config.bar.position === "left") return clockBarZone / 2;
+                if (Config.bar.position === "right") return -clockBarZone / 2;
+                return 0;
+            }
+            anchors.verticalCenterOffset: {
+                if (Config.bar.position === "top") return clockBarZone / 2;
+                if (Config.bar.position === "bottom") return -clockBarZone / 2;
+                return 0;
+            }
+
             state: Config.background.desktopClock.position
             states: [
                 State {
@@ -189,6 +200,17 @@ Variants {
             anchors.rightMargin: Config.bar.position === "right" ? lyricsBaseMargin + lyricsBarZone : lyricsBaseMargin
             anchors.topMargin: Config.bar.position === "top" ? lyricsBaseMargin + lyricsBarZone : lyricsBaseMargin
             anchors.bottomMargin: Config.bar.position === "bottom" ? lyricsBaseMargin + lyricsBarZone : lyricsBaseMargin
+
+            anchors.horizontalCenterOffset: {
+                if (Config.bar.position === "left") return lyricsBarZone / 2;
+                if (Config.bar.position === "right") return -lyricsBarZone / 2;
+                return 0;
+            }
+            anchors.verticalCenterOffset: {
+                if (Config.bar.position === "top") return lyricsBarZone / 2;
+                if (Config.bar.position === "bottom") return -lyricsBarZone / 2;
+                return 0;
+            }
 
             state: Config.background.desktopLyrics.position
             states: [
