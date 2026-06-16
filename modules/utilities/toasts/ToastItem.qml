@@ -26,7 +26,7 @@ StyledRect {
             baseColor = Colours.palette.m3errorContainer;
 
         if (GlobalConfig.utilities.toasts.transparency) {
-            return Qt.alpha(baseColor, GlobalConfig.utilities.toasts.transparencyBase);
+            return Qt.alpha(baseColor, Math.max(0.1, GlobalConfig.utilities.toasts.transparencyBase));
         }
         return baseColor;
     }
@@ -49,6 +49,7 @@ StyledRect {
         opacity: parent.opacity
         z: -1
         level: 3
+        visible: !GlobalConfig.utilities.toasts.transparency
     }
 
     RowLayout {
