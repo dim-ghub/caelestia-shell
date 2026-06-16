@@ -83,8 +83,8 @@ Singleton {
     }
 
     function reloadHyprRules(): void {
-        const drawersBlur = transparency.enabled || Config.utilities.toasts.transparency;
-        const drawersBase = transparency.enabled ? (Config.utilities.toasts.transparency ? Math.min(transparency.base, Config.utilities.toasts.transparencyBase) : transparency.base) : Config.utilities.toasts.transparencyBase;
+        const drawersBlur = transparency.enabled || GlobalConfig.utilities.toasts.transparency;
+        const drawersBase = transparency.enabled ? (GlobalConfig.utilities.toasts.transparency ? Math.min(transparency.base, GlobalConfig.utilities.toasts.transparencyBase) : transparency.base) : GlobalConfig.utilities.toasts.transparencyBase;
         const drawersIgnoreAlpha = drawersBase - 0.03;
 
         if (Hypr.usingLua) {
@@ -126,7 +126,7 @@ Singleton {
     }
 
     Connections {
-        target: Config.utilities.toasts
+        target: GlobalConfig.utilities.toasts
         ignoreUnknownSignals: true
         function onTransparencyChanged(): void {
             root.requestReloadHyprRules();

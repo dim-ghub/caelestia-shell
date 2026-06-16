@@ -25,8 +25,8 @@ StyledRect {
         else if (root.modelData.type === Toast.Error)
             baseColor = Colours.palette.m3errorContainer;
 
-        if (Config.utilities.toasts.transparency) {
-            return Qt.alpha(baseColor, Config.utilities.toasts.transparencyBase);
+        if (GlobalConfig.utilities.toasts.transparency) {
+            return Qt.alpha(baseColor, GlobalConfig.utilities.toasts.transparencyBase);
         }
         return baseColor;
     }

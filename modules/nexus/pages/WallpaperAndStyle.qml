@@ -307,7 +307,7 @@ PageBase {
             Layout.fillWidth: true
             text: qsTr("Toast transparency")
             subtext: qsTr("Apply transparency and blur to toast notifications")
-            checked: Config.utilities.toasts.transparency
+            checked: GlobalConfig.utilities.toasts.transparency
             onToggled: GlobalConfig.utilities.toasts.transparency = checked
         }
 
