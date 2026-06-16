@@ -19,6 +19,11 @@ Item {
     required property DrawerVisibilities visibilities
     readonly property int notifCount: Notifs.list.reduce((acc, n) => n.closed ? acc : acc + 1, 0)
 
+    property bool gameActive: false
+    onNotifCountChanged: {
+        if (notifCount > 0) gameActive = false;
+    }
+
     anchors.fill: parent
     anchors.margins: Tokens.padding.medium
 
@@ -85,10 +90,11 @@ Item {
         color: "transparent"
 
         Loader {
+            z: 1
             asynchronous: true
             anchors.centerIn: parent
             active: opacity > 0
-            opacity: root.notifCount > 0 ? 0 : 1
+            opacity: root.notifCount > 0 || root.gameActive ? 0 : 1
 
             sourceComponent: ColumnLayout {
                 spacing: Tokens.spacing.extraLarge
@@ -103,6 +109,12 @@ Item {
                     layer.effect: Colouriser {
                         colorizationColor: Colours.palette.m3outlineVariant
                         brightness: 1
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.gameActive = true
                     }
                 }
 
@@ -125,6 +137,7 @@ Item {
             id: view
 
             anchors.fill: parent
+            visible: !root.gameActive
 
             flickableDirection: Flickable.VerticalFlick
             contentWidth: width
@@ -140,6 +153,16 @@ Item {
                 props: root.props
                 visibilities: root.visibilities
                 container: view
+            }
+        }
+
+        Loader {
+            z: 2
+            anchors.fill: parent
+            active: root.gameActive
+            visible: active
+            sourceComponent: DinoGame {
+                onExit: root.gameActive = false
             }
         }
     }

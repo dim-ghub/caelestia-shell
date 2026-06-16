@@ -16,6 +16,12 @@ ColumnLayout {
 
     required property var lock
 
+    readonly property int notifCount: Notifs.list.length
+    property bool gameActive: false
+    onNotifCountChanged: {
+        if (notifCount > 0 && !Config.lock.hideNotifs) gameActive = false;
+    }
+
     anchors.fill: parent
     anchors.margins: Tokens.padding.large
 
@@ -39,10 +45,11 @@ ColumnLayout {
         color: "transparent"
 
         Loader {
+            z: 1
             asynchronous: true
             anchors.centerIn: parent
             active: opacity > 0
-            opacity: Notifs.list.length > 0 && !Config.lock.hideNotifs ? 0 : 1
+            opacity: (Notifs.list.length > 0 && !Config.lock.hideNotifs) || root.gameActive ? 0 : 1
 
             sourceComponent: ColumnLayout {
                 spacing: Tokens.spacing.largeIncreased
@@ -57,6 +64,12 @@ ColumnLayout {
                     layer.effect: Colouriser {
                         colorizationColor: Colours.palette.m3outlineVariant
                         brightness: 1
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.gameActive = true
                     }
                 }
 
@@ -77,7 +90,7 @@ ColumnLayout {
 
         StyledListView {
             anchors.fill: parent
-            visible: !Config.lock.hideNotifs
+            visible: !Config.lock.hideNotifs && !root.gameActive
             spacing: Tokens.spacing.small
             clip: true
 
@@ -136,6 +149,17 @@ ColumnLayout {
                 Anim {
                     property: "y"
                 }
+            }
+        }
+
+        Loader {
+            z: 2
+            anchors.fill: parent
+            active: root.gameActive
+            visible: active
+            sourceComponent: DinoGame {
+                dinoSource: Paths.absolutePath(Config.paths.lockNoNotifsPic)
+                onExit: root.gameActive = false
             }
         }
     }
