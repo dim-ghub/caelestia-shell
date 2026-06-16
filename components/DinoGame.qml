@@ -131,10 +131,10 @@ Item {
             w = 46
             h = 40
             let heightLevel = Math.floor(Math.random() * 3)
-            // Different pterodactyl heights (Dino stands at 42px tall)
-            if (heightLevel === 0) objY = ground.y - 42 - 15 // high (run under safely)
-            else if (heightLevel === 1) objY = ground.y - 42 + 5 // middle (must duck under)
-            else objY = ground.y - 42 + 25 // low (must jump over)
+            // Different pterodactyl heights (Dino stands at 42px tall, bird is 40px tall)
+            if (heightLevel === 0) objY = ground.y - 85 // high (above head, run safely under)
+            else if (heightLevel === 1) objY = ground.y - 65 // middle (upper half, must duck under)
+            else objY = ground.y - 40 // low (at feet, must jump over)
         }
 
         activeObstacles.push({
