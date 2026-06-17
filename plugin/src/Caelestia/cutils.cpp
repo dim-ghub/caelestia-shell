@@ -172,7 +172,7 @@ QString CUtils::qtVersion() const {
 }
 
 bool CUtils::isSystemd() const {
-    return !QStandardPaths::findExecutable(QStringLiteral("systemctl")).isEmpty();
+    return QFile::exists(QStringLiteral("/usr/bin/systemctl")) || QFile::exists(QStringLiteral("/bin/systemctl"));
 }
 
 } // namespace caelestia

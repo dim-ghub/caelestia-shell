@@ -14,11 +14,16 @@
 
 https://github.com/user-attachments/assets/0840f496-575c-4ca6-83a8-87bb01a85c5f
 
-## Components
+## Fork Features
 
--   Widgets: [`Quickshell`](https://quickshell.outfoxxed.me)
--   Window manager: [`Hyprland`](https://hyprland.org)
--   Dots: [`caelestia`](https://github.com/caelestia-dots)
+This fork adds the following features on top of the official shell:
+
+- **Launchers**: Emoji Picker, Clipboard History, Window Switcher, and Hyprland Keybinds.
+- **Wallpapers**: GIF/video support with auto-pause, plus Wallhaven integration.
+- **Games**: Playable Chrome Dino runner embedded in the notification dock.
+- **Dashboard**: Developer console terminal tab with history and autocomplete.
+- **Bar**: MacOS-style app dock, Material workspace icons, and DND toggle.
+- **Desktop**: Floating lyrics, Shimeji pets, dynamic wallpaper recoloring, and Bezel Mode.
 
 ## Installation
 
@@ -120,16 +125,11 @@ cd caelestia
 > [!TIP]
 > By default, the script will use the latest version tag from [upstream](https://github.com/caelestia-dots/shell) to set the version number for the build. It does not download anything from upstream - it builds your local fork. You can also specify a version manually: `./install.sh 2.0.2`
 
-## Fork Features
+## Components
 
-This fork adds the following features on top of the official caelestia shell:
-
-- **Enhanced Launchers**: Emoji Picker, Clipboard History, Window Switcher, and Hyprland Keybinds (with favorites support).
-- **Dynamic Wallpapers**: Support for GIF and video wallpapers with auto-pause, plus Wallhaven integration to search and download directly.
-- **Interactive Dino Game**: A fully playable Chrome Dino runner game embedded in the empty notification docks.
-- **Developer Console**: A premium terminal tab in the dashboard featuring inline ghost autocomplete, history, and a dedicated global shortcut.
-- **Bar Improvements**: A MacOS-style application dock in the taskbar, Material Design workspace icons, and a dedicated notification status icon with DND toggle.
-- **Desktop Enhancements**: Customizable floating desktop lyrics, animated Shimeji characters, and Bezel Mode for a seamless display look.
+-   Widgets: [`Quickshell`](https://quickshell.outfoxxed.me)
+-   Window manager: [`Hyprland`](https://hyprland.org)
+-   Dots: [`caelestia`](https://github.com/caelestia-dots)
 
 ## Global Shortcuts
 
