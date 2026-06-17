@@ -168,10 +168,14 @@ Item {
         opacity: 0
         scale: Wallpapers.showPreview ? 1 : 0.8
 
-        layer.enabled: Config.background.wallpaperRecolor && Colours.scheme !== "dynamic"
+        readonly property bool isDynamicScheme: Colours.scheme.startsWith("dynamic")
+        readonly property bool isDynamicMonochrome: isDynamicScheme && Colours.variant === "monochrome"
+        layer.enabled: Config.background.wallpaperRecolor && (!isDynamicScheme || isDynamicMonochrome)
         layer.effect: MultiEffect {
-            colorization: 0.65
+            saturation: isDynamicMonochrome ? -1 : 0
+            colorization: isDynamicMonochrome ? 0 : 0.65
             colorizationColor: Colours.palette.m3primary
+            contrast: Colours.flavour === "hard" ? 0.45 : 0.0
 
             Behavior on colorizationColor {
                 CAnim {}
