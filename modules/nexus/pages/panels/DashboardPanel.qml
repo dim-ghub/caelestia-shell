@@ -250,6 +250,14 @@ PageBase {
 
         ToggleRow {
             Layout.fillWidth: true
+            text: qsTr("Sync with music")
+            subtext: qsTr("Randomly pick shapes to the beat instead of bass level")
+            checked: Config.dashboard.syncMediaShapesToBeat
+            onToggled: GlobalConfig.dashboard.syncMediaShapesToBeat = checked
+        }
+
+        ToggleRow {
+            Layout.fillWidth: true
             last: true
             text: qsTr("Hyprland splash")
             subtext: qsTr("Show the current Hyprland splash text")

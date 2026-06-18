@@ -48,20 +48,20 @@ Item {
 
         function morph() {
             if (Config.dashboard.useMediaShapes && root.visible) {
-                let bassValue = 0;
-                if (Audio.cava && Audio.cava.values && Audio.cava.values.length > 2) {
-                    // Average the first few bands (bass layer) to get a stable magnitude
-                    bassValue = (Audio.cava.values[0] + Audio.cava.values[1] + Audio.cava.values[2]) / 3.0;
+                if (Config.dashboard.syncMediaShapesToBeat) {
+                    materialShape.shape = root.shapeTiers[Math.floor(Math.random() * root.shapeTiers.length)];
+                } else {
+                    let bassValue = 0;
+                    if (Audio.cava && Audio.cava.values && Audio.cava.values.length > 2) {
+                        bassValue = (Audio.cava.values[0] + Audio.cava.values[1] + Audio.cava.values[2]) / 3.0;
+                    }
+                    bassValue = Math.min(1.0, bassValue * 1.3); 
+                    let tier = Math.floor(bassValue * root.shapeTiers.length);
+                    if (tier >= root.shapeTiers.length) tier = root.shapeTiers.length - 1;
+                    if (tier < 0) tier = 0;
+                    materialShape.shape = root.shapeTiers[tier];
                 }
                 
-                // Amplify the signal slightly so it confidently reaches the top tiers on strong beats
-                bassValue = Math.min(1.0, bassValue * 1.3); 
-                
-                let tier = Math.floor(bassValue * root.shapeTiers.length);
-                if (tier >= root.shapeTiers.length) tier = root.shapeTiers.length - 1;
-                if (tier < 0) tier = 0;
-                
-                materialShape.shape = root.shapeTiers[tier];
                 if (Config.dashboard.randomizeMediaShapeColors) {
                     materialShape.color = root.colorPool[Math.floor(Math.random() * root.colorPool.length)];
                 } else {
@@ -72,10 +72,12 @@ Item {
             }
         }
 
+        property real speedMultiplier: Config.dashboard.syncMediaShapesToBeat ? (Config.general.mediaGifSpeedAdjustment / 300) : 1.0
+
         Timer {
             running: root.visible && Config.dashboard.useMediaShapes && (Players.active?.isPlaying ?? false)
             repeat: true
-            interval: 60000 / Math.max(1, Audio.beatTracker.bpm > 0 ? Audio.beatTracker.bpm : 120)
+            interval: (60000 / Math.max(1, Audio.beatTracker.bpm > 0 ? Audio.beatTracker.bpm : 120)) * materialShape.speedMultiplier
             onTriggered: materialShape.morph()
         }
         
@@ -87,14 +89,14 @@ Item {
         }
         
         Behavior on rotation {
-            NumberAnimation { duration: 250; easing.type: Easing.OutElastic }
+            NumberAnimation { duration: 250 * materialShape.speedMultiplier; easing.type: Easing.OutElastic }
         }
 
         SequentialAnimation on scale {
             id: beatAnim
             running: false
-            NumberAnimation { to: 1.15; duration: 80; easing.type: Easing.OutQuad }
-            NumberAnimation { to: 1.0; duration: 170; easing.type: Easing.InOutQuad }
+            NumberAnimation { to: 1.15; duration: 80 * materialShape.speedMultiplier; easing.type: Easing.OutQuad }
+            NumberAnimation { to: 1.0; duration: 170 * materialShape.speedMultiplier; easing.type: Easing.InOutQuad }
         }
     }
 }
