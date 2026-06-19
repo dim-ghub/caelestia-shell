@@ -111,7 +111,6 @@ PageBase {
         }
 
         StepperRow {
-            last: true
             label: qsTr("Visible toasts")
             subtext: qsTr("Maximum number of toasts shown at once")
             value: GlobalConfig.utilities.maxToasts
@@ -119,6 +118,22 @@ PageBase {
             to: 10
             stepSize: 1
             onMoved: v => GlobalConfig.utilities.maxToasts = Math.round(v)
+        }
+
+        ToggleRow {
+            text: qsTr("Toast transparency")
+            subtext: qsTr("Apply transparency and blur to toast notifications")
+            checked: GlobalConfig.utilities.toasts.transparency
+            onToggled: GlobalConfig.utilities.toasts.transparency = checked
+        }
+
+        SliderRow {
+            last: true
+            label: qsTr("Base transparency")
+            valueLabel: Math.round(value * 100) + "%"
+            value: GlobalConfig.utilities.toasts.transparencyBase
+            enabled: GlobalConfig.utilities.toasts.transparency
+            onMoved: v => GlobalConfig.utilities.toasts.transparencyBase = v
         }
 
         // Toast events

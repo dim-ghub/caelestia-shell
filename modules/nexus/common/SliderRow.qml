@@ -33,6 +33,7 @@ ConnectedRect {
         MaterialIcon {
             id: icon
 
+            visible: text !== ""
             color: Colours.palette.m3onSurfaceVariant
             fontStyle: Tokens.font.icon.medium
         }
