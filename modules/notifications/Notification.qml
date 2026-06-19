@@ -435,7 +435,7 @@ StyledRect {
                     if (!root.expanded)
                         return;
 
-                    const cmd = CUtils.isSystemd ? ["app2unit", "-O", "--", link] : ["xdg-open", link];
+                    const cmd = GlobalConfig.services.useSystemd ? ["app2unit", "-O", "--", link] : ["xdg-open", link];
                     Quickshell.execDetached(cmd);
                     root.modelData.popup = false;
                 }

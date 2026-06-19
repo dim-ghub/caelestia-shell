@@ -142,7 +142,7 @@ StyledRect {
             wrapMode: Text.WordWrap
 
             onLinkActivated: link => {
-                const cmd = CUtils.isSystemd ? ["app2unit", "-O", "--", link] : ["xdg-open", link];
+                const cmd = GlobalConfig.services.useSystemd ? ["app2unit", "-O", "--", link] : ["xdg-open", link];
                 Quickshell.execDetached(cmd);
                 root.visibilities.sidebar = false;
             }

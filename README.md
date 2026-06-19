@@ -73,11 +73,11 @@ cd $XDG_CONFIG_HOME/quickshell
 git clone https://github.com/dim-ghub/caelestia-shell.git caelestia
 
 cd caelestia
-./install.sh
+./scripts/install.sh
 ```
 
 > [!TIP]
-> By default, the script will use the latest version tag from [upstream](https://github.com/caelestia-dots/shell) to set the version number for the build. It does not download anything from upstream - it builds your local fork. You can also specify a version manually: `./install.sh 2.0.2`
+> By default, the script will use the latest version tag from [upstream](https://github.com/caelestia-dots/shell) to set the version number for the build. It does not download anything from upstream - it builds your local fork. You can also specify a version manually: `./scripts/install.sh 2.0.2`
 
 ### Nix
 
@@ -286,7 +286,7 @@ If installed manually, pull the latest changes and re-run the install script:
 ```sh
 cd $XDG_CONFIG_HOME/quickshell/caelestia
 git pull
-./install.sh
+./scripts/install.sh
 ```
 
 ## Configuring

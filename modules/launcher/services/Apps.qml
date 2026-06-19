@@ -16,7 +16,7 @@ Searcher {
             : entry.command;
 
         Quickshell.execDetached({
-            command: CUtils.isSystemd ? ["app2unit", "--", ...subCmd] : subCmd,
+            command: GlobalConfig.services.useSystemd ? ["app2unit", "--", ...subCmd] : subCmd,
             workingDirectory: entry.workingDirectory
         });
     }

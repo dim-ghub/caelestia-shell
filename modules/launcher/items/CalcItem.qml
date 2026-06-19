@@ -79,7 +79,7 @@ Item {
 
                 onClicked: {
                     const subCmd = [...GlobalConfig.general.apps.terminal, "fish", "-C", `exec qalc -i '${root.math}'`];
-                    const finalCmd = CUtils.isSystemd ? ["app2unit", "--", ...subCmd] : subCmd;
+                    const finalCmd = GlobalConfig.services.useSystemd ? ["app2unit", "--", ...subCmd] : subCmd;
                     Quickshell.execDetached(finalCmd);
                     root.list.visibilities.launcher = false;
                 }

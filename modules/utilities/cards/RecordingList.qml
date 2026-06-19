@@ -106,7 +106,7 @@ ColumnLayout {
                     root.visibilities.utilities = false;
                     root.visibilities.sidebar = false;
                     const subCmd = [...GlobalConfig.general.apps.playback, recording.modelData.path];
-                    const finalCmd = CUtils.isSystemd ? ["app2unit", "--", ...subCmd] : subCmd;
+                    const finalCmd = GlobalConfig.services.useSystemd ? ["app2unit", "--", ...subCmd] : subCmd;
                     Quickshell.execDetached(finalCmd);
                 }
             }
@@ -118,7 +118,7 @@ ColumnLayout {
                     root.visibilities.utilities = false;
                     root.visibilities.sidebar = false;
                     const subCmd = [...GlobalConfig.general.apps.explorer, recording.modelData.path];
-                    const finalCmd = CUtils.isSystemd ? ["app2unit", "--", ...subCmd] : subCmd;
+                    const finalCmd = GlobalConfig.services.useSystemd ? ["app2unit", "--", ...subCmd] : subCmd;
                     Quickshell.execDetached(finalCmd);
                 }
             }

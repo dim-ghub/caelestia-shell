@@ -14,12 +14,8 @@ class CUtils : public QObject {
     Q_PROPERTY(QString version READ version CONSTANT)
     Q_PROPERTY(QString qtVersion READ qtVersion CONSTANT)
 
-    Q_PROPERTY(bool isSystemd READ isSystemd CONSTANT)
-
 public:
     // clang-format off
-    [[nodiscard]] bool isSystemd() const;
-
     Q_INVOKABLE void saveItem(QQuickItem* target, const QUrl& path);
     Q_INVOKABLE void saveItem(QQuickItem* target, const QUrl& path, const QRect& rect);
     Q_INVOKABLE void saveItem(QQuickItem* target, const QUrl& path, QJSValue onSaved);

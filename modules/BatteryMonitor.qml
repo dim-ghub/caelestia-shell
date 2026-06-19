@@ -54,6 +54,6 @@ Scope {
         id: hibernateTimer
 
         interval: 5000
-        onTriggered: Quickshell.execDetached([CUtils.isSystemd ? "systemctl" : "loginctl", "hibernate"])
+        onTriggered: Quickshell.execDetached([GlobalConfig.services.useSystemd ? "systemctl" : "loginctl", "hibernate"])
     }
 }
