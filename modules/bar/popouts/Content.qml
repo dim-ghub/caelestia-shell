@@ -112,6 +112,19 @@ Item {
         }
 
         Popout {
+            name: "peripheralBattery"
+            sourceComponent: PeripheralBattery {
+            }
+        }
+
+        Popout {
+            name: "github"
+            sourceComponent: Github {
+                popouts: root.popouts
+            }
+        }
+
+        Popout {
             name: "audio"
             sourceComponent: Audio {
                 popouts: root.popouts

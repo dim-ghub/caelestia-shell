@@ -132,11 +132,18 @@ PageBase {
         }
 
         NavRow {
-            last: true
             icon: "schedule"
             label: qsTr("Clock")
             status: qsTr("Date, icon, background")
             onClicked: root.nState.openSubPage(9)
+        }
+
+        NavRow {
+            last: true
+            icon: "code"
+            label: qsTr("GitHub")
+            status: qsTr("Contributions, token setup")
+            onClicked: root.nState.openSubPage(11)
         }
 
         // Scroll actions

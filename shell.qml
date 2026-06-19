@@ -5,10 +5,12 @@ pragma ComponentBehavior: Bound
 //@ pragma DefaultEnv QS_DROP_EXPENSIVE_FONTS=1
 //@ pragma DefaultEnv QT_QUICK_FLICKABLE_WHEEL_DECELERATION=10000
 
+import QtQml
 import Quickshell
 import Caelestia.Config
 import qs.components.containers
 import qs.utils
+import qs.services
 import "modules"
 import "modules/drawers"
 import "modules/background"
@@ -41,6 +43,10 @@ ShellRoot {
 
     ConfigToasts {}
     Shortcuts {}
+
+    Component.onCompleted: {
+        Weather.reload();
+    }
     BatteryMonitor {}
     IdleMonitors {
         lock: lock

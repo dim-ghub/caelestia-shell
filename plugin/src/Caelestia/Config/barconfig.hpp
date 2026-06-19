@@ -105,6 +105,8 @@ class BarStatus : public ConfigObject {
     CONFIG_PROPERTY(bool, showWifi, true)
     CONFIG_PROPERTY(bool, showBluetooth, true)
     CONFIG_PROPERTY(bool, showBattery, true)
+    CONFIG_PROPERTY(bool, showPeripheralBattery, false)
+    CONFIG_PROPERTY(QStringList, peripheralBatteryExcluded)
     CONFIG_PROPERTY(bool, showLockStatus, true)
     CONFIG_PROPERTY(bool, showNotifications, true)
 
@@ -138,6 +140,18 @@ public:
         : ConfigObject(parent) {}
 };
 
+class BarGithub : public ConfigObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    CONFIG_PROPERTY(bool, background, false)
+    CONFIG_PROPERTY(QString, token, u""_s)
+
+public:
+    explicit BarGithub(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
 class BarConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
@@ -154,10 +168,12 @@ class BarConfig : public ConfigObject {
     CONFIG_SUBOBJECT(BarStatus, status)
     CONFIG_SUBOBJECT(BarClock, clock)
     CONFIG_SUBOBJECT(BarDock, dock)
+    CONFIG_SUBOBJECT(BarGithub, github)
     CONFIG_PROPERTY(QVariantList, entries,
         {
             vmap({ { u"id"_s, u"logo"_s }, { u"enabled"_s, true } }),
             vmap({ { u"id"_s, u"workspaces"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"github"_s }, { u"enabled"_s, true } }),
             vmap({ { u"id"_s, u"spacer"_s }, { u"enabled"_s, true } }),
             vmap({ { u"id"_s, u"activeWindow"_s }, { u"enabled"_s, true } }),
             vmap({ { u"id"_s, u"spacer"_s }, { u"enabled"_s, true } }),
@@ -178,7 +194,8 @@ public:
         , m_tray(new BarTray(this))
         , m_status(new BarStatus(this))
         , m_clock(new BarClock(this))
-        , m_dock(new BarDock(this)) {}
+        , m_dock(new BarDock(this))
+        , m_github(new BarGithub(this)) {}
 };
 
 } // namespace caelestia::config

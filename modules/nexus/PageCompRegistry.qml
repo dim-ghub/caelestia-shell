@@ -121,6 +121,9 @@ QtObject {
                 Component {
                     BarDock {}
                 }
+                Component {
+                    BarGithub {}
+                }
             }
         },
         Component {

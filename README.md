@@ -661,6 +661,10 @@ For example, to disable the bar on DP-1:
             },
             {
                 "enabled": true,
+                "id": "github"
+            },
+            {
+                "enabled": true,
                 "id": "spacer"
             },
             {
@@ -689,6 +693,10 @@ For example, to disable the bar on DP-1:
             }
         ],
         "excludedScreens": [],
+        "github": {
+            "background": false,
+            "token": ""
+        },
         "persistent": true,
         "popouts": {
             "activeWindow": true,
@@ -711,6 +719,8 @@ For example, to disable the bar on DP-1:
             "showMicrophone": false,
             "showNetwork": true,
             "showNotifications": true,
+            "showPeripheralBattery": true,
+            "peripheralBatteryExcluded": [],
             "showWifi": true
         },
         "tray": {

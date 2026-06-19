@@ -21,18 +21,19 @@ Item {
     required property bool sourceMuted
     required property real brightness
 
-    implicitWidth: layout.implicitWidth + Tokens.padding.large + layout.anchors.horizontalCenterOffset * 2
+    implicitWidth: layout.implicitWidth + Tokens.padding.large * 2
     implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
 
     ColumnLayout {
         id: layout
 
         anchors.centerIn: parent
-        anchors.horizontalCenterOffset: CUtils.clamp(Tokens.padding.large - Config.border.thickness, 0, Tokens.padding.large) / 2
         spacing: Tokens.spacing.medium
 
         // Speaker volume
         CustomMouseArea {
+            Layout.alignment: Qt.AlignHCenter
+
             function onWheel(event: WheelEvent) {
                 if (event.angleDelta.y > 0)
                     Audio.incrementVolume();
@@ -55,7 +56,10 @@ Item {
 
         // Microphone volume
         WrappedLoader {
+            Layout.alignment: Qt.AlignHCenter
             shouldBeActive: Config.osd.enableMicrophone && (!Config.osd.enableBrightness || !root.visibilities.session)
+            targetWidth: Tokens.sizes.osd.sliderWidth
+            targetHeight: Tokens.sizes.osd.sliderHeight
 
             sourceComponent: CustomMouseArea {
                 function onWheel(event: WheelEvent) {
@@ -81,7 +85,10 @@ Item {
 
         // Brightness
         WrappedLoader {
+            Layout.alignment: Qt.AlignHCenter
             shouldBeActive: Config.osd.enableBrightness
+            targetWidth: Tokens.sizes.osd.sliderWidth
+            targetHeight: Tokens.sizes.osd.sliderHeight
 
             sourceComponent: CustomMouseArea {
                 function onWheel(event: WheelEvent) {
@@ -100,9 +107,11 @@ Item {
                 FilledSlider {
                     anchors.fill: parent
 
-                    icon: `brightness_${(Math.round(value * 6) + 1)}`
+                    icon: HyprSunset.active ? "bedtime" : `brightness_${(Math.round(value * 6) + 1)}`
                     value: root.brightness
                     onMoved: root.monitor?.setBrightness(value)
+                    enableIconTap: true
+                    onIconTapped: HyprSunset.toggle(5000)
                 }
             }
         }
@@ -110,12 +119,21 @@ Item {
 
     component WrappedLoader: Loader {
         required property bool shouldBeActive
+        property real targetWidth: 0
+        property real targetHeight: 0
 
         asynchronous: true
-        Layout.preferredHeight: shouldBeActive ? Tokens.sizes.osd.sliderHeight : 0
+        Layout.preferredWidth: shouldBeActive ? targetWidth : 0
+        Layout.preferredHeight: shouldBeActive ? targetHeight : 0
         opacity: shouldBeActive ? 1 : 0
         active: opacity > 0
         visible: active
+
+        Behavior on Layout.preferredWidth {
+            Anim {
+                type: Anim.Emphasized
+            }
+        }
 
         Behavior on Layout.preferredHeight {
             Anim {

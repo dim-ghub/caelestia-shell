@@ -37,6 +37,7 @@ PageBase {
                     { "id": "dock", "enabled": false },
                     { "id": "spacer", "enabled": true },
                     { "id": "tray", "enabled": true },
+                    { "id": "github", "enabled": true },
                     { "id": "clock", "enabled": true },
                     { "id": "statusIcons", "enabled": true },
                     { "id": "power", "enabled": true }

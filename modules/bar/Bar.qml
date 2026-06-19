@@ -215,6 +215,15 @@ GridLayout {
                 }
             }
             DelegateChoice {
+                roleValue: "github"
+                delegate: WrappedLoader {
+                    visible: enabled && !root.fullscreen && GithubStore.available
+                    sourceComponent: GithubActivity {
+                        popouts: root.popouts
+                    }
+                }
+            }
+            DelegateChoice {
                 roleValue: "power"
                 delegate: WrappedLoader {
                     sourceComponent: Power {

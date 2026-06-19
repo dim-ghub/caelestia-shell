@@ -47,7 +47,7 @@ Item {
                 component: terminalComponent,
                 iconName: "terminal",
                 text: qsTr("Terminal"),
-                enabled: Config.dashboard.showTerminal
+                enabled: true
             }
         ];
         return allTabs.filter(tab => tab.enabled);

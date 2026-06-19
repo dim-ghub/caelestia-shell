@@ -74,6 +74,13 @@ PageBase {
 
         ToggleRow {
             Layout.fillWidth: true
+            text: qsTr("Peripheral Battery")
+            checked: Config.bar.status.showPeripheralBattery
+            onToggled: GlobalConfig.bar.status.showPeripheralBattery = checked
+        }
+
+        ToggleRow {
+            Layout.fillWidth: true
             last: true
             text: qsTr("Caps lock")
             checked: Config.bar.status.showLockStatus

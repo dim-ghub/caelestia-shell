@@ -304,6 +304,60 @@ StyledRect {
             }
         }
 
+        // Peripheral battery icons
+        WrappedLoader {
+            Layout.preferredWidth: isHorizontal ? implicitWidth : -1
+            Layout.preferredHeight: isHorizontal ? -1 : implicitHeight
+
+            name: "peripheralBattery"
+            active: Config.bar.status.showPeripheralBattery
+
+            sourceComponent: GridLayout {
+                id: peripheralColumn
+
+                readonly property var excluded: Config.bar.status.peripheralBatteryExcluded
+
+                columns: isHorizontal ? -1 : 1
+                rows: isHorizontal ? 1 : -1
+                flow: isHorizontal ? GridLayout.LeftToRight : GridLayout.TopToBottom
+                columnSpacing: Tokens.spacing.medium / 2
+                rowSpacing: Tokens.spacing.medium / 2
+
+                Repeater {
+                    model: ScriptModel {
+                        values: UPower.devices.values.filter(d => !d.isLaptopBattery && d.type !== UPowerDeviceType.LinePower && d.isPresent && !peripheralColumn.excluded.some(e => e === d.model || e === d.nativePath)) // qmllint disable unresolved-type
+                    }
+
+                    MaterialIcon {
+                        required property UPowerDevice modelData
+
+                        animate: true
+                        text: {
+                            if (modelData.state === UPowerDeviceState.Charging || modelData.state === UPowerDeviceState.PendingCharge)
+                                return "battery_charging_full";
+                            if (modelData.state === UPowerDeviceState.FullyCharged)
+                                return "battery_full";
+                            return Icons.getBatteryIcon(modelData.percentage, false);
+                        }
+                        color: modelData.percentage > 0.2 ? root.colour : Colours.palette.m3error
+                        fill: 1
+                    }
+                }
+            }
+
+            Behavior on Layout.preferredHeight {
+                enabled: !isHorizontal
+
+                Anim {}
+            }
+
+            Behavior on Layout.preferredWidth {
+                enabled: isHorizontal
+
+                Anim {}
+            }
+        }
+
         // Notifications icon
         WrappedLoader {
             name: "notifications"
