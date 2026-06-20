@@ -22,7 +22,7 @@ This fork adds the following features on top of the official shell:
 - **Wallpapers**: GIF/video support with auto-pause, plus Wallhaven integration.
 - **Games**: Playable Chrome Dino runner embedded in the notification dock.
 - **Dashboard**: Developer console terminal tab with history and autocomplete.
-- **Bar**: MacOS-style app dock, Material workspace icons, and DND toggle.
+- **Bar**: MacOS-style app dock, Material workspace icons, DND toggle, and a live drag-and-drop components editor.
 - **Desktop**: Floating lyrics, Shimeji pets, dynamic wallpaper recoloring, and Bezel Mode.
 
 ## Installation
