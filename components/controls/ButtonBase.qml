@@ -58,7 +58,7 @@ StyledRect {
         if (internalChecked)
             return checkedRadius;
         if (isRound)
-            return (height || implicitHeight) / 2 * Math.min(1, Tokens.rounding.scale);
+            return (implicitHeight || height) / 2 * Math.min(1, Tokens.rounding.scale);
         return defaultRadius;
     }
     color: type === ButtonBase.Text ? "transparent" : disabled ? disabledColour : internalChecked ? activeColour : inactiveColour
