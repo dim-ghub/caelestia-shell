@@ -94,24 +94,37 @@ public:
         : ConfigObject(parent) {}
 };
 
+class LogoConfig : public ConfigObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    CONFIG_GLOBAL_PROPERTY(QString, path, u""_s)
+    CONFIG_GLOBAL_PROPERTY(int, size, 32)
+
+public:
+    explicit LogoConfig(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
 class GeneralConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_GLOBAL_PROPERTY(QString, logo)
     CONFIG_PROPERTY(bool, showOverFullscreen, false)
     CONFIG_PROPERTY(qreal, mediaGifSpeedAdjustment, 300)
     CONFIG_PROPERTY(qreal, sessionGifSpeed, 0.7)
     CONFIG_SUBOBJECT(GeneralApps, apps)
     CONFIG_SUBOBJECT(GeneralIdle, idle)
     CONFIG_SUBOBJECT(GeneralBattery, battery)
+    CONFIG_SUBOBJECT(LogoConfig, logo)
 
 public:
     explicit GeneralConfig(QObject* parent = nullptr)
         : ConfigObject(parent)
         , m_apps(new GeneralApps(this))
         , m_idle(new GeneralIdle(this))
-        , m_battery(new GeneralBattery(this)) {}
+        , m_battery(new GeneralBattery(this))
+        , m_logo(new LogoConfig(this)) {}
 };
 
 } // namespace caelestia::config

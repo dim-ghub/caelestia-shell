@@ -58,11 +58,11 @@ Singleton {
             root.osIdLike = fd("ID_LIKE").split(" ");
 
             const logo = Quickshell.iconPath(fd("LOGO"), true);
-            if (GlobalConfig.general.logo === "caelestia") {
+            if (GlobalConfig.general.logo.path === "caelestia") {
                 root.osLogo = Qt.resolvedUrl(`${Quickshell.shellDir}/assets/logo.svg`);
                 root.isDefaultLogo = true;
-            } else if (GlobalConfig.general.logo) {
-                root.osLogo = Quickshell.iconPath(GlobalConfig.general.logo, true) || "file://" + Paths.absolutePath(GlobalConfig.general.logo);
+            } else if (GlobalConfig.general.logo.path) {
+                root.osLogo = Quickshell.iconPath(GlobalConfig.general.logo.path, true) || "file://" + Paths.absolutePath(GlobalConfig.general.logo.path);
                 root.isDefaultLogo = false;
             } else if (logo) {
                 root.osLogo = logo;
