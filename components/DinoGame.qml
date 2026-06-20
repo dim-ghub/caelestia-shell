@@ -268,13 +268,13 @@ Item {
             if (spawnTimer >= nextSpawnTime) {
                 spawnObstacle()
                 spawnTimer = 0
-                // Make obstacles spawn faster as game speed increases
+                // Match real dino game gaps by ensuring a minimum time to jump (0.6s jump duration)
                 let speedRatio = initialSpeed / gameSpeed
-                nextSpawnTime = (0.8 + Math.random() * 1.2) * speedRatio
+                nextSpawnTime = Math.max(0.7, (0.9 + Math.random() * 1.5) * speedRatio)
             }
 
             if (gameSpeed < maxSpeed) {
-                gameSpeed += 15 * dt // 3x faster acceleration
+                gameSpeed += 5 * dt
             }
 
             scoreTimer += dt
