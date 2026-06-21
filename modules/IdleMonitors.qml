@@ -6,12 +6,13 @@ import Quickshell.Wayland
 import Caelestia.Config
 import Caelestia.Internal
 import qs.services
+import "background"
 
 Scope {
     id: root
 
     required property Lock lock
-    readonly property bool enabled: !GlobalConfig.general.idle.inhibitWhenAudio || !Players.list.some(p => p.isPlaying)
+    readonly property bool enabled: (!GlobalConfig.general.idle.inhibitWhenAudio || !Players.list.some(p => p.isPlaying)) && !BadApplePlayer.shouldPlay
 
     function handleIdleAction(action: var): void {
         if (!action)
