@@ -6,6 +6,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import qs.components.misc
 import qs.services
+import Caelestia.Config
 
 Scope {
     property alias lock: lock
@@ -81,5 +82,11 @@ Scope {
         }
 
         target: "lock"
+    }
+
+    Component.onCompleted: {
+        if (GlobalConfig.lock.lockOnStartup) {
+            lock.locked = true;
+        }
     }
 }
