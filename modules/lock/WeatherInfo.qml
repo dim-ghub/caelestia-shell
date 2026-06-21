@@ -8,7 +8,8 @@ StyledRect {
     id: root
 
     required property int rootHeight
-    readonly property bool showForecast: rootHeight >= Tokens.sizes.lock.showForecastHeight
+    property bool isPortrait: false
+    readonly property bool showForecast: isPortrait || rootHeight >= Tokens.sizes.lock.showForecastHeight
 
     implicitHeight: {
         const base = brief.implicitHeight + brief.anchors.topMargin;
@@ -16,7 +17,7 @@ StyledRect {
             return base + Tokens.spacing.largeIncreased + forecast.implicitHeight + forecast.anchors.margins;
         return base + brief.anchors.topMargin;
     }
-    radius: Tokens.rounding.extraExtraLarge
+    radius: Tokens.rounding.extraLarge
     color: Colours.tPalette.m3surfaceContainer
 
     Timer {
@@ -48,6 +49,16 @@ StyledRect {
         active: root.showForecast
         asynchronous: true
 
-        sourceComponent: Forecast {}
+        sourceComponent: root.isPortrait ? dailyForecastComp : hourlyForecastComp
+
+        Component {
+            id: hourlyForecastComp
+            Forecast {}
+        }
+
+        Component {
+            id: dailyForecastComp
+            DailyForecast {}
+        }
     }
 }
