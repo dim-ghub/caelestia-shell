@@ -39,7 +39,9 @@ MouseArea {
     parent: {
         const win = QsWindow.window;
         const contentWin = win as ContentWindow; // If inside the drawer content window, put it inside the interaction wrapper so hover works
-        return contentWin ? contentWin.interactionWrapper : (win as QsWindow).contentItem;
+        if (contentWin) return contentWin.interactionWrapper;
+        if (win && win.contentItem) return win.contentItem;
+        return root.parent;
     }
     anchors.fill: parent
 

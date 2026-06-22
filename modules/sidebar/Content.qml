@@ -202,6 +202,8 @@ Item {
                         
                         Behavior on x { Anim { type: Anim.DefaultSpatial } }
                         Behavior on opacity { Anim { type: Anim.DefaultSpatial } }
+
+                        onAssistantPoppedOut: root.visibilities.sidebar = false
                     }
 
                     News {

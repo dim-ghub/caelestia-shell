@@ -13,6 +13,7 @@ import qs.services
 import qs.utils
 import Quickshell
 import M3Shapes
+import Caelestia.Blobs
 
 Item {
     id: root
@@ -22,6 +23,10 @@ Item {
 
     property bool isHistoryTab: false
     property string currentChatId: ""
+    
+    property bool isPoppedOut: false
+    signal windowCloseRequested()
+    signal assistantPoppedOut()
 
     Timer {
         id: typingTimer
@@ -58,11 +63,10 @@ Item {
         }
     }
     
-    Timer {
-        interval: 10000
-        repeat: true
-        running: true
-        onTriggered: fetchOllamaModels()
+    onVisibleChanged: {
+        if (visible) {
+            fetchOllamaModels();
+        }
     }
 
     function startTypingAnimation(text) {
@@ -505,7 +509,7 @@ Item {
                                     var toolName = tool.name;
                                     var args = tool.arguments;
                                     
-                                    if (toolName === "take_screenshot" || toolName === "web_search" || toolName === "read_webpage" || toolName === "open_app" || toolName === "get_weather") {
+                                    if (toolName === "take_screenshot" || toolName === "web_search" || toolName === "read_webpage" || toolName === "open_app" || toolName === "get_weather" || toolName === "caelestia_command") {
                                         runningToolsCount++;
                                     }
                                     
@@ -538,6 +542,13 @@ Item {
                                         currentActionText = "Checking weather...";
                                         var loc = args.location;
                                         runAgentCommand('curl -s "wttr.in/' + loc.replace(new RegExp("\"", "g"), '\"') + '?0T"', "exec_" + toolName);
+                                    } else if (toolName === "caelestia_command") {
+                                        currentActionText = "Running caelestia...";
+                                        var subcmd = args.subcommand || "";
+                                        var subargs = args.args || "";
+                                        var cmd = "caelestia " + subcmd;
+                                        if (subargs) cmd += " " + subargs;
+                                        runAgentCommand(cmd, "exec_" + toolName);
                                     }
                                 }
                                 
@@ -696,6 +707,21 @@ Item {
                             "required": ["location"]
                         }
                     }
+                },
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "caelestia_command",
+                        "description": "Execute a caelestia CLI command to manage the system. Valid subcommands: shell, toggle, scheme, search, screenshot, record, clipboard, emoji, wallpaper, resizer, install, update.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "subcommand": { "type": "string", "description": "The subcommand to run (e.g., scheme, wallpaper, toggle, record)" },
+                                "args": { "type": "string", "description": "Additional arguments to pass to the subcommand" }
+                            },
+                            "required": ["subcommand"]
+                        }
+                    }
                 }
             ];
         }
@@ -703,10 +729,67 @@ Item {
         xhr.send(JSON.stringify(requestBody));
     }
 
+    BlobGroup {
+        id: blobGroup
+        smoothing: Tokens.rounding.medium
+        color: Colours.tPalette.m3surface
+    }
+
+    BlobInvertedRect {
+        anchors.fill: parent
+        group: blobGroup
+        opacity: Colours.tPalette.m3surface.a
+        radius: Tokens.rounding.large
+
+        borderLeft: isPoppedOut ? Tokens.padding.medium : 0
+        borderRight: isPoppedOut ? Tokens.padding.medium : 0
+        borderTop: isPoppedOut ? Tokens.padding.medium : 0
+        borderBottom: isPoppedOut ? Tokens.padding.medium : 0
+        
+        visible: isPoppedOut
+    }
+
+    BlobRect {
+        id: popoutBtnBlob
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.margins: 0
+        
+        group: blobGroup
+        visible: isPoppedOut
+        opacity: Colours.tPalette.m3surface.a
+        radius: Tokens.rounding.medium
+
+        implicitWidth: popoutBtn.implicitWidth + Tokens.padding.extraSmall * 2
+        implicitHeight: popoutBtn.implicitHeight + Tokens.padding.extraSmall * 2
+    }
+
+    IconButton {
+        id: popoutBtn
+        anchors.centerIn: popoutBtnBlob
+        visible: isPoppedOut
+        icon: "close"
+        type: IconButton.Text
+        label.fill: 0
+        inactiveOnColour: hovered ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
+        stateLayer.opacity: 0
+
+        onClicked: {
+            root.windowCloseRequested();
+        }
+
+        label.scale: pressed ? 0.8 : 1
+        label.renderType: Text.QtRendering
+
+        Behavior on label.scale {
+            Anim {}
+        }
+    }
+
     Item {
         id: mainWrapper
         anchors.fill: parent
-        anchors.margins: Tokens.padding.medium
+        anchors.margins: isPoppedOut ? Tokens.padding.medium * 2 : Tokens.padding.medium
 
          // Mode Switcher Row (Chat / History)
          RowLayout {
@@ -714,6 +797,7 @@ Item {
              anchors.top: parent.top
              anchors.left: parent.left
              anchors.right: parent.right
+             anchors.rightMargin: isPoppedOut ? popoutBtnBlob.width + Tokens.spacing.small : 0
              z: 10
              spacing: Tokens.spacing.small
 
@@ -856,6 +940,38 @@ Item {
                      delegate: MenuItem {
                          required property string modelData
                          text: modelData
+                     }
+                 }
+             }
+
+             // Popout Button (Sidebar only)
+             StyledRect {
+                 visible: !isPoppedOut
+                 Layout.preferredWidth: modelSelector.height
+                 Layout.preferredHeight: modelSelector.height
+                 radius: Tokens.rounding.medium
+                 color: Colours.tPalette.m3surfaceContainerHigh
+
+                 IconButton {
+                     anchors.centerIn: parent
+                     icon: "open_in_new"
+                     type: IconButton.Text
+                     label.fill: 0
+                     inactiveOnColour: hovered ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+                     stateLayer.opacity: 0
+
+                     onClicked: {
+                         var windowQml = "import QtQuick; import Quickshell; import Caelestia.Config; import qs.components; import qs.services; import qs.utils; import qs.modules.sidebar; FloatingWindow { id: aiWin; color: Colours.tPalette.m3surfaceContainer; implicitWidth: 500; implicitHeight: 700; title: 'AI Assistant'; AiAssistant { anchors.fill: parent; anchors.margins: 0; isPoppedOut: true; onWindowCloseRequested: aiWin.destroy() } }";
+                         var win = Qt.createQmlObject(windowQml, root, "aiWindowObj");
+                         win.visible = true;
+                         root.assistantPoppedOut();
+                     }
+
+                     label.scale: pressed ? 0.8 : 1
+                     label.renderType: Text.QtRendering
+
+                     Behavior on label.scale {
+                         Anim {}
                      }
                  }
              }
