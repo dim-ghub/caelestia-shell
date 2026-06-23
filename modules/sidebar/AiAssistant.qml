@@ -25,9 +25,6 @@ Item {
     property string currentChatId: ""
     property var currentRequest: null
     
-    property bool isPoppedOut: false
-    signal windowCloseRequested()
-    signal assistantPoppedOut()
 
     Timer {
         id: typingTimer
@@ -804,67 +801,10 @@ Item {
         xhr.send(JSON.stringify(requestBody));
     }
 
-    BlobGroup {
-        id: blobGroup
-        smoothing: Tokens.rounding.medium
-        color: Colours.tPalette.m3surface
-    }
-
-    BlobInvertedRect {
-        anchors.fill: parent
-        group: blobGroup
-        opacity: Colours.tPalette.m3surface.a
-        radius: Tokens.rounding.large
-
-        borderLeft: isPoppedOut ? Tokens.padding.medium : 0
-        borderRight: isPoppedOut ? Tokens.padding.medium : 0
-        borderTop: isPoppedOut ? Tokens.padding.medium : 0
-        borderBottom: isPoppedOut ? Tokens.padding.medium : 0
-        
-        visible: isPoppedOut
-    }
-
-    BlobRect {
-        id: popoutBtnBlob
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.margins: 0
-        
-        group: blobGroup
-        visible: isPoppedOut
-        opacity: Colours.tPalette.m3surface.a
-        radius: Tokens.rounding.medium
-
-        implicitWidth: popoutBtn.implicitWidth + Tokens.padding.extraSmall * 2
-        implicitHeight: popoutBtn.implicitHeight + Tokens.padding.extraSmall * 2
-    }
-
-    IconButton {
-        id: popoutBtn
-        anchors.centerIn: popoutBtnBlob
-        visible: isPoppedOut
-        icon: "close"
-        type: IconButton.Text
-        label.fill: 0
-        inactiveOnColour: hovered ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
-        stateLayer.opacity: 0
-
-        onClicked: {
-            root.windowCloseRequested();
-        }
-
-        label.scale: pressed ? 0.8 : 1
-        label.renderType: Text.QtRendering
-
-        Behavior on label.scale {
-            Anim {}
-        }
-    }
-
     Item {
         id: mainWrapper
         anchors.fill: parent
-        anchors.margins: isPoppedOut ? Tokens.padding.medium * 2 : Tokens.padding.medium
+        anchors.margins: Tokens.padding.medium
 
          // Mode Switcher Row (Chat / History)
          RowLayout {
@@ -872,7 +812,7 @@ Item {
              anchors.top: parent.top
              anchors.left: parent.left
              anchors.right: parent.right
-             anchors.rightMargin: isPoppedOut ? popoutBtnBlob.width + Tokens.spacing.small : 0
+             anchors.rightMargin: 0
              z: 10
              spacing: Tokens.spacing.small
 
@@ -1019,37 +959,7 @@ Item {
                  }
              }
 
-             // Popout Button (Sidebar only)
-             StyledRect {
-                 visible: !isPoppedOut
-                 Layout.preferredWidth: modelSelector.height
-                 Layout.preferredHeight: modelSelector.height
-                 radius: Tokens.rounding.medium
-                 color: Colours.tPalette.m3surfaceContainerHigh
 
-                 IconButton {
-                     anchors.centerIn: parent
-                     icon: "open_in_new"
-                     type: IconButton.Text
-                     label.fill: 0
-                     inactiveOnColour: hovered ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
-                     stateLayer.opacity: 0
-
-                     onClicked: {
-                         var windowQml = "import QtQuick; import Quickshell; import Caelestia.Config; import qs.components; import qs.services; import qs.utils; import qs.modules.sidebar; FloatingWindow { id: aiWin; color: Colours.tPalette.m3surfaceContainer; implicitWidth: 500; implicitHeight: 700; title: 'AI Assistant'; AiAssistant { anchors.fill: parent; anchors.margins: 0; isPoppedOut: true; onWindowCloseRequested: aiWin.destroy() } }";
-                         var win = Qt.createQmlObject(windowQml, root, "aiWindowObj");
-                         win.visible = true;
-                         root.assistantPoppedOut();
-                     }
-
-                     label.scale: pressed ? 0.8 : 1
-                     label.renderType: Text.QtRendering
-
-                     Behavior on label.scale {
-                         Anim {}
-                     }
-                 }
-             }
          }
          
          Item {
