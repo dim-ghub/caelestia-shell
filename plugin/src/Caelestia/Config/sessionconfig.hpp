@@ -2,8 +2,8 @@
 
 #include "configobject.hpp"
 
-#include <QFileInfo>
-#include <QStandardPaths>
+#include <qstring.h>
+#include <qstringlist.h>
 
 namespace caelestia::config {
 
@@ -27,10 +27,10 @@ class SessionCommands : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(QStringList, logout, { u"hyprshutdown"_s })
-    CONFIG_PROPERTY(QStringList, shutdown, { u"hyprshutdown"_s, u"-p"_s, u"systemctl poweroff"_s })
-    CONFIG_PROPERTY(QStringList, hibernate, { u"systemctl"_s, u"hibernate"_s })
-    CONFIG_PROPERTY(QStringList, reboot, { u"hyprshutdown"_s, u"-p"_s, u"systemctl reboot"_s, u"-t"_s, u"Rebooting..."_s })
+    CONFIG_PROPERTY(QStringList, logout, { u"logout"_s })
+    CONFIG_PROPERTY(QStringList, shutdown, { u"poweroff"_s })
+    CONFIG_PROPERTY(QStringList, hibernate, { u"hibernate"_s })
+    CONFIG_PROPERTY(QStringList, reboot, { u"reboot"_s })
 
 public:
     explicit SessionCommands(QObject* parent = nullptr)

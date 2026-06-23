@@ -15,39 +15,21 @@ CustomMouseArea {
 
     required property DashboardState dashState
 
-    readonly property int realCurrMonth: dashState.currentDate.getMonth()
-    readonly property int realCurrYear: dashState.currentDate.getFullYear()
+    property date currentDate: dashState.currentDate
+    readonly property int currMonth: currentDate.getMonth()
+    readonly property int currYear: currentDate.getFullYear()
+    readonly property int nonAnimCurrMonth: dashState.currentDate.getMonth()
+    readonly property int nonAnimCurrYear: dashState.currentDate.getFullYear()
 
-    property int activeGrid: 1
-    property int month1
-    property int year1
-    property int month2
-    property int year2
-
-    function handleDateChange() {
-        const currM = activeGrid === 1 ? month1 : month2;
-        const currY = activeGrid === 1 ? year1 : year2;
-        if (realCurrMonth !== currM || realCurrYear !== currY) {
-            monthChangeAnim.direction = (realCurrYear > currY || (realCurrYear === currY && realCurrMonth > currM)) ? -1 : 1;
-
-            if (activeGrid === 1) {
-                month2 = realCurrMonth;
-                year2 = realCurrYear;
-                activeGrid = 2;
-            } else {
-                month1 = realCurrMonth;
-                year1 = realCurrYear;
-                activeGrid = 1;
-            }
-            monthChangeAnim.restart();
-        }
-    }
+    readonly property int animDirection: dashState.currentDate > currentDate ? -1 : 1
+    property real animTranslate
+    property real animOpacity: 1
 
     function onWheel(event: WheelEvent): void {
         if (event.angleDelta.y > 0)
-            root.dashState.currentDate = new Date(root.realCurrYear, root.realCurrMonth - 1, 1);
+            dashState.currentDate = new Date(nonAnimCurrYear, nonAnimCurrMonth - 1, 1);
         else if (event.angleDelta.y < 0)
-            root.dashState.currentDate = new Date(root.realCurrYear, root.realCurrMonth + 1, 1);
+            dashState.currentDate = new Date(nonAnimCurrYear, nonAnimCurrMonth + 1, 1);
     }
 
     anchors.left: parent.left
@@ -55,63 +37,51 @@ CustomMouseArea {
     implicitHeight: inner.implicitHeight + inner.anchors.margins * 2
 
     acceptedButtons: Qt.MiddleButton
-
-    Component.onCompleted: {
-        month1 = realCurrMonth;
-        year1 = realCurrYear;
-        month2 = realCurrMonth;
-        year2 = realCurrYear;
-    }
-
-    onRealCurrMonthChanged: handleDateChange()
-    onRealCurrYearChanged: handleDateChange()
-
     onClicked: root.dashState.currentDate = new Date()
 
-    SequentialAnimation {
-        id: monthChangeAnim
+    Anim {
+        id: trOutAnim
 
-        property int direction: 0
+        running: false
+        target: root
+        property: "animTranslate"
+        to: root.Tokens.padding.extraLarge * root.animDirection
+        type: Anim.FastSpatial
+    }
 
-        ScriptAction {
-            script: {
-                if (activeGrid === 1) {
-                    titleTranslate1.x = -monthChangeAnim.direction * titleClip.width;
-                    grid1Translate.x = -monthChangeAnim.direction * gridClip.width;
-                    titleTranslate2.x = 0;
-                    grid2Translate.x = 0;
-                } else {
-                    titleTranslate2.x = -monthChangeAnim.direction * titleClip.width;
-                    grid2Translate.x = -monthChangeAnim.direction * gridClip.width;
-                    titleTranslate1.x = 0;
-                    grid1Translate.x = 0;
+    Behavior on currentDate {
+        SequentialAnimation {
+            ParallelAnimation {
+                ScriptAction {
+                    script: Qt.callLater(() => trOutAnim.start())
+                }
+                Anim {
+                    target: root
+                    property: "animOpacity"
+                    to: 0
+                    type: Anim.FastEffects
                 }
             }
-        }
-        ParallelAnimation {
-            Anim {
-                target: titleTranslate1
-                property: "x"
-                to: root.activeGrid === 1 ? 0 : monthChangeAnim.direction * titleClip.width
-                type: Anim.DefaultSpatial
+            ScriptAction {
+                script: {
+                    trOutAnim.complete();
+                    root.animTranslate = root.Tokens.padding.extraLarge * -root.animDirection;
+                }
             }
-            Anim {
-                target: grid1Translate
-                property: "x"
-                to: root.activeGrid === 1 ? 0 : monthChangeAnim.direction * gridClip.width
-                type: Anim.DefaultSpatial
-            }
-            Anim {
-                target: titleTranslate2
-                property: "x"
-                to: root.activeGrid === 2 ? 0 : monthChangeAnim.direction * titleClip.width
-                type: Anim.DefaultSpatial
-            }
-            Anim {
-                target: grid2Translate
-                property: "x"
-                to: root.activeGrid === 2 ? 0 : monthChangeAnim.direction * gridClip.width
-                type: Anim.DefaultSpatial
+            PropertyAction {}
+            ParallelAnimation {
+                Anim {
+                    target: root
+                    property: "animTranslate"
+                    to: 0
+                    type: Anim.DefaultSpatial
+                }
+                Anim {
+                    target: root
+                    property: "animOpacity"
+                    to: 1
+                    type: Anim.DefaultEffects
+                }
             }
         }
     }
@@ -121,39 +91,37 @@ CustomMouseArea {
 
         anchors.fill: parent
         anchors.margins: Tokens.padding.large
-
         spacing: Tokens.spacing.extraSmall
 
         RowLayout {
             id: monthNavigationRow
 
             Layout.fillWidth: true
-
             spacing: Tokens.spacing.extraSmall
 
             IconButton {
+                isRound: true
                 icon: "chevron_left"
                 type: IconButton.Text
                 font: Tokens.font.icon.builders.small.weight(Font.Bold).build()
                 padding: Tokens.padding.small
-
-                onClicked: root.dashState.currentDate = new Date(root.realCurrYear, root.realCurrMonth - 1, 1)
+                onClicked: root.dashState.currentDate = new Date(root.nonAnimCurrYear, root.nonAnimCurrMonth - 1, 1)
             }
 
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                implicitWidth: monthYearDisplay1.implicitWidth + Tokens.padding.large * 2
-                implicitHeight: monthYearDisplay1.implicitHeight + Tokens.padding.extraSmall * 2
+
+                implicitWidth: monthYearDisplay.implicitWidth + Tokens.padding.large * 2
+                implicitHeight: monthYearDisplay.implicitHeight + Tokens.padding.extraSmall * 2
 
                 StateLayer {
                     color: Colours.palette.m3primary
-                    radius: pressed ? Tokens.rounding.small : Tokens.rounding.large
+                    radius: pressed ? Tokens.rounding.small : height / 2
                     disabled: {
                         const now = new Date();
-                        return root.realCurrMonth === now.getMonth() && root.realCurrYear === now.getFullYear();
+                        return root.nonAnimCurrMonth === now.getMonth() && root.nonAnimCurrYear === now.getFullYear();
                     }
-
                     onClicked: root.dashState.currentDate = new Date()
 
                     Behavior on radius {
@@ -163,56 +131,28 @@ CustomMouseArea {
                     }
                 }
 
-                Item {
-                    id: titleClip
+                StyledText {
+                    id: monthYearDisplay
 
-                    anchors.fill: parent
-
-                    clip: true
-
-                    StyledText {
-                        id: monthYearDisplay1
-
-                        anchors.centerIn: parent
-
-                        // qmllint disable missing-property
-                        text: grid1.item ? grid1.item.title : ""
-                        // qmllint enable missing-property
-                        color: Colours.palette.m3primary
-                        font: Tokens.font.title.builders.small.capitalisation(Font.Capitalize).build()
-                        visible: root.activeGrid === 1 || monthChangeAnim.running
-
-                        transform: Translate {
-                            id: titleTranslate1
-                        }
+                    opacity: root.animOpacity
+                    transform: Translate {
+                        x: root.animTranslate
                     }
 
-                    StyledText {
-                        id: monthYearDisplay2
-
-                        anchors.centerIn: parent
-
-                        // qmllint disable missing-property
-                        text: grid2.item ? grid2.item.title : ""
-                        // qmllint enable missing-property
-                        color: Colours.palette.m3primary
-                        font: Tokens.font.title.builders.small.capitalisation(Font.Capitalize).build()
-                        visible: root.activeGrid === 2 || monthChangeAnim.running
-
-                        transform: Translate {
-                            id: titleTranslate2
-                        }
-                    }
+                    anchors.centerIn: parent
+                    text: grid.title
+                    color: Colours.palette.m3primary
+                    font: Tokens.font.title.builders.small.capitalisation(Font.Capitalize).build()
                 }
             }
 
             IconButton {
+                isRound: true
                 icon: "chevron_right"
                 type: IconButton.Text
                 font: Tokens.font.icon.builders.small.weight(Font.Bold).build()
                 padding: Tokens.padding.small
-
-                onClicked: root.dashState.currentDate = new Date(root.realCurrYear, root.realCurrMonth + 1, 1)
+                onClicked: root.dashState.currentDate = new Date(root.nonAnimCurrYear, root.nonAnimCurrMonth + 1, 1)
             }
         }
 
@@ -220,8 +160,7 @@ CustomMouseArea {
             id: daysRow
 
             Layout.fillWidth: true
-
-            locale: Qt.locale()
+            locale: grid.locale
 
             delegate: StyledText {
                 required property var model
@@ -234,165 +173,93 @@ CustomMouseArea {
         }
 
         Item {
-            id: gridClip
-
             Layout.fillWidth: true
-            implicitHeight: grid1.implicitHeight
+            implicitHeight: grid.implicitHeight
 
-            clip: true
+            opacity: root.animOpacity
+            transform: Translate {
+                x: root.animTranslate
+            }
 
-            Component {
-                id: gridComp
+            MonthGrid {
+                id: grid
 
-                Item {
-                    id: internalGridContainer
+                month: root.currMonth
+                year: root.currYear
 
-                    property alias title: internalGrid.title
-                    property int month
-                    property int year
+                anchors.fill: parent
 
-                    implicitHeight: internalGrid.implicitHeight
+                spacing: 3
+                locale: Qt.locale()
 
-                    MonthGrid {
-                        id: internalGrid
+                delegate: Item {
+                    id: dayItem
 
-                        anchors.fill: parent
+                    required property var model
 
-                        month: internalGridContainer.month
-                        year: internalGridContainer.year
-                        spacing: 3
-                        locale: Qt.locale()
+                    implicitWidth: implicitHeight
+                    implicitHeight: text.implicitHeight + Tokens.padding.small
 
-                        delegate: Item {
-                            id: dayItem
+                    StyledText {
+                        id: text
 
-                            required property var model
+                        anchors.centerIn: parent
 
-                            implicitWidth: implicitHeight
-                            implicitHeight: text.implicitHeight + Tokens.padding.small
+                        horizontalAlignment: Text.AlignHCenter
+                        text: grid.locale.toString(dayItem.model.day)
+                        color: {
+                            const dayOfWeek = dayItem.model.date.getDay();
+                            if (dayOfWeek === 0 || dayOfWeek === 6)
+                                return Colours.palette.m3tertiary;
 
-                            StyledText {
-                                id: text
-
-                                anchors.centerIn: parent
-
-                                horizontalAlignment: Text.AlignHCenter
-                                text: internalGrid.locale.toString(dayItem.model.day)
-                                color: {
-                                    const dayOfWeek = dayItem.model.date.getDay();
-                                    if (dayOfWeek === 0 || dayOfWeek === 6)
-                                        return Colours.palette.m3tertiary;
-
-                                    return Colours.palette.m3onSurfaceVariant;
-                                }
-                                opacity: dayItem.model.today || dayItem.model.month === internalGrid.month ? 1 : 0.4
-                                font: Tokens.font.body.small
-                            }
+                            return Colours.palette.m3onSurfaceVariant;
                         }
-                    }
-
-                    MaterialShape {
-                        id: todayIndicator
-
-                        readonly property Item todayItem: internalGrid.contentItem.children.find(c => c.model.today) ?? null
-                        property Item today
-
-                        x: today ? today.x + (today.width - implicitWidth) / 2 : 0
-                        y: today ? today.y - Tokens.padding.extraSmall - 1 : 0
-
-                        implicitSize: today ? Math.max(today.implicitWidth, today.implicitHeight) + Tokens.padding.extraSmall * 2 : 0
-                        shape: MaterialShape.Sunny
-
-                        clip: true
-                        color: Colours.palette.m3primary
-                        opacity: todayItem ? 1 : 0
-                        scale: todayItem ? 1 : 0.7
-
-                        onTodayItemChanged: {
-                            if (todayItem)
-                                today = todayItem;
-                        }
-
-                        Colouriser {
-                            x: -todayIndicator.x
-                            y: -todayIndicator.y
-
-                            implicitWidth: internalGrid.width
-                            implicitHeight: internalGrid.height
-
-                            source: internalGrid
-                            sourceColor: Colours.palette.m3onSurface
-                            colorizationColor: Colours.palette.m3onPrimary
-                        }
-
-                        Behavior on opacity {
-                            Anim {
-                                type: Anim.DefaultEffects
-                            }
-                        }
-
-                        Behavior on scale {
-                            Anim {
-                                type: Anim.FastSpatial
-                            }
-                        }
-
-                        Behavior on x {
-                            Anim {}
-                        }
-
-                        Behavior on y {
-                            Anim {}
-                        }
+                        opacity: dayItem.model.today || dayItem.model.month === grid.month ? 1 : 0.4
+                        font: Tokens.font.body.small
                     }
                 }
             }
 
-            Loader {
-                id: grid1
+            MaterialShape {
+                id: todayIndicator
 
-                anchors.fill: parent
+                readonly property Item todayItem: grid.contentItem.children.find(c => c.model.today) ?? null
+                property Item today
 
-                sourceComponent: gridComp
-                visible: root.activeGrid === 1 || monthChangeAnim.running
-
-                transform: Translate {
-                    id: grid1Translate
+                onTodayItemChanged: {
+                    if (todayItem)
+                        today = todayItem;
                 }
 
-                Binding {
-                    target: grid1.item
-                    property: "month"
-                    value: root.month1
+                x: today ? today.x + (today.width - implicitWidth) / 2 : 0
+                y: today ? today.y - Tokens.padding.extraSmall - 1 : 0
+
+                implicitSize: today ? Math.max(today.implicitWidth, today.implicitHeight) + Tokens.padding.extraSmall * 2 : 0
+                shape: MaterialShape.Sunny
+
+                clip: true
+                color: Colours.palette.m3primary
+
+                opacity: todayItem ? 1 : 0
+
+                Colouriser {
+                    x: -todayIndicator.x
+                    y: -todayIndicator.y
+
+                    implicitWidth: grid.width
+                    implicitHeight: grid.height
+
+                    source: grid
+                    sourceColor: Colours.palette.m3onSurface
+                    colorizationColor: Colours.palette.m3onPrimary
                 }
-                Binding {
-                    target: grid1.item
-                    property: "year"
-                    value: root.year1
-                }
-            }
 
-            Loader {
-                id: grid2
-
-                anchors.fill: parent
-
-                sourceComponent: gridComp
-                visible: root.activeGrid === 2 || monthChangeAnim.running
-
-                transform: Translate {
-                    id: grid2Translate
+                Behavior on x {
+                    Anim {}
                 }
 
-                Binding {
-                    target: grid2.item
-                    property: "month"
-                    value: root.month2
-                }
-                Binding {
-                    target: grid2.item
-                    property: "year"
-                    value: root.year2
+                Behavior on y {
+                    Anim {}
                 }
             }
         }

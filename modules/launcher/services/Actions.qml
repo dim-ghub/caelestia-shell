@@ -4,6 +4,7 @@ import ".."
 import QtQuick
 import Quickshell
 import Caelestia.Config
+import Caelestia.Services
 import qs.services
 import qs.utils
 
@@ -45,15 +46,8 @@ Searcher {
                 Colours.setMode(command[1]);
             } else {
                 list.visibilities.launcher = false;
-                let cmd = command.slice();
-                if (!GlobalConfig.services.useSystemd) {
-                    if (cmd.length > 0 && cmd[0] === "systemctl") {
-                        cmd[0] = "loginctl";
-                    } else if (cmd.length > 2 && cmd[0] === "hyprshutdown" && cmd[1] === "-p") {
-                        cmd[2] = cmd[2].replace("systemctl", "loginctl");
-                    }
-                }
-                Quickshell.execDetached(cmd);
+                if (!SessionManager.exec(command))
+                    Quickshell.execDetached(command);
             }
         }
     }

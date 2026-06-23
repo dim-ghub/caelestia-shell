@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Caelestia
 import Caelestia.Config
+import Caelestia.Services
 import qs.components
 import qs.components.controls
 import qs.services
@@ -56,9 +57,8 @@ Column {
         playing: visible
         asynchronous: true
         speed: Config.general.sessionGifSpeed
-        source: Config.paths.sessionGif !== "" ? Paths.absolutePath(Config.paths.sessionGif) : ""
+        source: Paths.absolutePath(Config.paths.sessionGif)
         fillMode: AnimatedImage.PreserveAspectFit
-        visible: Config.paths.sessionGif !== ""
     }
 
     SessionButton {
@@ -85,6 +85,11 @@ Column {
 
         required property list<string> command
 
+        function exec(): void {
+            if (!SessionManager.exec(command))
+                Quickshell.execDetached(command);
+        }
+
         implicitWidth: Tokens.sizes.session.button
         implicitHeight: Tokens.sizes.session.button
 
@@ -92,22 +97,10 @@ Column {
         inactiveOnColour: activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
         radius: pressed ? Tokens.rounding.medium : activeFocus ? Tokens.rounding.extraLarge : Tokens.rounding.largeIncreased
         font: Tokens.font.icon.builders.large.scale(1.3).build()
-        function executeCmd() {
-            let cmd = button.command.slice();
-            if (!GlobalConfig.services.useSystemd) {
-                if (cmd.length > 0 && cmd[0] === "systemctl") {
-                    cmd[0] = "loginctl";
-                } else if (cmd.length > 2 && cmd[0] === "hyprshutdown" && cmd[1] === "-p") {
-                    cmd[2] = cmd[2].replace("systemctl", "loginctl");
-                }
-            }
-            Quickshell.execDetached(cmd);
-        }
+        onClicked: exec()
 
-        onClicked: executeCmd()
-
-        Keys.onEnterPressed: executeCmd()
-        Keys.onReturnPressed: executeCmd()
+        Keys.onEnterPressed: exec()
+        Keys.onReturnPressed: exec()
         Keys.onEscapePressed: root.visibilities.session = false
         Keys.onPressed: event => {
             if (!Config.session.vimKeybinds)

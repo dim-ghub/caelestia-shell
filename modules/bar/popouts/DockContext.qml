@@ -118,9 +118,8 @@ ColumnLayout {
                             const subCmd = model.entry.runInTerminal
                                 ? [...GlobalConfig.general.apps.terminal, `${Quickshell.shellDir}/assets/wrap_term_launch.sh`, ...model.entry.command]
                                 : model.entry.command;
-                            const finalCmd = GlobalConfig.services.useSystemd ? ["app2unit", "--", ...subCmd] : subCmd;
                             Quickshell.execDetached({
-                                command: finalCmd,
+                                command: subCmd,
                                 workingDirectory: model.entry.workingDirectory
                             });
                         }

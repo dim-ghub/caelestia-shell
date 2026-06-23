@@ -3,7 +3,7 @@ import Quickshell
 import Quickshell.Services.UPower
 import Caelestia
 import Caelestia.Config
-import qs.services
+import Caelestia.Services
 
 Scope {
     id: root
@@ -18,7 +18,6 @@ Scope {
             } else {
                 if (GlobalConfig.utilities.toasts.chargingChanged)
                     Toaster.toast(qsTr("Charger plugged in"), qsTr("Battery is charging"), "power");
-                Audio.playChargingStarted();
                 for (const level of root.warnLevels)
                     level.warned = false;
             }
@@ -37,7 +36,6 @@ Scope {
                 if (p <= level.level && !level.warned) {
                     level.warned = true;
                     Toaster.toast(level.title ?? qsTr("Battery warning"), level.message ?? qsTr("Battery level is low"), level.icon ?? "battery_android_alert", level.critical ? Toast.Error : Toast.Warning);
-                    Audio.playLowBattery();
                 }
             }
 
@@ -54,6 +52,6 @@ Scope {
         id: hibernateTimer
 
         interval: 5000
-        onTriggered: Quickshell.execDetached([GlobalConfig.services.useSystemd ? "systemctl" : "loginctl", "hibernate"])
+        onTriggered: SessionManager.hibernate()
     }
 }

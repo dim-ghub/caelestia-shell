@@ -1,55 +1,48 @@
 pragma ComponentBehavior: Bound
 
 import "lock"
+import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import Caelestia.Config
-import Caelestia.Internal
+import Caelestia.Services
 import qs.services
-import "background"
 
 Scope {
     id: root
 
     required property Lock lock
-    readonly property bool enabled: (!GlobalConfig.general.idle.inhibitWhenAudio || !Players.list.some(p => p.isPlaying)) && !BadApplePlayer.shouldPlay
+    readonly property bool enabled: !GlobalConfig.general.idle.inhibitWhenAudio || !Players.list.some(p => p.isPlaying)
 
     function handleIdleAction(action: var): void {
         if (!action)
             return;
 
-        if (action === "lock") {
+        if (action === "lock")
             lock.lock.locked = true;
-            Audio.playLock();
-        } else if (action === "unlock") {
+        else if (action === "unlock")
             lock.lock.locked = false;
-        } else if (typeof action === "string") {
+        else if (typeof action === "string")
             Hypr.dispatch(Hypr.usingLua && ["dpms off", "dpms on"].includes(action) ? `hl.dsp.dpms({ action = "${action === "dpms off" ? "disable" : "enable"}" })` : action);
-        } else {
-            let cmd = action.slice();
-            if (!GlobalConfig.services.useSystemd) {
-                if (cmd.length > 0 && cmd[0] === "systemctl") {
-                    cmd[0] = "loginctl";
-                } else if (cmd.length > 2 && cmd[0] === "hyprshutdown" && cmd[1] === "-p") {
-                    cmd[2] = cmd[2].replace("systemctl", "loginctl");
-                }
-            }
-            Quickshell.execDetached(cmd);
-        }
+        else if (!SessionManager.exec(action))
+            Quickshell.execDetached(action);
     }
 
-    LogindManager {
-        onAboutToSleep: {
-            if (GlobalConfig.general.idle.lockBeforeSleep) {
+    Connections {
+        function onAboutToSleep(): void {
+            if (GlobalConfig.general.idle.lockBeforeSleep)
                 root.lock.lock.locked = true;
-                Audio.playLock();
-            }
         }
-        onLockRequested: {
+
+        function onLockRequested(): void {
             root.lock.lock.locked = true;
-            Audio.playLock();
         }
-        onUnlockRequested: root.lock.lock.unlock()
+
+        function onUnlockRequested(): void {
+            root.lock.lock.unlock();
+        }
+
+        target: SessionManager
     }
 
     Variants {

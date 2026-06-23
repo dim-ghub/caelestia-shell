@@ -44,14 +44,7 @@ PageBase {
     ]
     readonly property list<string> gpuValues: ["", "NVIDIA", "GENERIC", "None"]
 
-    readonly property list<MenuItem> systemdItems: [
-        MenuItem {
-            text: "systemd"
-        },
-        MenuItem {
-            text: "openrc"
-        }
-    ]
+
 
     function gpuKeyToIndex(key: string): int {
         const u = (key ?? "").trim().toUpperCase();
@@ -224,14 +217,6 @@ PageBase {
             onToggled: GlobalConfig.services.smartScheme = checked
         }
 
-        SelectRow {
-            Layout.fillWidth: true
-            label: qsTr("Service manager")
-            subtext: qsTr("Used for launching apps and sleep commands")
-            menuItems: root.systemdItems
-            active: GlobalConfig.services.useSystemd ? root.systemdItems[0] : root.systemdItems[1]
-            onSelected: item => GlobalConfig.services.useSystemd = (item.text === "systemd")
-        }
 
         SelectRow {
             Layout.fillWidth: true

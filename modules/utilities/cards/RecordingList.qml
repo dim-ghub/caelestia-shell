@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import Caelestia
 import Caelestia.Config
 import Caelestia.Models
 import qs.components
@@ -105,9 +104,7 @@ ColumnLayout {
                 onClicked: {
                     root.visibilities.utilities = false;
                     root.visibilities.sidebar = false;
-                    const subCmd = [...GlobalConfig.general.apps.playback, recording.modelData.path];
-                    const finalCmd = GlobalConfig.services.useSystemd ? ["app2unit", "--", ...subCmd] : subCmd;
-                    Quickshell.execDetached(finalCmd);
+                    Quickshell.execDetached([...GlobalConfig.general.apps.playback, recording.modelData.path]);
                 }
             }
 
@@ -117,9 +114,7 @@ ColumnLayout {
                 onClicked: {
                     root.visibilities.utilities = false;
                     root.visibilities.sidebar = false;
-                    const subCmd = [...GlobalConfig.general.apps.explorer, recording.modelData.path];
-                    const finalCmd = GlobalConfig.services.useSystemd ? ["app2unit", "--", ...subCmd] : subCmd;
-                    Quickshell.execDetached(finalCmd);
+                    Quickshell.execDetached([...GlobalConfig.general.apps.explorer, recording.modelData.path]);
                 }
             }
 

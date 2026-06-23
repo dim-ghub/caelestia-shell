@@ -353,7 +353,7 @@ Singleton {
             onStreamFinished: {
                 if (text.trim().length > 0) {
                     if (text.includes("doesn't appear to be running") || text.includes("failed to connect to local tailscaled") || text.includes("daemon is not running") || text.includes("not running") && (text.includes("netbird") || text.includes("warp"))) {
-                        let cmd = "sudo " + (GlobalConfig.services.useSystemd ? "systemctl" : "rc-service") + " start ";
+                        let cmd = "sudo systemctl start ";
                         switch (root.providerName) {
                         case "tailscale":
                             cmd += "tailscaled";
