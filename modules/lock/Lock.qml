@@ -84,6 +84,17 @@ Scope {
         target: "lock"
     }
 
+    Timer {
+        id: startupLockTimer
+
+        interval: 750
+        onTriggered: {
+            if (GlobalConfig.lock.lockOnStartup) {
+                lock.locked = true;
+            }
+        }
+    }
+
     Process {
         id: startupLockProc
 
@@ -94,7 +105,7 @@ Scope {
         ]
         onExited: code => {
             if (code === 0 && GlobalConfig.lock.lockOnStartup) {
-                lock.locked = true;
+                startupLockTimer.start();
             }
         }
     }
@@ -105,3 +116,4 @@ Scope {
         }
     }
 }
+
