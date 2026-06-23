@@ -23,6 +23,7 @@ Item {
 
     property bool isHistoryTab: false
     property string currentChatId: ""
+    property var currentRequest: null
     
     property bool isPoppedOut: false
     signal windowCloseRequested()
@@ -463,6 +464,7 @@ Item {
             currentActionText = "Thinking...";
         }
         var xhr = new XMLHttpRequest();
+        root.currentRequest = xhr;
 
         var ollamaModel = GlobalConfig.ai.defaultOllamaModel || "llama3";
         var ollamaUrl = GlobalConfig.ai.ollamaUrl || "http://localhost:11434";
@@ -645,10 +647,18 @@ Item {
                             inAgentLoop = false;
                         }
                     } else {
-                        addAiMessage("Ollama request failed (status " + xhr.status + ").");
+                        var errMsg = (xhr.status === 0) ? "Generation cancelled" : "Ollama request failed (status " + xhr.status + ").";
+                        var currentText = chatHistory.get(chatHistory.count - 1).text;
+                        if (currentText.trim() === "") {
+                            chatHistory.setProperty(chatHistory.count - 1, "text", errMsg);
+                        } else {
+                            chatHistory.setProperty(chatHistory.count - 1, "text", currentText + "\n\n*[" + errMsg + "]*");
+                        }
+                        chatHistory.setProperty(chatHistory.count - 1, "isFinished", true);
                         isTyping = false;
                         isThinking = false;
                         inAgentLoop = false;
+                        saveHistory();
                     }
                 }
             }
@@ -1384,7 +1394,19 @@ Item {
                                          id: thoughtContent
                                          width: Math.min(implicitWidth, bubbleRect.maxBubbleWidth - Tokens.padding.medium * 2)
                                          textFormat: Text.MarkdownText
-                                         text: bubbleLayout.delegateThought
+                                         
+                                         property string fullThought: bubbleLayout.delegateThought
+                                         
+                                         property bool cursorVisible: true
+                                         Timer {
+                                             running: !delegateItem.isFinished
+                                             repeat: true
+                                             interval: 400
+                                             onTriggered: thoughtContent.cursorVisible = !thoughtContent.cursorVisible
+                                         }
+                                         
+                                         text: delegateItem.isFinished ? fullThought : fullThought + (cursorVisible ? "▌" : "")
+                                         
                                          color: Colours.palette.m3onSurfaceVariant
                                          font: Tokens.font.body.small
                                          wrapMode: Text.Wrap
@@ -1407,7 +1429,19 @@ Item {
                                      id: messageText
                                      textFormat: Text.MarkdownText
                                      width: Math.min(implicitWidth, bubbleRect.maxBubbleWidth - Tokens.padding.medium * 2)
-                                     text: delegateItem.text !== undefined ? delegateItem.text : ""
+                                     
+                                     property string fullText: delegateItem.text !== undefined ? delegateItem.text : ""
+                                     
+                                     property bool cursorVisible: true
+                                     Timer {
+                                         running: !delegateItem.isFinished
+                                         repeat: true
+                                         interval: 400
+                                         onTriggered: messageText.cursorVisible = !messageText.cursorVisible
+                                     }
+                                     
+                                     text: delegateItem.isFinished ? fullText : fullText + (cursorVisible ? "▌" : "")
+                                     
                                      color: delegateItem.isUser ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
                                      font: Tokens.font.body.small
                                      wrapMode: Text.Wrap
@@ -1519,9 +1553,9 @@ Item {
 
                              MaterialShape {
                                  anchors.fill: parent
-                                 color: inputArea.text.length > 0 ? Colours.palette.m3primary : Colours.layer(Colours.tPalette.m3surfaceContainerHigh, 2)
-                                 shape: inputArea.text.length > 0 ? MaterialShape.Arrow : MaterialShape.Circle
-                                 scale: inputArea.text.length === 0 ? 1 : sendMouse.pressed ? 0.6 : sendMouse.containsMouse ? 0.8 : 0.7
+                                 color: root.isTyping ? Colours.palette.m3error : (inputArea.text.length > 0 ? Colours.palette.m3primary : Colours.layer(Colours.tPalette.m3surfaceContainerHigh, 2))
+                                 shape: root.isTyping ? MaterialShape.Cookie4Sided : (inputArea.text.length > 0 ? MaterialShape.Arrow : MaterialShape.Circle)
+                                 scale: (inputArea.text.length === 0 && !root.isTyping) ? 1 : sendMouse.pressed ? 0.6 : sendMouse.containsMouse ? 0.8 : 0.7
                                  rotation: 0
                                  
                                  Behavior on scale { Anim { type: Anim.FastSpatial } }
@@ -1531,9 +1565,19 @@ Item {
                                      id: sendMouse
                                      anchors.fill: parent
                                      hoverEnabled: true
-                                     cursorShape: inputArea.text.length > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                     cursorShape: (inputArea.text.length > 0 || root.isTyping) ? Qt.PointingHandCursor : Qt.ArrowCursor
                                      onClicked: {
-                                         if (inputArea.text.length > 0) {
+                                         if (root.isTyping) {
+                                             if (root.currentRequest) {
+                                                 root.currentRequest.abort();
+                                             }
+                                             root.isTyping = false;
+                                             root.isThinking = false;
+                                             root.inAgentLoop = false;
+                                             typingTimer.stop();
+                                             chatHistory.setProperty(chatHistory.count - 1, "isFinished", true);
+                                             saveHistory();
+                                         } else if (inputArea.text.length > 0) {
                                              root.sendPrompt(inputArea.text);
                                              inputArea.clear();
                                          }
@@ -1546,7 +1590,7 @@ Item {
                                  text: "arrow_upward"
                                  color: Colours.palette.m3onSurfaceVariant
                                  font: Tokens.font.icon.small
-                                 opacity: inputArea.text.length > 0 ? 0 : 1
+                                 opacity: (inputArea.text.length > 0 || root.isTyping) ? 0 : 1
                                  Behavior on opacity { Anim { type: Anim.DefaultEffects } }
                              }
                          }
