@@ -21,7 +21,7 @@ StyledWindow {
 
     property int activeScreenScale: 1
     readonly property real centerScale: Math.max(0.8, Math.min(1, root.height / 1440))
-    readonly property int centerWidth: Tokens.sizes.lock.centerWidth * centerScale
+    readonly property int centerWidth: root.screen ? Tokens.sizes.lock.centerWidth * centerScale : 0
     readonly property int passwordMaxWidth: centerWidth * 0.8
     
     readonly property string rawMessage: agent.flow ? agent.flow.message : ""
@@ -143,8 +143,8 @@ StyledWindow {
 
         property bool isExpanded: false
 
-        readonly property int iconSize: lockIcon.implicitHeight + Tokens.padding.large * 4
-        readonly property int initialRadius: iconSize / 4 * Tokens.rounding.scale
+        readonly property int iconSize: lockIcon.implicitHeight + (root.screen ? Tokens.padding.large * 4 : 0)
+        readonly property int initialRadius: root.screen ? iconSize / 4 * Tokens.rounding.scale : 0
 
         property int targetWidth: Math.max(420, root.passwordMaxWidth + Tokens.padding.extraLarge * 2)
         property int targetHeight: dialogContent.implicitHeight + (Tokens.padding.large * 2)

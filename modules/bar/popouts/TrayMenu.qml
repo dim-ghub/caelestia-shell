@@ -79,12 +79,12 @@ StackView {
             let currentGroup = [];
             for (let i = 0; i < groupInstantiator.count; ++i) {
                 let obj = groupInstantiator.objectAt(i);
-                if (obj.isSeparator) {
+                if (obj && obj.isSeparator) {
                     if (currentGroup.length > 0) {
                         groups.push(currentGroup);
                         currentGroup = [];
                     }
-                } else {
+                } else if (obj) {
                     currentGroup.push(obj.entry);
                 }
             }
@@ -205,6 +205,7 @@ StackView {
                                         color: item.modelData.enabled ? Colours.palette.m3onSurface : Colours.palette.m3outline
                                     }
 
+                                    property int trayMenuWidth: Tokens.sizes.bar.trayMenuWidth
                                     TextMetrics {
                                         id: labelMetrics
 
@@ -212,7 +213,7 @@ StackView {
                                         font: label.font
 
                                         elide: Text.ElideRight
-                                        elideWidth: root.popouts.isHorizontal ? Tokens.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + Tokens.spacing.medium : 0) : 200
+                                        elideWidth: root.popouts.isHorizontal ? trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + Tokens.spacing.medium : 0) : 200
                                     }
 
                                     Loader {

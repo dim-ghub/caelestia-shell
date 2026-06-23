@@ -248,7 +248,7 @@ StyledRect {
             TextMetrics {
                 id: appNameMetrics
 
-                text: root.modelData?.appName
+                text: root.modelData?.appName ?? ""
                 font: appName.font
                 elide: Text.ElideRight
                 elideWidth: expandBtn.x - time.width - timeSep.width - summary.x - root.Tokens.spacing.small * 3
@@ -302,7 +302,7 @@ StyledRect {
             TextMetrics {
                 id: summaryMetrics
 
-                text: root.modelData?.summary
+                text: root.modelData?.summary ?? ""
                 font: summary.font
                 elide: Text.ElideRight
                 elideWidth: expandBtn.x - time.width - timeSep.width - summary.x - root.Tokens.spacing.small * 3
@@ -343,7 +343,7 @@ StyledRect {
 
                 animate: true
                 horizontalAlignment: Text.AlignLeft
-                text: root.modelData?.timeStr
+                text: root.modelData?.timeStr ?? ""
                 color: Colours.palette.m3onSurfaceVariant
                 font: Tokens.font.body.small
             }
@@ -409,7 +409,7 @@ StyledRect {
             TextMetrics {
                 id: bodyPreviewMetrics
 
-                text: root.modelData?.body
+                text: root.modelData?.body ?? ""
                 font: bodyPreview.font
                 elide: Text.ElideRight
                 elideWidth: bodyPreview.width
@@ -425,7 +425,7 @@ StyledRect {
 
                 animate: true
                 textFormat: root.bodyTextFormat
-                text: root.modelData?.body
+                text: root.modelData?.body ?? ""
                 color: Colours.palette.m3onSurfaceVariant
                 font: Tokens.font.body.small
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere

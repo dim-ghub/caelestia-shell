@@ -51,10 +51,12 @@ Item {
 
         active: root.shouldBeActive || root.visible
 
-        sourceComponent: Content {
-            visibilities: root.visibilities
-            panels: root.panels
-            maxHeight: root.maxHeight
+        sourceComponent: Component {
+            Content {
+                visibilities: root.visibilities
+                panels: root.panels
+                maxHeight: root.maxHeight
+            }
         }
     }
 }
