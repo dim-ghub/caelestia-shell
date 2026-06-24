@@ -207,6 +207,13 @@ PageBase {
             onClicked: root.nState.openSubPage(2)
         }
 
+        NavRow {
+            icon: "chat" // Using chat since discord icon might not be available in Material icons
+            label: qsTr("Discord Rich Presence")
+            status: qsTr("Broadcast your status to Vesktop")
+            onClicked: root.nState.openSubPage(4)
+        }
+
         StepperRow {
             label: qsTr("Visualiser bars")
             subtext: qsTr("Number of bars in the audio visualisers")

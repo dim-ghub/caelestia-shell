@@ -19,6 +19,8 @@ qml_module(caelestia-services
         lyrics.cpp
         sessionmanager.cpp
         sessionmanager.hpp
+        discordipc.cpp
+        discordipc.hpp
     LIBRARIES
         Qt::DBus
         PkgConfig::Pipewire

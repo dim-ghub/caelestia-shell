@@ -36,6 +36,19 @@ class ServiceConfig : public ConfigObject {
     CONFIG_GLOBAL_PROPERTY(QString, lyricsBackend, u"Auto"_s)
     CONFIG_GLOBAL_PROPERTY(QStringList, bluetoothAutoReconnectDevices)
 
+    // Discord ARPC Settings
+    CONFIG_GLOBAL_PROPERTY(bool, arpcEnabled, false)
+    CONFIG_GLOBAL_PROPERTY(QString, arpcClientId, u"1126685412586733678"_s)
+    CONFIG_GLOBAL_PROPERTY(QString, arpcAppName, u"Caelestia Shell"_s)
+    CONFIG_GLOBAL_PROPERTY(QString, arpcDetails, u""_s)
+    CONFIG_GLOBAL_PROPERTY(QString, arpcState, u""_s)
+    CONFIG_GLOBAL_PROPERTY(QString, arpcLargeImage, u""_s)
+    CONFIG_GLOBAL_PROPERTY(QString, arpcSmallImage, u""_s)
+    CONFIG_GLOBAL_PROPERTY(bool, arpcSteamAutoDetect, false)
+    CONFIG_GLOBAL_PROPERTY(QStringList, arpcSteamBlacklist)
+    CONFIG_GLOBAL_PROPERTY(QStringList, arpcTargetWindows)
+    CONFIG_GLOBAL_PROPERTY(bool, arpcCaelestiaInfo, false)
+    CONFIG_GLOBAL_PROPERTY(bool, arpcManualOverride, false)
 
 public:
     explicit ServiceConfig(QObject* parent = nullptr)
