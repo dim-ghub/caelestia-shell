@@ -60,8 +60,6 @@ Dependencies:
 -   [`bash`](https://www.gnu.org/software/bash)
 -   `qt6-base`
 -   `qt6-declarative`
--   `qt6-websockets`
-
 Build dependencies:
 
 -   [`cmake`](https://cmake.org)

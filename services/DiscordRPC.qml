@@ -1,7 +1,6 @@
 pragma Singleton
 
 import QtQuick
-import QtWebSockets
 import Caelestia.Config
 import Quickshell
 import Quickshell.Hyprland
