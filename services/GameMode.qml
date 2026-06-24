@@ -44,6 +44,8 @@ Singleton {
     property var _toplevelsTracker: Hyprland.toplevels.values
     on_ToplevelsTrackerChanged: evaluateAutoEnable()
 
+    Component.onCompleted: evaluateAutoEnable()
+
     Connections {
         target: GlobalConfig.utilities.gameMode
         function onAutoEnableChanged(): void { root.evaluateAutoEnable(); }

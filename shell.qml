@@ -55,6 +55,7 @@ ShellRoot {
     }
     BluetoothReconnect {}
 
-    // Force DiscordRPC initialization
+    // Force service initialization
     property var _arpcInit: DiscordRPC
+    property var _gameModeInit: GameMode
 }
