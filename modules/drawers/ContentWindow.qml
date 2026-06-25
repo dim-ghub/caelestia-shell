@@ -285,13 +285,13 @@ StyledWindow {
                 if (bar.position === "top")
                     return baseY - panels.popouts.implicitHeight * extraShift;
                 if (bar.position === "bottom" && connectedToSidebar)
-                    return baseY - Tokens.spacing.extraLarge - 10;
+                    return baseY - Tokens.spacing.medium - 10;
                 return baseY;
             }
             implicitHeight: {
                 if (bar.position === "top" || bar.position === "bottom") {
                     let h = panels.popouts.implicitHeight * (1 + extraShift);
-                    if (connectedToSidebar) h += Tokens.spacing.extraLarge + 10;
+                    if (connectedToSidebar) h += Tokens.spacing.medium + 10;
                     return h;
                 }
                 return panels.popouts.implicitHeight;
