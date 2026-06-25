@@ -13,6 +13,7 @@ Item {
 
     property var popouts
     property var utilities
+    property bool sidebarStreaming: false
 
     readonly property bool isBarHorizontal: Config.bar.position === "top" || Config.bar.position === "bottom"
     readonly property bool showPopoutSeparator: isBarHorizontal && root.visibilities.sidebar && popouts && popouts.hasCurrent && popouts.currentName !== "dockhover" && popouts.currentName !== "dockcontext" && popouts.currentName !== "activewindow" && popouts.currentName !== "github"
@@ -193,13 +194,21 @@ Item {
                     }
 
                     AiAssistant {
+                        id: aiAssistant
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         width: parent.width
                         x: root.activeTab === "ai" ? 0 : (indicator.activeIndex < 1 ? width : -width)
                         opacity: root.activeTab === "ai" ? 1 : 0
                         visible: opacity > 0
-                        
+
+                        Connections {
+                            target: aiAssistant
+                            function onIsStreamingChanged() {
+                                root.sidebarStreaming = aiAssistant.isStreaming;
+                            }
+                        }
+
                         Behavior on x { Anim { type: Anim.DefaultSpatial } }
                         Behavior on opacity { Anim { type: Anim.DefaultSpatial } }
                     }

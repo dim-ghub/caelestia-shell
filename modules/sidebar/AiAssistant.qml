@@ -24,6 +24,7 @@ Item {
     property bool isHistoryTab: false
     property string currentChatId: ""
     property var currentRequest: null
+    property bool isStreaming: false
     
 
     Timer {
@@ -196,6 +197,7 @@ Item {
         isTyping = false;
         isThinking = false;
         inAgentLoop = false;
+        isStreaming = false;
         currentChatId = "chat_" + Date.now();
         chatHistory.clear();
         isHistoryTab = false;
@@ -206,6 +208,7 @@ Item {
         isTyping = false;
         isThinking = false;
         inAgentLoop = false;
+        isStreaming = false;
         currentChatId = id;
         chatHistory.clear();
         var found = false;
@@ -629,6 +632,7 @@ Item {
                                         isTyping = false;
                                         isThinking = false;
                                         inAgentLoop = false;
+                                        isStreaming = false;
                                     }
                                 }
                             } else {
@@ -636,12 +640,14 @@ Item {
                                 isTyping = false;
                                 isThinking = false;
                                 inAgentLoop = false;
+                                isStreaming = false;
                             }
                         } else {
                             currentActionText = "Thinking...";
                             isTyping = false;
                             isThinking = false;
                             inAgentLoop = false;
+                            isStreaming = false;
                         }
                     } else {
                         var errMsg = (xhr.status === 0) ? "Generation cancelled" : "Ollama request failed (status " + xhr.status + ").";
@@ -655,6 +661,7 @@ Item {
                         isTyping = false;
                         isThinking = false;
                         inAgentLoop = false;
+                        isStreaming = false;
                         saveHistory();
                     }
                 }
@@ -798,6 +805,7 @@ Item {
             ];
         }
         
+        isStreaming = true;
         xhr.send(JSON.stringify(requestBody));
     }
 
