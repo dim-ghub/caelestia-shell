@@ -147,7 +147,7 @@ PageBase {
             icon: "code"
             label: qsTr("GitHub")
             status: qsTr("Contributions, token setup")
-            onClicked: root.nState.openSubPage(12)
+            onClicked: root.nState.openSubPage(13)
         }
 
         // Scroll actions

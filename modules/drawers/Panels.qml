@@ -21,6 +21,7 @@ Item {
     required property DrawerVisibilities visibilities
     required property Bar.BarWrapper bar
     required property real borderThickness
+    required property DockWrapper dockWrapper
 
     readonly property alias osd: osd
     readonly property alias osdWrapper: osdWrapper

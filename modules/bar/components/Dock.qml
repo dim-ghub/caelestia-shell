@@ -20,7 +20,9 @@ Item {
     implicitWidth: container.implicitWidth
     implicitHeight: container.implicitHeight
 
-    required property var bar
+    required property var popouts
+    property var bar: null
+    readonly property bool isHorizontal: bar ? bar.isHorizontal : (Config.bar.position === "top" || Config.bar.position === "bottom")
 
     property int modelUpdateTrigger: 0
 
@@ -72,14 +74,14 @@ Item {
         color: root.modelDataArray.length > 0 ? Colours.tPalette.m3surfaceContainer : "transparent"
         radius: Tokens.rounding.full
 
-        implicitWidth: bar.isHorizontal ? layout.implicitWidth + padding * 2 : Tokens.sizes.bar.innerWidth
-        implicitHeight: bar.isHorizontal ? Tokens.sizes.bar.innerWidth : layout.implicitHeight + padding * 2
+        implicitWidth: isHorizontal ? layout.implicitWidth + padding * 2 : Tokens.sizes.bar.innerWidth
+        implicitHeight: isHorizontal ? Tokens.sizes.bar.innerWidth : layout.implicitHeight + padding * 2
 
         property bool monitorCenter: Config.bar.dock.monitorCenter ?? true
 
-        property real preferredX: bar.isHorizontal ? (bar.width / 2 - width / 2 - (root.parent ? root.parent.x : 0)) : (root.width / 2 - width / 2)
+        property real preferredX: isHorizontal ? ((bar ? bar.width : root.width) / 2 - width / 2 - (root.parent ? root.parent.x : 0)) : (root.width / 2 - width / 2)
 
-        property real preferredY: bar.isHorizontal ? (root.height / 2 - height / 2) : (bar.height / 2 - height / 2 - (root.parent ? root.parent.y : 0))
+        property real preferredY: isHorizontal ? (root.height / 2 - height / 2) : ((bar ? bar.height : root.height) / 2 - height / 2 - (root.parent ? root.parent.y : 0))
 
         // Clamp only if root is larger than container, otherwise just center it
         x: monitorCenter ? (root.width > width ? Math.max(0, Math.min(preferredX, root.width - width)) : root.width / 2 - width / 2) : root.width / 2 - width / 2
@@ -89,13 +91,13 @@ Item {
         on_AppsValuesChanged: root.rebuildModel()
 
         Behavior on implicitWidth {
-            enabled: bar.isHorizontal
+            enabled: isHorizontal
 
             Anim { type: Anim.DefaultSpatial }
         }
 
         Behavior on implicitHeight {
-            enabled: !bar.isHorizontal
+            enabled: !isHorizontal
 
             Anim { type: Anim.DefaultSpatial }
         }
@@ -111,9 +113,9 @@ Item {
                 id: listView
 
                 anchors.centerIn: parent
-                width: bar.isHorizontal ? contentWidth : Tokens.sizes.bar.innerWidth * 0.8
-                height: bar.isHorizontal ? Tokens.sizes.bar.innerWidth * 0.8 : contentHeight
-                orientation: bar.isHorizontal ? ListView.Horizontal : ListView.Vertical
+                width: isHorizontal ? contentWidth : Tokens.sizes.bar.innerWidth * 0.8
+                height: isHorizontal ? Tokens.sizes.bar.innerWidth * 0.8 : contentHeight
+                orientation: isHorizontal ? ListView.Horizontal : ListView.Vertical
                 spacing: root.spacing
                 interactive: false
 
@@ -197,11 +199,11 @@ Item {
                         acceptedButtons: Qt.NoButton
 
                         onEntered: {
-                            if (bar.popouts.hasCurrent && bar.popouts.currentName === "dockcontext") return;
-                            bar.popouts.currentName = "dockhover";
-                            bar.popouts.currentCenter = bar.isHorizontal ? delegateItem.mapToItem(null, delegateItem.width / 2, 0).x : (delegateItem.mapToItem(null, 0, delegateItem.height / 2).y ?? 0);
-                            bar.popouts.dockModel = modelData;
-                            bar.popouts.hasCurrent = true;
+                            if (popouts.hasCurrent && popouts.currentName === "dockcontext") return;
+                            popouts.currentName = "dockhover";
+                            popouts.currentCenter = isHorizontal ? delegateItem.mapToItem(null, delegateItem.width / 2, 0).x : (delegateItem.mapToItem(null, 0, delegateItem.height / 2).y ?? 0);
+                            popouts.dockModel = modelData;
+                            popouts.hasCurrent = true;
                         }
                     }
 
@@ -212,7 +214,7 @@ Item {
 
                         anchors.fill: parent
                         drag.target: held ? delegateItem : null
-                        drag.axis: bar.isHorizontal ? Drag.XAxis : Drag.YAxis
+                        drag.axis: isHorizontal ? Drag.XAxis : Drag.YAxis
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
                         cursorShape: Qt.PointingHandCursor
                         
@@ -244,10 +246,10 @@ Item {
                                     });
                                 }
                             } else if (mouse.button === Qt.RightButton) {
-                                bar.popouts.currentName = "dockcontext";
-                                bar.popouts.currentCenter = bar.isHorizontal ? delegateItem.mapToItem(null, delegateItem.width / 2, 0).x : (delegateItem.mapToItem(null, 0, delegateItem.height / 2).y ?? 0);
-                                bar.popouts.dockModel = modelData;
-                                bar.popouts.hasCurrent = true;
+                                popouts.currentName = "dockcontext";
+                                popouts.currentCenter = isHorizontal ? delegateItem.mapToItem(null, delegateItem.width / 2, 0).x : (delegateItem.mapToItem(null, 0, delegateItem.height / 2).y ?? 0);
+                                popouts.dockModel = modelData;
+                                popouts.hasCurrent = true;
                             }
                         }
                         
@@ -399,7 +401,7 @@ Item {
 
     function handleHover(relPos: real, isHorizontal: bool): void {
         // Don't close dock context menu
-        if (bar.popouts.hasCurrent && bar.popouts.currentName === "dockcontext") return;
+        if (popouts.hasCurrent && popouts.currentName === "dockcontext") return;
 
         const itemSize = Tokens.sizes.bar.innerWidth * 0.8;
         const itemWidthWithSpacing = itemSize + spacing;
@@ -407,22 +409,22 @@ Item {
         
         // Only close if cursor is completely outside dock bounds
         if (adjustedPos < 0 || adjustedPos >= modelDataArray.length * itemWidthWithSpacing) {
-            bar.popouts.hasCurrent = false;
+            popouts.hasCurrent = false;
             return;
         }
         
         const index = Math.floor(adjustedPos / itemWidthWithSpacing);
         
         if (index >= 0 && index < modelDataArray.length) {
-            bar.popouts.currentName = "dockhover";
+            popouts.currentName = "dockhover";
             const centerOffset = index * itemWidthWithSpacing + itemSize / 2;
             const absoluteCenter = isHorizontal 
                 ? container.mapToItem(null, padding + centerOffset, 0).x 
                 : container.mapToItem(null, 0, padding + centerOffset).y;
             
-            bar.popouts.currentCenter = absoluteCenter;
-            bar.popouts.dockModel = modelDataArray[index];
-            bar.popouts.hasCurrent = true;
+            popouts.currentCenter = absoluteCenter;
+            popouts.dockModel = modelDataArray[index];
+            popouts.hasCurrent = true;
         }
     }
 

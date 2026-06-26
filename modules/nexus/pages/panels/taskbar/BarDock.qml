@@ -64,11 +64,18 @@ PageBase {
 
         ToggleRow {
             Layout.fillWidth: true
-            last: true
             text: qsTr("Recolour icons")
             subtext: qsTr("Recolour application icons using the system theme")
             checked: Config.bar.dock.recolourIcons
             onToggled: GlobalConfig.bar.dock.recolourIcons = checked
+        }
+
+        NavRow {
+            last: true
+            icon: "open_with"
+            label: qsTr("Detached mode")
+            status: qsTr("Position, visibility, drag threshold")
+            onClicked: root.nState.openSubPage(12)
         }
     }
 }

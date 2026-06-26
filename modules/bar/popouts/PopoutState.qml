@@ -7,6 +7,7 @@ QtObject {
     property string selectedClientAddress: ""
     property bool sidebarOpen: false
     property bool isHorizontal: true
+    property real currentCenter
 
     signal detachRequested(mode: string)
 }
