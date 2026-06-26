@@ -59,7 +59,7 @@ Item {
         anchors.leftMargin: 0
         anchors.rightMargin: Tokens.padding.medium
 
-        radius: mainBorder.innerRadius
+        radius: Tokens.rounding.large
         color: "transparent"
 
         Loader {
@@ -75,12 +75,6 @@ Item {
         }
     }
 
-    InnerBorder {
-        id: mainBorder
-
-        leftThickness: 0
-        rightThickness: Tokens.padding.medium
-    }
 
     Component {
         id: mainContentComponent

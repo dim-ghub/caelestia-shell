@@ -262,12 +262,11 @@ PageBase {
             Layout.fillWidth: true
             spacing: Tokens.spacing.small
 
-            StyledInputField {
+            M3TextField {
                 id: silenceAppInput
 
                 Layout.fillWidth: true
-                // placeholderText is also not exposed in StyledInputField? Let's check... wait, we can't use it if it's not exposed.
-                onEditingFinished: root.addApp()
+                field.onEditingFinished: root.addApp()
             }
 
             IconTextButton {

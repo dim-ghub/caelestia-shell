@@ -385,11 +385,10 @@ PageBase {
                     spacing: Tokens.spacing.extraSmall
                     Layout.fillWidth: true
                     StyledText { text: "App/game name"; color: Colours.palette.m3onSurface }
-                    StyledInputField {
+                    M3TextField {
                         id: manualAppName
                         Layout.fillWidth: true
                         text: GlobalConfig.services.arpcAppName
-                        horizontalAlignment: TextInput.AlignLeft
                     }
                 }
 
@@ -397,11 +396,10 @@ PageBase {
                     spacing: Tokens.spacing.extraSmall
                     Layout.fillWidth: true
                     StyledText { text: "Details"; color: Colours.palette.m3onSurface }
-                    StyledInputField {
+                    M3TextField {
                         id: manualDetails
                         Layout.fillWidth: true
                         text: GlobalConfig.services.arpcDetails
-                        horizontalAlignment: TextInput.AlignLeft
                     }
                 }
 
@@ -409,11 +407,10 @@ PageBase {
                     spacing: Tokens.spacing.extraSmall
                     Layout.fillWidth: true
                     StyledText { text: "State"; color: Colours.palette.m3onSurface }
-                    StyledInputField {
+                    M3TextField {
                         id: manualState
                         Layout.fillWidth: true
                         text: GlobalConfig.services.arpcState
-                        horizontalAlignment: TextInput.AlignLeft
                     }
                 }
 
@@ -421,11 +418,10 @@ PageBase {
                     spacing: Tokens.spacing.extraSmall
                     Layout.fillWidth: true
                     StyledText { text: "Large image key/URL"; color: Colours.palette.m3onSurface }
-                    StyledInputField {
+                    M3TextField {
                         id: manualLargeImage
                         Layout.fillWidth: true
                         text: GlobalConfig.services.arpcLargeImage
-                        horizontalAlignment: TextInput.AlignLeft
                     }
                 }
 
@@ -433,11 +429,10 @@ PageBase {
                     spacing: Tokens.spacing.extraSmall
                     Layout.fillWidth: true
                     StyledText { text: "Small image key/URL"; color: Colours.palette.m3onSurface }
-                    StyledInputField {
+                    M3TextField {
                         id: manualSmallImage
                         Layout.fillWidth: true
                         text: GlobalConfig.services.arpcSmallImage
-                        horizontalAlignment: TextInput.AlignLeft
                     }
                 }
 
