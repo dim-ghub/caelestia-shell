@@ -120,10 +120,10 @@ Singleton {
         const sizeX = (t.lastIpcObject && t.lastIpcObject.size && t.lastIpcObject.size[0]) ? t.lastIpcObject.size[0] : 0;
         const sizeY = (t.lastIpcObject && t.lastIpcObject.size && t.lastIpcObject.size[1]) ? t.lastIpcObject.size[1] : 0;
 
-        const currentX = (t.lastIpcObject && t.lastIpcObject.at && t.lastIpcObject.at[0]) ? t.lastIpcObject.at[0] : 0;
-        const currentY = (t.lastIpcObject && t.lastIpcObject.at && t.lastIpcObject.at[1]) ? t.lastIpcObject.at[1] : 0;
+        const currentX = (t.lastIpcObject && t.lastIpcObject.at && t.lastIpcObject.at.length > 0) ? t.lastIpcObject.at[0] : null;
+        const currentY = (t.lastIpcObject && t.lastIpcObject.at && t.lastIpcObject.at.length > 1) ? t.lastIpcObject.at[1] : null;
 
-        if (root.lastPipX !== -1 && root.lastPipY !== -1 && (Date.now() - root.lastPipMoveTime > 1000)) {
+        if (currentX !== null && currentY !== null && root.lastPipX !== -1 && root.lastPipY !== -1 && (Date.now() - root.lastPipMoveTime > 1000)) {
             const diffX = Math.abs(currentX - root.lastPipX);
             const diffY = Math.abs(currentY - root.lastPipY);
 
