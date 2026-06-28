@@ -49,9 +49,11 @@ Singleton {
         target: GlobalConfig.services
         function onPipPositionChanged(): void {
             root.tempPipPosition = ""; // Reset temporary override on explicit setting change
+            root.lastPipMoveTime = Date.now(); // Block drag-detection from falsely re-triggering
             root.checkPip();
         }
         function onPipFollowFocusChanged(): void {
+            root.lastPipMoveTime = Date.now();
             root.checkPip();
         }
         function onPipPausedChanged(): void {
