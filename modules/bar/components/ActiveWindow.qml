@@ -137,7 +137,6 @@ Item {
 
         // Custom Title component does not have font/color directly, StyledText child does
         opacity: root.current === this ? 1 : 0
-        horizontalAlignment: Text.AlignLeft
 
         StyledText {
             id: styledText

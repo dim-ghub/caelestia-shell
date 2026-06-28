@@ -54,6 +54,11 @@ Singleton {
         function onPipFollowFocusChanged(): void {
             root.checkPip();
         }
+        function onPipPausedChanged(): void {
+            if (!GlobalConfig.services.pipPaused) {
+                root.checkPip();
+            }
+        }
     }
 
     Connections {
@@ -71,6 +76,8 @@ Singleton {
     }
 
     function checkPip(): void {
+        if (GlobalConfig.services.pipPaused) return;
+
         const toplevels = Hyprland.toplevels.values;
         for (let i = 0; i < toplevels.length; i++) {
             const t = toplevels[i];
@@ -81,6 +88,8 @@ Singleton {
     }
 
     function movePip(t: HyprlandToplevel): void {
+        if (GlobalConfig.services.pipPaused) return;
+
         if (Hyprland.activeToplevel && Hyprland.activeToplevel.address === t.address) {
             return; // Pause auto-alignment while the user is interacting with the window!
         }

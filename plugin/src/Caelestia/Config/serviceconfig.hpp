@@ -53,6 +53,7 @@ class ServiceConfig : public ConfigObject {
     // Picture-in-Picture Settings
     CONFIG_GLOBAL_PROPERTY(QString, pipPosition, u"bottom right"_s)
     CONFIG_GLOBAL_PROPERTY(bool, pipFollowFocus, false)
+    CONFIG_GLOBAL_PROPERTY(bool, pipPaused, false)
 
 public:
     explicit ServiceConfig(QObject* parent = nullptr)

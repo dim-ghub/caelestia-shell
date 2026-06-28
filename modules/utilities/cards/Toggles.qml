@@ -30,6 +30,9 @@ StyledRect {
             },
             {
                 id: "pauseWallpaper"
+            },
+            {
+                id: "pipPause"
             }
         ].filter(t => !disabledIds.has(t.id));
 
@@ -202,6 +205,18 @@ StyledRect {
                         onClicked: {
                             const newVal = !GlobalConfig.background.videoWallpaperPaused;
                             GlobalConfig.background.videoWallpaperPaused = newVal;
+                        }
+                    }
+                }
+                DelegateChoice {
+                    roleValue: "pipPause"
+                    delegate: Toggle {
+                        icon: "picture_in_picture_alt"
+                        isToggle: true
+
+                        Component.onCompleted: checked = Qt.binding(() => GlobalConfig.services.pipPaused)
+                        onClicked: {
+                            GlobalConfig.services.pipPaused = !GlobalConfig.services.pipPaused;
                         }
                     }
                 }
