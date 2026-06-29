@@ -859,7 +859,10 @@ For example, to disable the bar on DP-1:
                 }
             ]
         },
-        "logo": "",
+        "logo": {
+            "path": "",
+            "size": 32
+        },
         "mediaGifSpeedAdjustment": 300,
         "sessionGifSpeed": 0.7,
         "showOverFullscreen": false
