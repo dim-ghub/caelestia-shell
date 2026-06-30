@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import QtCore
 import Quickshell.Io
 import Caelestia
 import Caelestia.Config
@@ -29,6 +30,11 @@ Searcher {
         let cats = [];
         for (let i = 0; i < root.list.length; i++) {
             let p = root.list[i].parentDir;
+            if (p.includes("steamapps/workshop/content/431960")) {
+                let cat = "Wallpaper Engine";
+                if (!cats.includes(cat)) cats.push(cat);
+                continue;
+            }
             if (p !== baseDir) {
                 let cat = p.slice(baseDir.length + 1);
                 if (cat.includes("/")) cat = cat.slice(0, cat.indexOf("/"));
@@ -45,6 +51,12 @@ Searcher {
         for (let i = 0; i < root.list.length; i++) {
             let w = root.list[i];
             let p = w.parentDir;
+            if (p.includes("steamapps/workshop/content/431960")) {
+                let cat = "Wallpaper Engine";
+                if (!grp[cat]) grp[cat] = [];
+                grp[cat].push(w);
+                continue;
+            }
             if (p === baseDir) {
                 grp["Main"].push(w);
             } else {
@@ -58,6 +70,9 @@ Searcher {
     }
 
     function getCategoryFor(w: FileSystemEntry): string {
+        if (w.parentDir.includes("steamapps/workshop/content/431960")) {
+            return "Wallpaper Engine";
+        }
         let category = w.parentDir.slice(Paths.wallsdir.length + 1);
         if (category.includes("/"))
             category = category.slice(0, category.indexOf("/"));
@@ -69,8 +84,25 @@ Searcher {
     }
 
     function setWallpaper(path: string): void {
-        actualCurrent = path;
-        Quickshell.execDetached(["caelestia", "wallpaper", "-f", path, ...smartArg]);
+        let targetPath = path;
+        let isWE = false;
+        let weId = "";
+        if (path.endsWith("project.json")) {
+            isWE = true;
+            let parts = path.split("/");
+            weId = parts[parts.length - 2];
+            let content = CUtils.readFile(path);
+            try {
+                let json = JSON.parse(content);
+                if (json.preview) {
+                    targetPath = path.substring(0, path.length - 12) + json.preview;
+                }
+            } catch (e) {
+                console.warn("Failed to parse project.json:", e);
+            }
+        }
+        actualCurrent = targetPath;
+        Quickshell.execDetached(["caelestia", "wallpaper", "-f", targetPath, ...smartArg]);
     }
 
     function preview(path: string): void {
@@ -90,6 +122,18 @@ Searcher {
     }
 
     function getThumbnailPath(path: string): string {
+        if (path.endsWith("project.json")) {
+            let content = CUtils.readFile(path);
+            try {
+                let json = JSON.parse(content);
+                if (json.preview) {
+                    return path.substring(0, path.length - 12) + json.preview;
+                }
+            } catch (e) {
+                console.warn("Failed to parse project.json:", e);
+            }
+            return path;
+        }
         if (Images.isVideo(path)) {
             return `${Paths.cache}/wallpapers/${CUtils.sha256(path)}/first_frame.png`;
         }
@@ -145,13 +189,43 @@ Searcher {
         }
     }
 
+    function updateCombinedList() {
+        let arr = [];
+        for (let i = 0; i < wallpapers.entries.length; i++) {
+            arr.push(wallpapers.entries[i]);
+        }
+        for (let i = 0; i < weWallpapers.entries.length; i++) {
+            arr.push(weWallpapers.entries[i]);
+        }
+        root.list = arr;
+    }
+
+    property alias weVolume: weSettings.volume
+    property alias weSilent: weSettings.silent
+    
+    Settings {
+        id: weSettings
+        property real volume: 0.15
+        property bool silent: false
+    }
+
+
     FileSystemModel {
         id: wallpapers
-
         recursive: true
         path: Paths.wallsdir
         filter: FileSystemModel.Files
-        nameFilters: Images.validImageExtensions.concat(Images.validVideoExtensions).map(e => `*.${e}`)
+        nameFilters: Images.validImageExtensions.concat(Images.validVideoExtensions).map(e => `*.${e}`).concat(["project.json"])
+        onEntriesChanged: root.updateCombinedList()
+    }
+
+    FileSystemModel {
+        id: weWallpapers
+        recursive: true
+        path: Quickshell.env("HOME") + "/.local/share/Steam/steamapps/workshop/content/431960"
+        filter: FileSystemModel.Files
+        nameFilters: ["project.json"]
+        onEntriesChanged: root.updateCombinedList()
     }
 
     Process {

@@ -155,6 +155,19 @@ QString CUtils::sha256(const QString& path) {
     return hash.result().toHex();
 }
 
+bool CUtils::fileExists(const QString& path) {
+    return QFileInfo::exists(path);
+}
+
+QString CUtils::readFile(const QString& path) {
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCWarning(lcCUtils) << "readFile: failed to open" << path;
+        return QString();
+    }
+    return QString::fromUtf8(file.readAll());
+}
+
 qreal CUtils::clamp(qreal value, qreal min, qreal max) {
     return qBound(min, value, max);
 }

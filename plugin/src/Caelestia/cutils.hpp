@@ -30,6 +30,8 @@ public:
     Q_INVOKABLE static QString sha256(const QString& path);
 
     Q_INVOKABLE static qreal clamp(qreal value, qreal min, qreal max);
+    Q_INVOKABLE static bool fileExists(const QString& path);
+    Q_INVOKABLE static QString readFile(const QString& path);
 
     [[nodiscard]] QString version() const;
     [[nodiscard]] QString qtVersion() const;

@@ -39,6 +39,9 @@ QtObject {
                 Component {
                     WallhavenPage {}
                 }
+                Component {
+                    WallpaperEnginePage {}
+                }
             }
         },
 

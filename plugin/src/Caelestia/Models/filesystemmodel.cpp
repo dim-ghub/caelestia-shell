@@ -225,7 +225,7 @@ void FileSystemModel::watchDirIfRecursive(const QString& path) {
                 filters |= QDir::Hidden;
             }
 
-            QDirIterator iter(path, filters, QDirIterator::Subdirectories);
+            QDirIterator iter(path, filters, QDirIterator::Subdirectories | QDirIterator::FollowSymlinks);
             QStringList dirs;
             while (iter.hasNext()) {
                 dirs << iter.next();
@@ -292,7 +292,7 @@ void FileSystemModel::updateEntriesForDir(const QString& dir) {
     }
 
     auto future = QtConcurrent::run([=](QPromise<QPair<QSet<QString>, QSet<QString>>>& promise) {
-        const auto flags = recursive ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags;
+        const auto flags = recursive ? (QDirIterator::Subdirectories | QDirIterator::FollowSymlinks) : QDirIterator::FollowSymlinks;
 
         std::optional<QDirIterator> iter;
 

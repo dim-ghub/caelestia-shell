@@ -5,6 +5,7 @@ import QtQuick.Effects
 import QtMultimedia
 import Quickshell
 import M3Shapes
+import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.filedialog
@@ -19,6 +20,23 @@ Item {
     property Item current: one
     property bool completed
     property var screen: null
+    property bool weActive: false
+    property string weDir: ""
+
+    function checkWE(path: string): void {
+        if (!path) {
+            weActive = false;
+            return;
+        }
+        let dir = path.substring(0, path.lastIndexOf('/'));
+        let projJson = dir + "/project.json";
+        if (CUtils.fileExists(projJson)) {
+            weDir = dir;
+            weActive = true;
+        } else {
+            weActive = false;
+        }
+    }
 
     function isVideo(path: string): bool {
         if (!path)
@@ -28,6 +46,7 @@ Item {
     }
 
     onSourceChanged: {
+        checkWE(source);
         if (!source)
             current = null;
         else if (current === one) {
@@ -40,12 +59,14 @@ Item {
     }
 
     Component.onCompleted: {
-        if (source)
+        if (source) {
+            checkWE(source);
             Qt.callLater(() => {
                 one.screen = screen;
                 Qt.callLater(() => one.update());
                 completed = true;
             });
+        }
     }
 
     Loader {
@@ -225,6 +246,7 @@ Item {
         Item {
             id: contentItem
             anchors.fill: parent
+            opacity: root.weActive ? 0 : 1
 
             layer.enabled: needsMask || Config.background.wallpaperRecolor
             layer.effect: MultiEffect {

@@ -171,6 +171,19 @@ PageBase {
             }
 
             IconTextButton {
+                icon: "view_in_ar"
+                text: qsTr("Wallpaper Engine")
+                font: Tokens.font.body.large
+                isRound: true
+                shapeMorph: true
+                type: IconTextButton.Tonal
+                horizontalPadding: Tokens.padding.extraLarge
+                verticalPadding: Tokens.padding.medium
+                disabled: !Config.background.wallpaperEnabled
+                onClicked: root.nState.openSubPage(5) // WE page
+            }
+
+            IconTextButton {
                 icon: "palette"
                 text: qsTr("Colours")
                 font: Tokens.font.body.large

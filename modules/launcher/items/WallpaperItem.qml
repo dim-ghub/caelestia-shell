@@ -76,7 +76,7 @@ Item {
 
         CachingImage {
             anchors.fill: parent
-            path: root.modelData.path
+            path: Wallpapers.getThumbnailPath(root.modelData.path)
             smooth: !root.PathView.view.moving
             visible: !Images.isVideo(root.modelData.name)
             sourceSize: {
@@ -97,7 +97,17 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         elide: Text.ElideRight
         renderType: Text.QtRendering
-        text: root.modelData.name
+        text: {
+            if (root.modelData.name === "project.json") {
+                let content = CUtils.readFile(root.modelData.path);
+                try {
+                    let json = JSON.parse(content);
+                    if (json.title) return json.title;
+                } catch (e) {}
+                return root.modelData.path.split('/').slice(-2, -1)[0];
+            }
+            return root.modelData.name;
+        }
         font: Tokens.font.label.medium
     }
 
