@@ -262,11 +262,11 @@ PageBase {
             Layout.fillWidth: true
             spacing: Tokens.spacing.small
 
-            M3TextField {
+            StyledTextField {
                 id: silenceAppInput
 
                 Layout.fillWidth: true
-                field.onEditingFinished: root.addApp()
+                onEditingFinished: root.addApp()
             }
 
             IconTextButton {

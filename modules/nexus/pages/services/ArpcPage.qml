@@ -385,7 +385,7 @@ PageBase {
                     spacing: Tokens.spacing.extraSmall
                     Layout.fillWidth: true
                     StyledText { text: "App/game name"; color: Colours.palette.m3onSurface }
-                    M3TextField {
+                    StyledTextField {
                         id: manualAppName
                         Layout.fillWidth: true
                         text: GlobalConfig.services.arpcAppName
@@ -396,7 +396,7 @@ PageBase {
                     spacing: Tokens.spacing.extraSmall
                     Layout.fillWidth: true
                     StyledText { text: "Details"; color: Colours.palette.m3onSurface }
-                    M3TextField {
+                    StyledTextField {
                         id: manualDetails
                         Layout.fillWidth: true
                         text: GlobalConfig.services.arpcDetails
@@ -407,7 +407,7 @@ PageBase {
                     spacing: Tokens.spacing.extraSmall
                     Layout.fillWidth: true
                     StyledText { text: "State"; color: Colours.palette.m3onSurface }
-                    M3TextField {
+                    StyledTextField {
                         id: manualState
                         Layout.fillWidth: true
                         text: GlobalConfig.services.arpcState
@@ -418,7 +418,7 @@ PageBase {
                     spacing: Tokens.spacing.extraSmall
                     Layout.fillWidth: true
                     StyledText { text: "Large image key/URL"; color: Colours.palette.m3onSurface }
-                    M3TextField {
+                    StyledTextField {
                         id: manualLargeImage
                         Layout.fillWidth: true
                         text: GlobalConfig.services.arpcLargeImage
@@ -429,7 +429,7 @@ PageBase {
                     spacing: Tokens.spacing.extraSmall
                     Layout.fillWidth: true
                     StyledText { text: "Small image key/URL"; color: Colours.palette.m3onSurface }
-                    M3TextField {
+                    StyledTextField {
                         id: manualSmallImage
                         Layout.fillWidth: true
                         text: GlobalConfig.services.arpcSmallImage
