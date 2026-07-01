@@ -107,11 +107,11 @@ replace_lines(366, 423, '''            var parsedLength = 0;
                                     currentActionText = "Searching the web...";
                                     var query = args.query;
                                     var page = args.page || 1;
-                                    runAgentCommand('python3 ~/.config/quickshell/caelestia/scripts/orion_search.py --mode search --query "' + query.replace(/"/g, '\\\\"') + '" --page ' + page, "exec");
+                                    runAgentCommand('python3 "' + Quickshell.shellDir + '/assets/scripts/orion_search.py" --mode search --query "' + query.replace(/"/g, '\\\\"') + '" --page ' + page, "exec");
                                 } else if (toolName === "read_webpage") {
                                     currentActionText = "Reading webpage...";
                                     var url = args.url;
-                                    runAgentCommand('python3 ~/.config/quickshell/caelestia/scripts/orion_search.py --mode read --url "' + url.replace(/"/g, '\\\\"') + '"', "exec");
+                                    runAgentCommand('python3 "' + Quickshell.shellDir + '/assets/scripts/orion_search.py" --mode read --url "' + url.replace(/"/g, '\\\\"') + '"', "exec");
                                 } else if (toolName === "open_app") {
                                     currentActionText = "Opening app...";
                                     var app = args.app_name;
