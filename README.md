@@ -310,7 +310,7 @@ To cleanly uninstall the shell and its components, simply run `pkgit`'s uninstal
 
 ```sh
 cd $XDG_CONFIG_HOME/quickshell/caelestia
-pkgit -u .
+pkgit -r .
 ```
 
 ## Configuring
