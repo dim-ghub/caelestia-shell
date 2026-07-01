@@ -65,21 +65,25 @@ Build dependencies:
 -   [`cmake`](https://cmake.org)
 -   [`ninja`](https://github.com/ninja-build/ninja)
 
-To install the shell manually, clone **this fork** to `$XDG_CONFIG_HOME/quickshell/caelestia`.
-Then simply run `pkgit` to build and install it:
+To install the shell, first install the `pkgit` package manager (available on the AUR as `pkgit-git`).
+Then you can simply install the shell directly from GitHub without cloning it:
 
 ```sh
-sudo pacman -Rdd caelestia-shell
-
-cd $XDG_CONFIG_HOME/quickshell
-git clone https://github.com/dim-ghub/caelestia-shell.git caelestia
-
-cd caelestia
-pkgit -i .
+sudo pacman -Rdd caelestia-shell # if previously installed
+pkgit -i https://github.com/dim-ghub/caelestia-shell
 ```
 
 > [!TIP]
-> You can also use `pkgit -q -i .` for a quiet installation that hides the build output.
+> You can also use `pkgit -q -i https://github.com/dim-ghub/caelestia-shell` for a quiet installation.
+
+If you prefer to clone and install it manually:
+
+```sh
+cd $XDG_CONFIG_HOME/quickshell
+git clone https://github.com/dim-ghub/caelestia-shell.git caelestia
+cd caelestia
+pkgit -i .
+```
 
 Alternatively, this fork can be installed and managed via [`pkgmgr`](https://github.com/dim-ghub/pkgmgr)'s
 `gh` plugin:
@@ -309,8 +313,7 @@ pkgit -i .
 To cleanly uninstall the shell and its components, simply run `pkgit`'s uninstall command:
 
 ```sh
-cd $XDG_CONFIG_HOME/quickshell/caelestia
-pkgit -r .
+pkgit -r caelestia-shell
 ```
 
 ## Configuring

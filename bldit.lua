@@ -1,6 +1,6 @@
 bldit_version = "0.1.3"
+package_name = "caelestia-shell"
 package_version = "2.0.2"
-global_dependencies = {}
 dependencies = {}
 
 local legacy_libs = {
