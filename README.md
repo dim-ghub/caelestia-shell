@@ -65,8 +65,8 @@ Build dependencies:
 -   [`cmake`](https://cmake.org)
 -   [`ninja`](https://github.com/ninja-build/ninja)
 
-To install the shell manually, install all dependencies and clone **this fork** to `$XDG_CONFIG_HOME/quickshell/caelestia`.
-Then simply run the install script:
+To install the shell manually, clone **this fork** to `$XDG_CONFIG_HOME/quickshell/caelestia`.
+Then simply run `pkgit` to build and install it:
 
 ```sh
 sudo pacman -Rdd caelestia-shell
@@ -75,8 +75,11 @@ cd $XDG_CONFIG_HOME/quickshell
 git clone https://github.com/dim-ghub/caelestia-shell.git caelestia
 
 cd caelestia
-./scripts/install.sh
+pkgit -i .
 ```
+
+> [!TIP]
+> You can also use `pkgit -q -i .` for a quiet installation that hides the build output.
 
 Alternatively, this fork can be installed and managed via [`pkgmgr`](https://github.com/dim-ghub/pkgmgr)'s
 `gh` plugin:
@@ -84,9 +87,6 @@ Alternatively, this fork can be installed and managed via [`pkgmgr`](https://git
 ```sh
 pkg install gh/dim-ghub/caelestia-shell-git
 ```
-
-> [!TIP]
-> By default, the script will use the latest version tag from [upstream](https://github.com/caelestia-dots/shell) to set the version number for the build. It does not download anything from upstream - it builds your local fork. You can also specify a version manually: `./scripts/install.sh 2.0.2`
 
 ### Nix
 
@@ -296,12 +296,21 @@ If installed via [`pkgmgr`](https://github.com/dim-ghub/pkgmgr), run:
 pkg update
 ```
 
-If installed manually, pull the latest changes and re-run the install script:
+If installed manually, pull the latest changes and re-run the installation:
 
 ```sh
 cd $XDG_CONFIG_HOME/quickshell/caelestia
 git pull
-./scripts/install.sh
+pkgit -i .
+```
+
+## Uninstalling
+
+To cleanly uninstall the shell and its components, simply run `pkgit`'s uninstall command:
+
+```sh
+cd $XDG_CONFIG_HOME/quickshell/caelestia
+pkgit -u .
 ```
 
 ## Configuring
