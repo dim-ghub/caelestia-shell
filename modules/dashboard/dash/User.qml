@@ -27,8 +27,16 @@ Item {
         CAnim {}
     }
 
+    Timer {
+        id: splashDelayTimer
+        interval: 350
+        running: Config.dashboard.showHyprlandSplash && root.visible
+        onTriggered: splashProcess.running = true
+    }
+
     Process {
-        running: Config.dashboard.showHyprlandSplash
+        id: splashProcess
+        running: false
         command: ["hyprctl", "splash"]
         stdout: StdioCollector {
             onStreamFinished: {

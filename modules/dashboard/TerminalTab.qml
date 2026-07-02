@@ -181,12 +181,21 @@ Item {
     implicitWidth: 840
     implicitHeight: 500
 
+    Timer {
+        id: initTimer
+        interval: 350
+        running: false
+        onTriggered: {
+            hostnameResolverComp.createObject(root, {
+                command: ["cat", "/etc/hostname"],
+                running: true
+            });
+        }
+    }
+
     Component.onCompleted: {
         startShell();
-        hostnameResolverComp.createObject(root, {
-            command: ["cat", "/etc/hostname"],
-            running: true
-        });
+        initTimer.start();
     }
 
     Component {
