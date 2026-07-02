@@ -69,7 +69,6 @@ To install the shell, first install the `pkgit` package manager (available on th
 Then you can simply install the shell directly from GitHub without cloning it:
 
 ```sh
-sudo pacman -Rdd caelestia-shell # if previously installed
 pkgit -i https://github.com/dim-ghub/caelestia-shell
 ```
 
