@@ -1,6 +1,6 @@
 bldit_version = "0.1.3"
 package_name = "caelestia-shell"
-package_version = "2.0.2"
+package_version = "2.0.3"
 global_dependencies = {
     caelestia_cli = {
         url = "https://github.com/dim-ghub/caelestia-cli.git",
