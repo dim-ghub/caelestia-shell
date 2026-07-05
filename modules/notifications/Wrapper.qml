@@ -4,7 +4,7 @@ import qs.components
 Item {
     id: root
 
-    required property DrawerVisibilities visibilities
+    required property ScreenState screenState
     required property Item sidebarPanel
     property alias osdPanel: content.osdPanel
     property alias sessionPanel: content.sessionPanel
@@ -20,6 +20,6 @@ Item {
         id: content
 
         anchors.topMargin: -root.baseTopMargin
-        visibilities: root.visibilities
+        screenState: root.screenState
     }
 }

@@ -5,21 +5,31 @@ import qs.components
 import qs.services
 
 Singleton {
-    property var screens: new Map()
-    property var bars: new Map()
     property string launcherInitialSearch: ""
     property string initialSidebarTab: "notifications"
 
-    function load(screen: ShellScreen, visibilities: DrawerVisibilities): void {
-        screens.set(Hypr.monitorFor(screen), visibilities);
+    // Backwards compatibility for custom modules
+    property var bars: ({
+        get: function(name) {
+            for (let i = 0; i < Screens.screens.length; i++) {
+                if (Screens.screens[i].name === name) {
+                    const comps = ShellState.componentsFor(Screens.screens[i]);
+                    if (comps) return comps.bar;
+                }
+            }
+            return null;
+        }
+    })
+
+    function load(screen: ShellScreen, visibilities: ScreenState): void {
+        // Obsolete, ScreenState handles this
     }
 
     function registerBar(screen: ShellScreen, barWrapper: var): void {
-        bars.set(screen.name, barWrapper);
-        bars = new Map(bars); // Force QML property change notification by changing the Map reference
+        // Obsolete, ShellState ComponentRef handles this
     }
 
-    function getForActive(): DrawerVisibilities {
-        return screens.get(Hypr.focusedMonitor);
+    function getForActive(): ScreenState {
+        return ShellState.forActive();
     }
 }

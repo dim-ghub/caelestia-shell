@@ -18,10 +18,19 @@ import "modules/background"
 import "modules/shimeji"
 import "modules/areapicker"
 import "modules/lock"
+import QtQuick
 import "modules/polkit"
 
 ShellRoot {
+    id: root
+
     settings.watchFiles: true
+
+    Binding {
+        target: ShellState
+        property: "shellRoot"
+        value: root
+    }
 
     GSFLoader {}
 

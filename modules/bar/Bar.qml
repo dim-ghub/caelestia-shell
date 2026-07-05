@@ -15,7 +15,7 @@ GridLayout {
 
     required property ShellScreen screen
     Config.screen: screen.name
-    required property DrawerVisibilities visibilities
+    required property ScreenState screenState
     required property BarPopouts.Wrapper popouts
     required property bool fullscreen
     readonly property int vPadding: Tokens.padding.large
@@ -29,15 +29,14 @@ GridLayout {
             return;
 
         for (let i = 0; i < repeater.count; i++) {
-            const loader = repeater.itemAt(i) as WrappedLoader;
-            if (loader?.enabled && loader.entryId === "tray") {
-                (loader.item as Tray).expanded = false;
-            }
+            const tray = (repeater.itemAt(i) as EntryWrapper).item as Tray;
+            if (tray)
+                tray.expanded = false;
         }
     }
 
     function checkPopout(pos: real): void {
-        const ch = childAt(isHorizontal ? pos : width / 2, isHorizontal ? height / 2 : pos) as WrappedLoader;
+        const ch = childAt(isHorizontal ? pos : width / 2, isHorizontal ? height / 2 : pos) as EntryWrapper;
 
         if (ch?.entryId !== "tray")
             closeTray();
@@ -61,7 +60,7 @@ GridLayout {
             } else {
                 popouts.hasCurrent = false;
             }
-        } else if (id === "tray" && Config.bar.popouts.tray && !visibilities.sidebar) {
+        } else if (id === "tray" && Config.bar.popouts.tray && !screenState.sidebar) {
             const tray = ch.item as Tray;
             const mouseMap = mapToItem(tray.expandIcon, isHorizontal ? pos : tray.implicitWidth / 2, isHorizontal ? tray.implicitHeight / 2 : pos);
             if (!Config.bar.tray.compact || (tray.expanded && !tray.expandIcon.contains(mouseMap))) {
@@ -125,7 +124,7 @@ GridLayout {
     }
 
     function handleWheel(pos: real, angleDelta: point): void {
-        const ch = childAt(isHorizontal ? pos : width / 2, isHorizontal ? height / 2 : pos) as WrappedLoader;
+        const ch = childAt(isHorizontal ? pos : width / 2, isHorizontal ? height / 2 : pos) as EntryWrapper;
         if (ch?.entryId === "workspaces" && Config.bar.scrollActions.workspaces) {
             // Workspace scroll
             const mon = (GlobalConfig.bar.workspaces.perMonitorWorkspaces ? Hypr.monitorFor(screen) : Hypr.focusedMonitor);
@@ -160,28 +159,34 @@ GridLayout {
     Repeater {
         id: repeater
 
-        model: Config.bar.entries
+        model: ScriptModel {
+            values: root.Config.bar.entries.filter(e => e.enabled ?? true)
+        }
 
         DelegateChooser {
             role: "id"
 
             DelegateChoice {
                 roleValue: "spacer"
-                delegate: WrappedLoader {
+                delegate: EntryWrapper {
                     Layout.fillHeight: !root.isHorizontal && enabled
                     Layout.fillWidth: root.isHorizontal && enabled
+                }
                 }
             }
             DelegateChoice {
                 roleValue: "logo"
-                delegate: WrappedLoader {
-                    sourceComponent: OsIcon {}
+                delegate: EntryWrapper {
+                    OsIcon {
+                        objectName: "taskbarLogo"
+                    }
                 }
             }
             DelegateChoice {
                 roleValue: "workspaces"
-                delegate: WrappedLoader {
-                    sourceComponent: Workspaces {
+                delegate: EntryWrapper {
+                    Workspaces {
+                        objectName: "taskbarWorkspaces"
                         screen: root.screen
                         fullscreen: root.fullscreen
                     }
@@ -189,20 +194,19 @@ GridLayout {
             }
             DelegateChoice {
                 roleValue: "dock"
-                delegate: WrappedLoader {
+                delegate: EntryWrapper {
                     Layout.fillWidth: true
                     visible: !root.fullscreen
-                    sourceComponent: Dock {
+                    Dock {
                         bar: root
                     }
                 }
             }
             DelegateChoice {
                 roleValue: "activeWindow"
-                delegate: WrappedLoader {
-                    Layout.fillWidth: true
-                    visible: !root.fullscreen
-                    sourceComponent: ActiveWindow {
+                delegate: EntryWrapper {
+                    ActiveWindow {
+                        objectName: "taskbarActiveWindow"
                         bar: root
                         monitor: Brightness.getMonitorForScreen(root.screen)
                     }
@@ -210,50 +214,54 @@ GridLayout {
             }
             DelegateChoice {
                 roleValue: "tray"
-                delegate: WrappedLoader {
-                    visible: !root.fullscreen
-                    sourceComponent: Tray {}
+                delegate: EntryWrapper {
+                    Tray {
+                        objectName: "taskbarTray"
+                    }
                 }
             }
             DelegateChoice {
                 roleValue: "clock"
-                delegate: WrappedLoader {
-                    visible: !root.fullscreen
-                    sourceComponent: Clock {}
+                delegate: EntryWrapper {
+                    Clock {
+                        objectName: "taskbarClock"
+                    }
                 }
             }
             DelegateChoice {
                 roleValue: "statusIcons"
-                delegate: WrappedLoader {
-                    visible: !root.fullscreen
-                    sourceComponent: StatusIcons {}
+                delegate: EntryWrapper {
+                    StatusIcons {
+                        objectName: "taskbarStatusIcons"
+                    }
                 }
             }
             DelegateChoice {
                 roleValue: "github"
-                delegate: WrappedLoader {
+                delegate: EntryWrapper {
                     visible: enabled && !root.fullscreen && GithubStore.available
-                    sourceComponent: GithubActivity {
+                    GithubActivity {
                         popouts: root.popouts
                     }
                 }
             }
             DelegateChoice {
                 roleValue: "power"
-                delegate: WrappedLoader {
-                    sourceComponent: Power {
-                        visibilities: root.visibilities
+                delegate: EntryWrapper {
+                    Power {
+                        objectName: "taskbarPowerButton"
+                        screenState: root.screenState
                     }
                 }
             }
         }
     }
 
-    component WrappedLoader: Loader {
-        required enabled
+    component EntryWrapper: Item {
         required property var modelData
-        readonly property string entryId: modelData.id
         required property int index
+        default property Item item
+        readonly property string entryId: modelData.id
 
         function findFirstEnabled(): Item {
             const count = repeater.count;
@@ -274,7 +282,6 @@ GridLayout {
             return null;
         }
 
-        asynchronous: false
         Layout.alignment: root.isHorizontal ? Qt.AlignVCenter : Qt.AlignHCenter
 
         // Cursed ahh thing to add padding to first and last enabled components
@@ -283,7 +290,9 @@ GridLayout {
         Layout.topMargin: (!root.isHorizontal && findFirstEnabled() === this) ? root.vPadding : 0
         Layout.bottomMargin: (!root.isHorizontal && findLastEnabled() === this) ? root.vPadding : 0
 
-        visible: enabled
-        active: enabled
+        implicitWidth: item?.implicitWidth ?? 0
+        implicitHeight: item?.implicitHeight ?? 0
+
+        children: item
     }
 }

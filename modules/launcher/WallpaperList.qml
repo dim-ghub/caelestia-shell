@@ -13,7 +13,7 @@ PathView {
     id: root
 
     required property SearchBar search
-    required property var visibilities
+    required property var screenState
     required property var panels
     required property var content
     required property var contentList
@@ -30,7 +30,6 @@ PathView {
         const barThickness = isBarHorizontal ? panels.bar.implicitHeight : panels.bar.implicitWidth;
         const barMargins = Math.max(Config.border.thickness, barThickness);
         let outerMargins = 0;
-
         if (panels.popouts.hasCurrent) {
             let overlaps = false;
             if (isBarHorizontal) {
@@ -64,7 +63,7 @@ PathView {
             }
         }
 
-        if (visibilities.sidebar) {
+        if (screenState.utilities || screenState.sidebar) {
             let overlaps = false;
             const sidebarY = screen.height - panels.bottomMargin - panels.sidebar.implicitHeight;
             const launcherY = isBarHorizontal ? screen.height - panels.bottomMargin - content.implicitHeight : screen.height - content.implicitHeight;
@@ -73,10 +72,9 @@ PathView {
             }
 
             if (overlaps) {
-                outerMargins = Math.max(outerMargins, panels.sidebar.implicitWidth);
+                outerMargins = Math.max(outerMargins, panels.utilities.implicitWidth);
             }
         }
-
         const maxWidth = screen.width - Config.border.rounding * 4 - (barMargins + outerMargins) * 2;
 
         if (maxWidth <= 0)
@@ -151,7 +149,7 @@ PathView {
     highlightRangeMode: PathView.StrictlyEnforceRange
 
     delegate: WallpaperItem {
-        visibilities: root.visibilities
+        screenState: root.screenState
     }
 
     path: Path {

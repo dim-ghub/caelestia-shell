@@ -17,7 +17,7 @@ import "../../background"
 StyledRect {
     id: root
 
-    required property DrawerVisibilities visibilities
+    required property ScreenState screenState
     required property BarPopouts.Wrapper popouts
 
     readonly property var quickToggles: {
@@ -134,7 +134,7 @@ StyledRect {
                         inactiveOnColour: Colours.palette.m3onSurfaceVariant
                         isToggle: false
                         onClicked: {
-                            root.visibilities.utilities = false;
+                            root.screenState.utilities = false;
                             WindowFactory.create();
                         }
                     }

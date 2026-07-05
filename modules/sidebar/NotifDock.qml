@@ -16,7 +16,7 @@ Item {
     id: root
 
     required property Props props
-    required property DrawerVisibilities visibilities
+    required property ScreenState screenState
     readonly property int notifCount: Notifs.list.reduce((acc, n) => n.closed ? acc : acc + 1, 0)
 
     property bool gameActive: false
@@ -148,7 +148,7 @@ Item {
                 id: notifList
 
                 props: root.props
-                visibilities: root.visibilities
+                screenState: root.screenState
                 container: view
             }
         }

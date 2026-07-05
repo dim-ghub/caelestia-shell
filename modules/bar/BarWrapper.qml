@@ -11,7 +11,7 @@ Item {
     id: root
 
     required property ShellScreen screen
-    required property DrawerVisibilities visibilities
+    required property ScreenState screenState
     required property BarPopouts.Wrapper popouts
     required property bool fullscreen
 
@@ -22,8 +22,8 @@ Item {
 
     readonly property int padding: Math.max(Tokens.padding.small, Config.border.thickness)
     readonly property int contentWidth: Tokens.sizes.bar.innerWidth + padding * 2
-    readonly property int exclusiveZone: !disabled && (Config.bar.persistent || visibilities.bar) ? contentWidth + (GlobalConfig.appearance.islands ? Tokens.spacing.extraLarge : 0) : Config.border.thickness
-    readonly property bool shouldBeVisible: !fullscreen && !disabled && (Config.bar.persistent || visibilities.bar || isHovered)
+    readonly property int exclusiveZone: !disabled && (Config.bar.persistent || screenState.bar) ? contentWidth + (GlobalConfig.appearance.islands ? Tokens.spacing.extraLarge : 0) : Config.border.thickness
+    readonly property bool shouldBeVisible: !fullscreen && !disabled && (Config.bar.persistent || screenState.bar || isHovered)
     property bool isHovered
 
     readonly property bool isHorizontal: Config.bar.position === "top" || Config.bar.position === "bottom"
@@ -35,12 +35,12 @@ Item {
         (content.item as Bar)?.closeTray();
     }
 
-    function checkPopout(y: real): void {
-        (content.item as Bar)?.checkPopout(y);
+    function checkPopout(pos: real): void {
+        (content.item as Bar)?.checkPopout(pos);
     }
 
-    function handleWheel(y: real, angleDelta: point): void {
-        (content.item as Bar)?.handleWheel(y, angleDelta);
+    function handleWheel(pos: real, angleDelta: point): void {
+        (content.item as Bar)?.handleWheel(pos, angleDelta);
     }
 
     clip: true
@@ -89,7 +89,7 @@ Item {
             anchors.fill: parent
             width: root.contentWidth
             screen: root.screen
-            visibilities: root.visibilities
+            screenState: root.screenState
             popouts: root.popouts // qmllint disable incompatible-type
             fullscreen: root.fullscreen
         }
@@ -101,7 +101,7 @@ Item {
         Bar {
             anchors.fill: parent
             screen: root.screen
-            visibilities: root.visibilities
+            screenState: root.screenState
             popouts: root.popouts // qmllint disable incompatible-type
             fullscreen: root.fullscreen
         }

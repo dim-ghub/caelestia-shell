@@ -18,7 +18,7 @@ Item {
 
     required property ShellScreen screen
     Config.screen: screen.name
-    required property DrawerVisibilities visibilities
+    required property ScreenState screenState
     required property Bar.BarWrapper bar
     required property real borderThickness
 
@@ -144,7 +144,7 @@ Item {
             id: osd
 
             screen: root.screen
-            visibilities: root.visibilities
+            screenState: root.screenState
             sidebarOrSessionVisible: sidebar.visible || session.visible
 
             anchors.verticalCenter: parent.verticalCenter
@@ -157,7 +157,7 @@ Item {
 
         property bool shouldPush: popoutsWrapper.offsetScale < 1 && !popoutsWrapper.content.isDockPopout && !sidebar.visible
 
-        visibilities: root.visibilities
+        screenState: root.screenState
         sidebarPanel: sidebar
         osdPanel: osdWrapper
         sessionPanel: sessionWrapper
@@ -185,7 +185,7 @@ Item {
         Session.Wrapper {
             id: session
 
-            visibilities: root.visibilities
+            screenState: root.screenState
             sidebarVisible: sidebar.visible
 
             anchors.verticalCenter: parent.verticalCenter
@@ -197,7 +197,7 @@ Item {
         id: launcher
 
         screen: root.screen
-        visibilities: root.visibilities
+        screenState: root.screenState
         panels: root
 
         anchors.horizontalCenter: parent.horizontalCenter
@@ -207,7 +207,7 @@ Item {
     Dashboard.Wrapper {
         id: dashboard
 
-        visibilities: root.visibilities
+        screenState: root.screenState
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
@@ -219,13 +219,13 @@ Item {
         screen: root.screen
         bar: root.bar
         borderThickness: root.borderThickness
-        visibilities: root.visibilities
+        screenState: root.screenState
     }
 
     Utilities.Wrapper {
         id: utilities
 
-        visibilities: root.visibilities
+        screenState: root.screenState
         sidebar: sidebar
         popouts: popoutsWrapper.content
 
@@ -244,7 +244,7 @@ Item {
     Sidebar.Wrapper {
         id: sidebar
 
-        visibilities: root.visibilities
+        screenState: root.screenState
         popouts: popoutsWrapper.content
         utilities: utilities
 

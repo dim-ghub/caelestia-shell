@@ -29,6 +29,12 @@ Variants {
         anchors.left: true
         anchors.right: true
 
+        ShellState.ComponentRef {
+            screen: win.screen
+            slot: "background"
+            component: win
+        }
+
         Item {
             id: behindClock
 

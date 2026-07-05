@@ -9,14 +9,14 @@ Item {
     id: root
 
     required property Props props
-    required property DrawerVisibilities visibilities
+    required property ScreenState screenState
 
     property var popouts
     property var utilities
     property bool sidebarStreaming: false
 
     readonly property bool isBarHorizontal: Config.bar.position === "top" || Config.bar.position === "bottom"
-    readonly property bool showPopoutSeparator: isBarHorizontal && root.visibilities.sidebar && popouts && popouts.hasCurrent && popouts.currentName !== "dockhover" && popouts.currentName !== "dockcontext" && popouts.currentName !== "activewindow" && popouts.currentName !== "github"
+    readonly property bool showPopoutSeparator: isBarHorizontal && root.screenState.sidebar && popouts && popouts.hasCurrent && popouts.currentName !== "dockhover" && popouts.currentName !== "dockcontext" && popouts.currentName !== "activewindow" && popouts.currentName !== "github"
 
     property string activeTab: "notifications"
 
@@ -26,9 +26,9 @@ Item {
     }
 
     Connections {
-        target: root.visibilities
+        target: root.screenState
         function onSidebarChanged() {
-            if (root.visibilities.sidebar) {
+            if (root.screenState.sidebar) {
                 root.activeTab = Visibilities.initialSidebarTab;
                 checkAiTab();
             }
@@ -180,6 +180,7 @@ Item {
                     property int activeIndex: indicator.activeIndex
 
                     NotifDock {
+                        objectName: "sidebarNotifications"
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         width: parent.width
@@ -187,7 +188,7 @@ Item {
                         opacity: root.activeTab === "notifications" ? 1 : 0
                         visible: opacity > 0
                         props: root.props
-                        visibilities: root.visibilities
+                        screenState: root.screenState
                         
                         Behavior on x { Anim { type: Anim.DefaultSpatial } }
                         Behavior on opacity { Anim { type: Anim.DefaultSpatial } }

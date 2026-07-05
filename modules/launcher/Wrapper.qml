@@ -10,14 +10,14 @@ Item {
     id: root
 
     required property ShellScreen screen
-    required property DrawerVisibilities visibilities
+    required property ScreenState screenState
     required property var panels
 
-    readonly property bool shouldBeActive: visibilities.launcher && Config.launcher.enabled
+    readonly property bool shouldBeActive: screenState.launcher && Config.launcher.enabled
 
     readonly property real maxHeight: {
         let max = screen.height - Config.border.thickness * 2 + Tokens.padding.extraLarge;
-        if (visibilities.dashboard)
+        if (screenState.dashboard)
             max -= panels.dashboard.nonAnimHeight;
         return max;
     }
@@ -53,12 +53,10 @@ Item {
 
         active: root.shouldBeActive || root.visible
 
-        sourceComponent: Component {
-            Content {
-                visibilities: root.visibilities
-                panels: root.panels
-                maxHeight: root.maxHeight
-            }
+        sourceComponent: Content {
+            screenState: root.screenState
+            panels: root.panels
+            maxHeight: root.maxHeight
         }
     }
 }
