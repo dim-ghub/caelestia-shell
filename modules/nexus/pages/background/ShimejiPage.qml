@@ -43,7 +43,7 @@ PageBase {
             Layout.fillWidth: true
             label: qsTr("Shimeji count per screen")
             from: 1
-            to: 10
+            to: 9999
             stepSize: 1
             value: Config.shimeji.count
             onMoved: GlobalConfig.shimeji.count = value
