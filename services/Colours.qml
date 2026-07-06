@@ -93,19 +93,25 @@ Singleton {
     function reloadHyprRules(): void {
         let rule, trEnabled;
         const ignoreAlpha = Math.max(0, transparency.base - 0.03);
+        let messages = [];
         if (Hypr.usingLua) {
             rule = `eval hl.layer_rule({ match = { namespace = "%1" }, %2 = %3 })`;
             trEnabled = transparency.enabled;
+            messages.push(rule.arg("caelestia-drawers").arg("blur").arg(trEnabled));
+            messages.push(rule.arg("caelestia-drawers").arg("ignore_alpha").arg(ignoreAlpha));
+            messages.push(rule.arg("caelestia-polkit").arg("blur").arg(trEnabled));
+            messages.push(rule.arg("caelestia-polkit").arg("ignore_alpha").arg(ignoreAlpha));
+            messages.push(`eval hl.layer_rule({ match = { namespace = "caelestia-shimeji" }, no_anim = true })`);
         } else {
             rule = "keyword layerrule %2 %3, match:namespace %1";
             trEnabled = transparency.enabled ? 1 : 0;
+            messages.push(rule.arg("caelestia-drawers").arg("blur").arg(trEnabled));
+            messages.push(rule.arg("caelestia-drawers").arg("ignore_alpha").arg(ignoreAlpha));
+            messages.push(rule.arg("caelestia-polkit").arg("blur").arg(trEnabled));
+            messages.push(rule.arg("caelestia-polkit").arg("ignore_alpha").arg(ignoreAlpha));
+            messages.push("keyword layerrule noanim, match:namespace caelestia-shimeji");
         }
-        Hypr.extras.batchMessage([
-            rule.arg("caelestia-drawers").arg("blur").arg(trEnabled),
-            rule.arg("caelestia-drawers").arg("ignore_alpha").arg(ignoreAlpha),
-            rule.arg("caelestia-polkit").arg("blur").arg(trEnabled),
-            rule.arg("caelestia-polkit").arg("ignore_alpha").arg(ignoreAlpha)
-        ]);
+        Hypr.extras.batchMessage(messages);
     }
 
     function requestReloadHyprRules(): void {
