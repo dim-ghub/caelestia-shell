@@ -14,6 +14,7 @@ Column {
     id: root
 
     required property ScreenState screenState
+    signal requestShutdown(var command)
 
     padding: Tokens.padding.large
     rightPadding: CUtils.clamp(padding - Config.border.thickness, 0, padding)
@@ -81,14 +82,19 @@ Column {
         KeyNavigation.up: hibernate
     }
 
+
     component SessionButton: IconButton {
         id: button
 
         required property list<string> command
 
         function exec(): void {
-            if (!SessionManager.exec(command))
-                Quickshell.execDetached(command);
+            if (Config.session.gracefulShutdown) {
+                root.requestShutdown(command);
+            } else {
+                if (!SessionManager.exec(command))
+                    Quickshell.execDetached(command);
+            }
         }
 
         implicitWidth: Tokens.sizes.session.button

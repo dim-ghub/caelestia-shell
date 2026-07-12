@@ -36,11 +36,18 @@ PageBase {
         }
 
         NavRow {
-            last: true
             icon: "dock_to_right"
             label: qsTr("Sidebar")
             status: Config.sidebar.enabled ? qsTr("Enabled") : qsTr("Disabled")
             onClicked: root.nState.openSubPage(4)
+        }
+
+        NavRow {
+            last: true
+            icon: "power_settings_new"
+            label: qsTr("Session Menu")
+            status: Config.session.enabled ? qsTr("Enabled") : qsTr("Disabled")
+            onClicked: root.nState.openSubPage(5)
         }
     }
 }

@@ -37,5 +37,16 @@ Item {
         sourceComponent: Content {
             screenState: root.screenState
         }
+
+        Connections {
+            target: content.item
+            function onRequestShutdown(command) {
+                gracefulShutdown.startSequence(command);
+            }
+        }
+    }
+
+    GracefulShutdown {
+        id: gracefulShutdown
     }
 }

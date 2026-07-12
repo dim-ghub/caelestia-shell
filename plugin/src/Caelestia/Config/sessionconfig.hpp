@@ -4,6 +4,7 @@
 
 #include <qstring.h>
 #include <qstringlist.h>
+#include <QCoreApplication>
 
 namespace caelestia::config {
 
@@ -41,7 +42,10 @@ class SessionConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
+    Q_PROPERTY(int pid READ pid CONSTANT)
     CONFIG_PROPERTY(bool, enabled, true)
+    CONFIG_PROPERTY(bool, gracefulShutdown, true)
+    CONFIG_PROPERTY(bool, gracefulShutdownDry, false)
     CONFIG_PROPERTY(int, dragThreshold, 30)
     CONFIG_PROPERTY(bool, vimKeybinds, false)
     CONFIG_SUBOBJECT(SessionIcons, icons)
@@ -52,6 +56,8 @@ public:
         : ConfigObject(parent)
         , m_icons(new SessionIcons(this))
         , m_commands(new SessionCommands(this)) {}
+
+    int pid() const { return QCoreApplication::applicationPid(); }
 };
 
 } // namespace caelestia::config

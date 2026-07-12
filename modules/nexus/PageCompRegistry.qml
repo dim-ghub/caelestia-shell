@@ -155,6 +155,9 @@ QtObject {
                 Component {
                     SidebarPanel {}
                 }
+                Component {
+                    SessionPanel {}
+                }
 
                 // Taskbar component sub-pages
                 Component {
