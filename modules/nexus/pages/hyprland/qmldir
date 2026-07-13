@@ -1,0 +1,5 @@
+module qs.modules.nexus.pages.hyprland
+HyprlandPage 1.0 HyprlandPage.qml
+HyprVariablesPage 1.0 HyprVariablesPage.qml
+UserConfigPage 1.0 UserConfigPage.qml
+HyprKeybindsPage 1.0 HyprKeybindsPage.qml

@@ -17,6 +17,7 @@ import qs.modules.nexus.pages.wallandstyle
 import qs.modules.nexus.pages.panels.taskbar
 import qs.modules.nexus.pages.background
 import qs.modules.nexus.pages.tokens
+import qs.modules.nexus.pages.hyprland
 
 QtObject {
     id: root
@@ -228,6 +229,24 @@ QtObject {
                 }
             }
         },
+        Component {
+            // Hyprland
+            StackPage {
+                Component {
+                    HyprlandPage {}
+                }
+                Component {
+                    HyprVariablesPage {}
+                }
+                Component {
+                    HyprKeybindsPage {}
+                }
+                Component {
+                    UserConfigPage {}
+                }
+            }
+        },
+
 
         // About
         Component {

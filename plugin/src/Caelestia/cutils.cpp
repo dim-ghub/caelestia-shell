@@ -169,6 +169,18 @@ QString CUtils::readFile(const QString& path) {
     return QString::fromUtf8(file.readAll());
 }
 
+bool CUtils::writeFile(const QString& path, const QString& content) {
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qCWarning(lcCUtils) << "writeFile: failed to open" << path;
+        return false;
+    }
+    QTextStream out(&file);
+    out << content;
+    file.close();
+    return true;
+}
+
 qreal CUtils::clamp(qreal value, qreal min, qreal max) {
     return qBound(min, value, max);
 }

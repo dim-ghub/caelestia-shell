@@ -94,6 +94,12 @@ QtObject {
             description: qsTr("UI language, weather location, display units"),
             category: "shell"
         },
+        {
+            label: qsTr("Hyprland"),
+            icon: "layers",
+            description: qsTr("Window manager configuration"),
+            category: "shell"
+        },
 
         // About
         {

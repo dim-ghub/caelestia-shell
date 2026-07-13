@@ -11,6 +11,9 @@ import qs.modules.nexus.common
 ConnectedRect {
     id: root
 
+    property bool showDelete: false
+    signal deleted()
+
     property alias icon: icon.text
     property alias label: label.text
     property alias valueLabel: valueLabel.text
@@ -49,15 +52,25 @@ ConnectedRect {
 
                 StyledText {
                     id: label
-
-                    Layout.fillWidth: true
+                    text: root.label
                     font: Tokens.font.body.small
                     elide: Text.ElideRight
                 }
 
+                IconButton {
+                    icon: "delete"
+                    type: IconButton.Text
+                    font: Tokens.font.icon.small
+                    visible: root.showDelete
+                    onClicked: root.deleted()
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                }
+
                 StyledText {
                     id: valueLabel
-
                     color: Colours.palette.m3outline
                     font: Tokens.font.body.small
                 }

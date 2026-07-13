@@ -8,6 +8,9 @@ import qs.services
 StyledSwitch {
     id: root
 
+    property bool showDelete: false
+    signal deleted()
+
     property string subtext
     property alias first: bg.first
     property alias last: bg.last
@@ -56,15 +59,30 @@ StyledSwitch {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 0
 
-            StyledText {
-                id: label
+            RowLayout {
+                width: parent.width
+                spacing: Tokens.spacing.small
 
-                anchors.left: parent.left
-                anchors.right: parent.right
+                StyledText {
+                    id: label
+                    text: root.text
+                    font: root.font
+                    elide: Text.ElideRight
+                    Layout.maximumWidth: parent.width - (delBtn.visible ? delBtn.implicitWidth + parent.spacing : 0)
+                }
 
-                text: root.text
-                font: root.font
-                elide: Text.ElideRight
+                IconButton {
+                    id: delBtn
+                    icon: "delete"
+                    type: IconButton.Text
+                    font: Tokens.font.icon.small
+                    visible: root.showDelete
+                    onClicked: root.deleted()
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                }
             }
 
             StyledText {
