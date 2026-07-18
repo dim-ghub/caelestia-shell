@@ -55,6 +55,9 @@ QtObject {
                 Component {
                     NetworkDetailPage {}
                 }
+                Component {
+                    AddVpnPage {}
+                }
             }
         },
         Component {
