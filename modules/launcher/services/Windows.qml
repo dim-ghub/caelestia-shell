@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell.Hyprland
+import Caelestia.Config
 
 QtObject {
     id: root
@@ -30,10 +31,18 @@ QtObject {
     }
 
     function query(search: string): var {
+        let results = items;
+        if (GlobalConfig.launcher.windowSwitcherActiveWorkspaceOnly) {
+            const activeWs = Hyprland.focusedMonitor?.activeWorkspace?.name;
+            if (activeWs) {
+                results = results.filter(w => w.workspace === activeWs);
+            }
+        }
+        
         if (!search)
-            return items;
+            return results;
         const lower = search.toLowerCase();
-        return items.filter(w => w.title.toLowerCase().includes(lower) || w.class.toLowerCase().includes(lower));
+        return results.filter(w => w.title.toLowerCase().includes(lower) || w.class.toLowerCase().includes(lower));
     }
 
     function focusWindow(address: string): void {
