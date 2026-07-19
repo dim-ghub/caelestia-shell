@@ -10,6 +10,7 @@ import Quickshell.Widgets
 import Caelestia.Config
 import qs.components
 import qs.components.containers
+import qs.components.controls
 import qs.services
 import qs.utils
 
@@ -30,7 +31,7 @@ StyledWindow {
     anchors.bottom: true
     anchors.left: true
 
-    width: 350
+    implicitWidth: 350
     visible: visibleOffset > 0
 
     Behavior on visibleOffset { Anim {} }
@@ -61,17 +62,10 @@ StyledWindow {
                     font: Tokens.font.title.large
                     Layout.fillWidth: true
                 }
-                StateLayer {
-                    radius: Tokens.rounding.medium
-                    implicitWidth: closeIcon.implicitWidth + Tokens.padding.small
-                    implicitHeight: closeIcon.implicitHeight + Tokens.padding.small
+                IconButton {
+                    icon: "close"
+                    type: IconButton.Text
                     onClicked: screenState.workspaceDrawer = false
-                    MaterialIcon {
-                        id: closeIcon
-                        anchors.centerIn: parent
-                        text: "close"
-                        fontStyle: Tokens.font.icon.medium
-                    }
                 }
             }
 
