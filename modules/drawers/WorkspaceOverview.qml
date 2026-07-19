@@ -104,12 +104,12 @@ Item {
 
                     Item {
                         anchors.fill: parent
-                        clip: true
+                        // Do not clip here so the drag target can float out
 
                         Repeater {
                             model: wsDelegate.windows
-                            delegate: StyledRect {
-                                id: windowRect
+                            delegate: Item {
+                                id: windowContainer
                                 required property var modelData
                                 
                                 property var ipc: modelData.lastIpcObject
@@ -119,45 +119,49 @@ Item {
                                 width: ipc && ipc.size ? (ipc.size[0] / wsDelegate.mw * parent.width) : 0
                                 height: ipc && ipc.size ? (ipc.size[1] / wsDelegate.mh * parent.height) : 0
 
-                                color: Colours.palette.m3surface
-                                border.width: 1
-                                border.color: Colours.palette.m3outlineVariant
-                                radius: Tokens.rounding.small
-                                clip: true
-                                
-                                ScreencopyView {
+                                StyledRect {
+                                    id: windowRect
                                     anchors.fill: parent
-                                    captureSource: windowRect.modelData.wayland ?? null
-                                    live: windowRect.visible
-                                }
-
-                                Rectangle {
-                                    anchors.centerIn: parent
-                                    width: 32
-                                    height: 32
+                                    color: Colours.palette.m3surface
+                                    border.width: 1
+                                    border.color: Colours.palette.m3outlineVariant
                                     radius: Tokens.rounding.small
-                                    color: Colours.tPalette.m3surface
-                                }
+                                    clip: true
+                                    
+                                    ScreencopyView {
+                                        anchors.fill: parent
+                                        captureSource: windowContainer.modelData.wayland ?? null
+                                        live: windowRect.visible
+                                    }
 
-                                IconImage {
-                                    anchors.centerIn: parent
-                                    source: Icons.getAppIcon(windowRect.modelData.lastIpcObject.class ?? "", "image-missing")
-                                    implicitSize: 20
-                                    asynchronous: true
+                                    Rectangle {
+                                        anchors.centerIn: parent
+                                        width: 32
+                                        height: 32
+                                        radius: Tokens.rounding.small
+                                        color: Colours.tPalette.m3surface
+                                    }
+
+                                    IconImage {
+                                        anchors.centerIn: parent
+                                        source: Icons.getAppIcon(windowContainer.modelData.lastIpcObject.class ?? "", "image-missing")
+                                        implicitSize: 20
+                                        asynchronous: true
+                                    }
                                 }
 
                                 Rectangle {
                                     id: dragRect
                                     width: parent.width
                                     height: parent.height
-                                    color: "transparent"
-                                    border.width: dragArea.drag.active ? 2 : 0
-                                    border.color: Colours.palette.m3primary
+                                    color: dragArea.drag.active ? Colours.palette.m3primary : "transparent"
+                                    opacity: dragArea.drag.active ? 0.3 : 0
+                                    radius: Tokens.rounding.small
                                     
                                     Drag.active: dragArea.drag.active
                                     Drag.hotSpot.x: width / 2
                                     Drag.hotSpot.y: height / 2
-                                    Drag.source: windowRect.modelData
+                                    Drag.source: windowContainer.modelData
                                 }
 
                                 MouseArea {
@@ -167,9 +171,19 @@ Item {
                                     drag.axis: Drag.XAndYAxis
                                     cursorShape: Qt.PointingHandCursor
                                     
+                                    onReleased: {
+                                        if (drag.active) {
+                                            dragRect.Drag.drop();
+                                            dragRect.x = 0;
+                                            dragRect.y = 0;
+                                        }
+                                    }
+                                    
                                     onClicked: {
-                                        Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.focus({ window = "address:0x${windowRect.modelData.address}" })` : `focuswindow address:0x${windowRect.modelData.address}`);
-                                        screenState.workspaceDrawer = false;
+                                        if (!drag.active) {
+                                            Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.focus({ window = "address:0x${windowContainer.modelData.address}" })` : `focuswindow address:0x${windowContainer.modelData.address}`);
+                                            screenState.workspaceDrawer = false;
+                                        }
                                     }
                                 }
                             }
