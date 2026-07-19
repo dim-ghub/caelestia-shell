@@ -148,7 +148,8 @@ Item {
 
                                 Rectangle {
                                     id: dragRect
-                                    anchors.fill: parent
+                                    width: parent.width
+                                    height: parent.height
                                     color: "transparent"
                                     border.width: dragArea.drag.active ? 2 : 0
                                     border.color: Colours.palette.m3primary
