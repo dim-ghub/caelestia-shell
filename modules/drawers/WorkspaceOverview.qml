@@ -31,7 +31,7 @@ StyledWindow {
     anchors.left: true
 
     width: 350
-    x: (visibleOffset - 1) * width
+    anchors.leftMargin: (visibleOffset - 1) * width
     visible: visibleOffset > 0
 
     Behavior on visibleOffset { Anim {} }
