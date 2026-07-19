@@ -247,6 +247,26 @@ Scope {
     }
 
     IpcHandler {
+        function openEmoji(): void {
+            if (root.hasFullscreen)
+                return;
+            Visibilities.launcherInitialSearch = `${GlobalConfig.launcher.actionPrefix}emoji `;
+            const visibilities = Visibilities.getForActive();
+            visibilities.launcher = true;
+        }
+
+        function openClipboard(): void {
+            if (root.hasFullscreen)
+                return;
+            Visibilities.launcherInitialSearch = `${GlobalConfig.launcher.actionPrefix}clipboard `;
+            const visibilities = Visibilities.getForActive();
+            visibilities.launcher = true;
+        }
+
+        target: "launcher"
+    }
+
+    IpcHandler {
         function info(title: string, message: string, icon: string): void {
             Toaster.toast(title, message, icon, Toast.Info);
         }
