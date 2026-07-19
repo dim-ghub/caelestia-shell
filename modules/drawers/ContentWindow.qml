@@ -117,6 +117,7 @@ StyledWindow {
         active: {
             const s = root.screenState;
             const conf = root.contentItem.Config;
+            if (s.workspaceDrawer) return true;
             if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled))
                 return true;
             if (!conf.dashboard.showOnHover && s.dashboard && conf.dashboard.enabled)
@@ -127,6 +128,7 @@ StyledWindow {
         }
         windows: [root]
         onCleared: {
+            root.screenState.workspaceDrawer = false;
             root.screenState.launcher = false;
             root.screenState.session = false;
             root.screenState.sidebar = false;

@@ -24,9 +24,9 @@ Item {
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
-    anchors.leftMargin: (-implicitWidth - Tokens.spacing.medium) * offsetScale
+    anchors.leftMargin: Config.bar.position === "left" ? 0 : (-implicitWidth - Tokens.spacing.medium) * offsetScale
     
-    implicitWidth: 350
+    implicitWidth: 160
     visible: offsetScale < 1
     opacity: 1 - offsetScale
 
@@ -37,25 +37,15 @@ Item {
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: Tokens.padding.large
+            anchors.margins: Tokens.padding.medium
             spacing: Tokens.spacing.medium
 
-            RowLayout {
-                Layout.fillWidth: true
-                MaterialIcon {
-                    text: "dashboard"
-                    fontStyle: Tokens.font.icon.large
-                }
-                StyledText {
-                    text: qsTr("Workspace Overview")
-                    font: Tokens.font.title.large
-                    Layout.fillWidth: true
-                }
-                IconButton {
-                    icon: "close"
-                    type: IconButton.Text
-                    onClicked: screenState.workspaceDrawer = false
-                }
+            StyledText {
+                text: qsTr("Workspaces")
+                font: Tokens.font.title.large
+                font.bold: true
+                Layout.alignment: Qt.AlignHCenter
+                Layout.bottomMargin: Tokens.spacing.small
             }
 
             ListView {
@@ -63,123 +53,102 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
-                spacing: Tokens.spacing.large
+                spacing: Tokens.spacing.medium
 
-                model: Hyprland.workspaces.values.filter(ws => ws.id > 0).sort((a, b) => a.id - b.id)
+                model: 10
 
-                delegate: Rectangle {
+                delegate: StyledRect {
                     id: wsDelegate
-                    required property var modelData
+                    readonly property int workspaceId: index + 1
+                    // Fallback to Hyprland.activeWorkspace if monitor activeWorkspace is not ready yet
+                    readonly property int activeWsId: Hypr.monitorFor(root.screen)?.activeWorkspace?.id ?? Hyprland.activeWorkspace?.id ?? 1
+                    readonly property bool isActive: activeWsId === workspaceId
+
                     width: ListView.view.width
-                    implicitHeight: contentCol.implicitHeight + Tokens.padding.medium * 2
-                    color: Colours.palette.m3surfaceVariant
-                    radius: Tokens.rounding.medium
+                    implicitHeight: Math.max(90, contentCol.implicitHeight + Tokens.padding.medium * 2)
+                    color: isActive ? Colours.tPalette.m3surfaceVariant : Colours.tPalette.m3surfaceContainer
+                    radius: Tokens.rounding.large
+                    border.width: isActive ? 2 : 0
+                    border.color: isActive ? Colours.palette.m3primary : "transparent"
 
                     DropArea {
                         anchors.fill: parent
                         onDropped: drop => {
                             const client = drop.source;
                             if (client) {
-                                Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.window.move({ window = "address:0x${client.address}", workspace = "${modelData.id}", follow = false })` : `movetoworkspace ${modelData.id},address:0x${client.address}`);
+                                Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.window.move({ window = "address:0x${client.address}", workspace = "${workspaceId}", follow = false })` : `movetoworkspace ${workspaceId},address:0x${client.address}`);
                             }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        radius: parent.radius
+                        onClicked: {
+                            Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.workspace({ workspace = "${workspaceId}" })` : `workspace ${workspaceId}`);
+                            screenState.workspaceDrawer = false;
                         }
                     }
 
                     ColumnLayout {
                         id: contentCol
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.top: parent.top
-                        anchors.margins: Tokens.padding.medium
-                        spacing: Tokens.spacing.medium
-
-                        StyledText {
-                            text: qsTr("Workspace ") + modelData.name
-                            font: Tokens.font.title.medium
-                            color: Colours.palette.m3onSurfaceVariant
-                        }
+                        anchors.centerIn: parent
+                        spacing: Tokens.spacing.small
 
                         Flow {
-                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignHCenter
+                            Layout.maximumWidth: wsDelegate.width - Tokens.padding.medium * 2
                             spacing: Tokens.spacing.small
-
-                            // Get windows for this workspace
-                            property list<var> windows: Hyprland.toplevels.values.filter(t => t.workspace && t.workspace.id === modelData.id)
+                            
+                            property list<var> windows: Hyprland.toplevels.values.filter(t => t.workspace && t.workspace.id === workspaceId)
 
                             Repeater {
                                 model: parent.windows
 
-                                delegate: Item {
-                                    id: windowItem
+                                delegate: IconImage {
+                                    id: windowIcon
                                     required property var modelData
                                     
-                                    width: 120
-                                    height: 120
-
+                                    source: Icons.getAppIcon(modelData.lastIpcObject.class ?? "", "image-missing")
+                                    implicitSize: 24
+                                    asynchronous: true
+                                    
                                     Rectangle {
                                         id: dragRect
                                         anchors.fill: parent
-                                        color: Colours.palette.m3surface
-                                        radius: Tokens.rounding.small
-                                        border.width: 1
-                                        border.color: dragArea.drag.active ? Colours.palette.m3primary : Colours.palette.m3outlineVariant
+                                        color: "transparent"
+                                        border.width: dragArea.drag.active ? 2 : 0
+                                        border.color: Colours.palette.m3primary
                                         
                                         Drag.active: dragArea.drag.active
                                         Drag.hotSpot.x: width / 2
                                         Drag.hotSpot.y: height / 2
                                         Drag.source: modelData
+                                    }
 
-                                        ColumnLayout {
-                                            anchors.fill: parent
-                                            anchors.margins: Tokens.padding.small
-                                            spacing: Tokens.spacing.small
-
-                                            RowLayout {
-                                                Layout.fillWidth: true
-                                                IconImage {
-                                                    source: Icons.getAppIcon(modelData.lastIpcObject.class ?? "", "image-missing")
-                                                    implicitSize: 16
-                                                    asynchronous: true
-                                                }
-                                                StyledText {
-                                                    text: modelData.lastIpcObject.class ?? ""
-                                                    font: Tokens.font.label.small
-                                                    color: Colours.palette.m3onSurface
-                                                    Layout.fillWidth: true
-                                                    elide: Text.ElideRight
-                                                }
-                                            }
-
-                                            ClippingWrapperRectangle {
-                                                Layout.fillWidth: true
-                                                Layout.fillHeight: true
-                                                color: "transparent"
-                                                radius: Tokens.rounding.small
-
-                                                ScreencopyView {
-                                                    captureSource: modelData.wayland ?? null // qmllint disable unresolved-type
-                                                    live: windowItem.visible
-                                                    constraintSize.width: 100
-                                                    constraintSize.height: 80
-                                                }
-                                            }
-                                        }
-
-                                        MouseArea {
-                                            id: dragArea
-                                            anchors.fill: parent
-                                            drag.target: dragRect
-                                            drag.axis: Drag.XAndYAxis
-                                            
-                                            // Handle click to focus window
-                                            onClicked: {
-                                                Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.focus({ window = "address:0x${modelData.address}" })` : `focuswindow address:0x${modelData.address}`);
-                                                screenState.workspaceDrawer = false;
-                                            }
+                                    MouseArea {
+                                        id: dragArea
+                                        anchors.fill: parent
+                                        drag.target: dragRect
+                                        drag.axis: Drag.XAndYAxis
+                                        cursorShape: Qt.PointingHandCursor
+                                        
+                                        onClicked: {
+                                            Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.focus({ window = "address:0x${modelData.address}" })` : `focuswindow address:0x${modelData.address}`);
+                                            screenState.workspaceDrawer = false;
                                         }
                                     }
                                 }
                             }
+                        }
+
+                        StyledText {
+                            Layout.alignment: Qt.AlignHCenter
+                            text: workspaceId.toString()
+                            font: Tokens.font.title.large
+                            color: isActive ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+                            font.bold: true
+                            font.weight: Font.Bold
                         }
                     }
                 }
