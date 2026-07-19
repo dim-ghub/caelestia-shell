@@ -58,6 +58,7 @@ Item {
 
                 delegate: Item {
                     id: wsDelegate
+                    required property int index
                     readonly property int workspaceId: index + 1
                     // Fallback to Hyprland.activeWorkspace if monitor activeWorkspace is not ready yet
                     readonly property int activeWsId: Hypr.monitorFor(root.screen)?.activeWorkspace?.id ?? Hyprland.activeWorkspace?.id ?? 1
