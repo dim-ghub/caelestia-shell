@@ -17,8 +17,7 @@ Item {
     property real offsetScale: shouldBeActive ? 0 : 1
 
     visible: offsetScale < 0.999
-    anchors.leftMargin: Config.bar.position === "right" ? (-implicitWidth - 5) * offsetScale : 0
-    anchors.rightMargin: Config.bar.position !== "right" ? (-implicitWidth - 5) * offsetScale : 0
+    anchors.rightMargin: (-implicitWidth - 5) * offsetScale
     implicitWidth: Tokens.sizes.sidebar.width
     opacity: 1 - offsetScale
 

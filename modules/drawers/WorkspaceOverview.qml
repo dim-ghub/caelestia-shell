@@ -25,7 +25,7 @@ Item {
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
-    anchors.leftMargin: Config.bar.position === "left" ? 0 : (-implicitWidth - Tokens.spacing.medium) * offsetScale
+    anchors.leftMargin: (-implicitWidth - Tokens.spacing.medium) * offsetScale
     
     implicitWidth: 200
     visible: offsetScale < 0.999
