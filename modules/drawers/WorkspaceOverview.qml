@@ -372,30 +372,31 @@ Item {
                                     cursorShape: Qt.PointingHandCursor
                                     
                                     property bool wasDragged: false
+                                    property real pressX: 0
+                                    property real pressY: 0
 
-                                    onPressed: {
+                                    onPressed: (mouse) => {
                                         wasDragged = false;
+                                        pressX = mouse.x;
+                                        pressY = mouse.y;
                                     }
 
-                                    onPositionChanged: {
-                                        if (drag.active) {
+                                    onPositionChanged: (mouse) => {
+                                        if (Math.abs(mouse.x - pressX) > 5 || Math.abs(mouse.y - pressY) > 5) {
                                             wasDragged = true;
                                         }
                                     }
 
-                                    onReleased: {
+                                    onReleased: (mouse) => {
                                         if (wasDragged) {
                                             dragRect.Drag.drop();
                                             dragRect.x = 0;
                                             dragRect.y = 0;
-                                        }
-                                    }
-                                    
-                                    onClicked: {
-                                        if (!wasDragged) {
+                                        } else {
                                             Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.focus({ window = "address:0x${windowContainer.modelData.address}" })` : `focuswindow address:0x${windowContainer.modelData.address}`);
                                             screenState.workspaceDrawer = false;
                                         }
+                                        wasDragged = false;
                                     }
                                 }
                             }
