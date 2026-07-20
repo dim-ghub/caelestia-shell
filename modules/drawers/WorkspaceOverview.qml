@@ -393,8 +393,8 @@ Item {
                                             dragRect.x = 0;
                                             dragRect.y = 0;
                                         } else {
-                                            Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.focus({ window = "address:0x${windowContainer.modelData.address}" })` : `focuswindow address:0x${windowContainer.modelData.address}`);
-                                            screenState.workspaceDrawer = false;
+                                            // Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.focus({ window = "address:0x${windowContainer.modelData.address}" })` : `focuswindow address:0x${windowContainer.modelData.address}`);
+                                            // screenState.workspaceDrawer = false;
                                         }
                                         wasDragged = false;
                                     }
