@@ -229,10 +229,25 @@ Item {
 
                     DropArea {
                         anchors.fill: parent
+                        keys: ["window"]
                         onDropped: drop => {
                             const client = drop.source;
                             if (client) {
-                                Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.window.move({ window = "address:0x${client.address}", workspace = "${workspaceId}", follow = false })` : `movetoworkspace ${workspaceId},address:0x${client.address}`);
+                                const rawW = client.lastIpcObject.size ? client.lastIpcObject.size[0] : 0;
+                                const rawH = client.lastIpcObject.size ? client.lastIpcObject.size[1] : 0;
+                                const visualW = rawW / wsDelegate.effectiveMw * width;
+                                const visualH = rawH / wsDelegate.effectiveMh * height;
+                                
+                                const visualTopLeftX = drop.x - visualW / 2;
+                                const visualTopLeftY = drop.y - visualH / 2;
+                                
+                                const logicalX = wsDelegate.effectiveMinX + (visualTopLeftX / width) * wsDelegate.effectiveMw + wsDelegate.mx + wsDelegate.inactiveOffsetX;
+                                const logicalY = wsDelegate.effectiveMinY + (visualTopLeftY / height) * wsDelegate.effectiveMh + wsDelegate.my + wsDelegate.inactiveOffsetY;
+                                
+                                if (client.workspace.id !== workspaceId) {
+                                    Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.window.move({ window = "address:0x${client.address}", workspace = "${workspaceId}", follow = false })` : `movetoworkspacesilent ${workspaceId},address:0x${client.address}`);
+                                }
+                                Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.dispatch("movewindowpixel", "exact ${Math.round(logicalX)} ${Math.round(logicalY)},address:0x${client.address}")` : `movewindowpixel exact ${Math.round(logicalX)} ${Math.round(logicalY)},address:0x${client.address}`);
                             }
                         }
                     }
