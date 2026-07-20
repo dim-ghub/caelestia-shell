@@ -65,6 +65,9 @@ Item {
                     readonly property int activeWsId: Hypr.monitorFor(root.screen)?.activeWorkspace?.id ?? Hyprland.activeWorkspace?.id ?? 1
                     readonly property bool isActive: activeWsId === workspaceId
                     
+                    property int activeDrags: 0
+                    z: activeDrags > 0 ? 100 : 0
+                    
                     property list<var> windows: Hyprland.toplevels.values.filter(t => t.workspace && t.workspace.id === workspaceId)
                     
                     property var hlMonitor: {
@@ -253,7 +256,6 @@ Item {
                             model: wsDelegate.windows
                             delegate: Item {
                                 id: windowContainer
-                                clip: true
                                 required property var modelData
                                 
                                 property var ipc: modelData.lastIpcObject
@@ -262,6 +264,13 @@ Item {
                                 property real rawLogicalY: ipc && ipc.at ? (ipc.at[1] - wsDelegate.my - wsDelegate.inactiveOffsetY) : 0
                                 property real rawLogicalW: ipc && ipc.size ? ipc.size[0] : 0
                                 property real rawLogicalH: ipc && ipc.size ? ipc.size[1] : 0
+                                
+                                property bool isDragging: dragArea.drag.active
+                                onIsDraggingChanged: {
+                                    if (isDragging) wsDelegate.activeDrags++;
+                                    else wsDelegate.activeDrags--;
+                                }
+                                z: dragArea.drag.active ? 100 : 0
 
                                 Behavior on rawLogicalX { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                                 Behavior on rawLogicalY { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
@@ -362,8 +371,20 @@ Item {
                                     drag.axis: Drag.XAndYAxis
                                     cursorShape: Qt.PointingHandCursor
                                     
-                                    onReleased: {
+                                    property bool wasDragged: false
+
+                                    onPressed: {
+                                        wasDragged = false;
+                                    }
+
+                                    onPositionChanged: {
                                         if (drag.active) {
+                                            wasDragged = true;
+                                        }
+                                    }
+
+                                    onReleased: {
+                                        if (wasDragged) {
                                             dragRect.Drag.drop();
                                             dragRect.x = 0;
                                             dragRect.y = 0;
@@ -371,7 +392,7 @@ Item {
                                     }
                                     
                                     onClicked: {
-                                        if (!drag.active) {
+                                        if (!wasDragged) {
                                             Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.focus({ window = "address:0x${windowContainer.modelData.address}" })` : `focuswindow address:0x${windowContainer.modelData.address}`);
                                             screenState.workspaceDrawer = false;
                                         }
