@@ -282,92 +282,95 @@ Item {
                                 width: (rawLogicalW / wsDelegate.effectiveMw * parent.width)
                                 height: (rawLogicalH / wsDelegate.effectiveMh * parent.height)
 
-                                StyledRect {
-                                    id: windowBg
-                                    anchors.fill: parent
-                                    color: Colours.palette.m3surfaceContainer
-                                    radius: Tokens.rounding.medium
-                                }
-
-                                Rectangle {
-                                    id: windowMask
-                                    anchors.fill: parent
-                                    radius: Tokens.rounding.medium
-                                    layer.enabled: true
-                                    visible: false
-                                }
-
                                 Item {
-                                    anchors.fill: parent
-                                    layer.enabled: true
-                                    layer.effect: Mask {
-                                        maskSource: windowMask
+                                    id: windowVisualProxy
+                                    width: parent.width
+                                    height: parent.height
+                                    
+                                    opacity: dragArea.drag.active ? 0.8 : 1
+                                    scale: dragArea.drag.active ? 1.05 : 1
+                                    Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutBack } }
+                                    Behavior on opacity { NumberAnimation { duration: 150 } }
+                                    
+                                    Drag.active: dragArea.drag.active
+                                    Drag.keys: ["window"]
+                                    Drag.hotSpot.x: width / 2
+                                    Drag.hotSpot.y: height / 2
+                                    Drag.source: windowContainer.modelData
+
+                                    StyledRect {
+                                        id: windowBg
+                                        anchors.fill: parent
+                                        color: Colours.palette.m3surfaceContainer
+                                        radius: Tokens.rounding.medium
+                                    }
+
+                                    Rectangle {
+                                        id: windowMask
+                                        anchors.fill: parent
+                                        radius: Tokens.rounding.medium
+                                        layer.enabled: true
+                                        visible: false
                                     }
 
                                     Item {
                                         anchors.fill: parent
-                                        clip: true
+                                        layer.enabled: true
+                                        layer.effect: Mask {
+                                            maskSource: windowMask
+                                        }
 
-                                        StyledRect {
+                                        Item {
                                             anchors.fill: parent
-                                            color: Colours.palette.m3surfaceContainer
-                                            opacity: isActive ? 0.3 : 0.6
+                                            clip: true
+
+                                            StyledRect {
+                                                anchors.fill: parent
+                                                color: Colours.palette.m3surfaceContainer
+                                                opacity: isActive ? 0.3 : 0.6
+                                            }
+                                        }
+
+                                        ScreencopyView {
+                                            anchors.fill: parent
+                                            captureSource: windowContainer.modelData.wayland ?? null
+                                            live: windowBg.visible
+                                        }
+
+                                        Rectangle {
+                                            anchors.centerIn: parent
+                                            width: 32
+                                            height: 32
+                                            radius: Tokens.rounding.medium
+                                            color: Colours.tPalette.m3surface
+                                        }
+
+                                        IconImage {
+                                            anchors.centerIn: parent
+                                            source: Icons.getAppIcon(windowContainer.modelData.lastIpcObject.class ?? "", "image-missing")
+                                            width: 64
+                                            height: 64
+                                            scale: 20 / 64
+                                            asynchronous: true
                                         }
                                     }
 
-                                    ScreencopyView {
+                                    StyledRect {
                                         anchors.fill: parent
-                                        captureSource: windowContainer.modelData.wayland ?? null
-                                        live: windowBg.visible
-                                    }
-
-                                    Rectangle {
-                                        anchors.centerIn: parent
-                                        width: 32
-                                        height: 32
+                                        color: "transparent"
+                                        border.width: 2
+                                        border.color: dragArea.containsMouse ? Colours.palette.m3primary : Colours.palette.m3outlineVariant
                                         radius: Tokens.rounding.medium
-                                        color: Colours.tPalette.m3surface
+                                        
+                                        Behavior on border.color { ColorAnimation { duration: 250; easing.type: Easing.OutCubic } }
                                     }
-
-                                    IconImage {
-                                        anchors.centerIn: parent
-                                        source: Icons.getAppIcon(windowContainer.modelData.lastIpcObject.class ?? "", "image-missing")
-                                        width: 64
-                                        height: 64
-                                        scale: 20 / 64
-                                        asynchronous: true
-                                    }
-                                }
-
-                                StyledRect {
-                                    anchors.fill: parent
-                                    color: "transparent"
-                                    border.width: 2
-                                    border.color: dragArea.containsMouse ? Colours.palette.m3primary : Colours.palette.m3outlineVariant
-                                    radius: Tokens.rounding.medium
-                                    
-                                    Behavior on border.color { ColorAnimation { duration: 250; easing.type: Easing.OutCubic } }
-                                }
-
-                                Rectangle {
-                                    id: dragRect
-                                    width: parent.width
-                                    height: parent.height
-                                    color: dragArea.drag.active ? Colours.palette.m3primary : "transparent"
-                                    opacity: dragArea.drag.active ? 0.3 : 0
-                                    radius: Tokens.rounding.medium
-                                    
-                                    Drag.active: dragArea.drag.active
-                                    Drag.hotSpot.x: width / 2
-                                    Drag.hotSpot.y: height / 2
-                                    Drag.source: windowContainer.modelData
                                 }
 
                                 MouseArea {
                                     id: dragArea
                                     anchors.fill: parent
                                     hoverEnabled: true
-                                    drag.target: dragRect
+                                    drag.target: windowVisualProxy
                                     drag.axis: Drag.XAndYAxis
                                     cursorShape: Qt.PointingHandCursor
                                     
@@ -389,9 +392,9 @@ Item {
 
                                     onReleased: (mouse) => {
                                         if (wasDragged) {
-                                            dragRect.Drag.drop();
-                                            dragRect.x = 0;
-                                            dragRect.y = 0;
+                                            windowVisualProxy.Drag.drop();
+                                            windowVisualProxy.x = 0;
+                                            windowVisualProxy.y = 0;
                                         } else {
                                             Hyprland.dispatch(Hyprland.usingLua ? `hl.dsp.focus({ window = "address:0x${windowContainer.modelData.address}" })` : `focuswindow address:0x${windowContainer.modelData.address}`);
                                             screenState.workspaceDrawer = false;
