@@ -34,10 +34,14 @@ QtObject {
         let results = items;
         if (GlobalConfig.launcher.windowSwitcherActiveWorkspaceOnly) {
             const monitor = Hyprland.focusedMonitor;
-            const activeWs = monitor?.activeWorkspace?.name;
             const specialWs = monitor?.lastIpcObject?.specialWorkspace?.name;
-            if (activeWs || specialWs) {
-                results = results.filter(w => w.workspace === activeWs || (specialWs && w.workspace === specialWs));
+            if (specialWs) {
+                results = results.filter(w => w.workspace === specialWs);
+            } else {
+                const activeWs = monitor?.activeWorkspace?.name;
+                if (activeWs) {
+                    results = results.filter(w => w.workspace === activeWs);
+                }
             }
         }
         
