@@ -89,9 +89,6 @@ if `yay`:
 yay -S dim-caelestia-shell-git
 ```
 
-> [!TIP]
-> You can also use `pkgit -qi https://github.com/dim-ghub/caelestia-shell` for a quiet installation.
-
 If you prefer to clone and install it manually:
 
 ```sh
