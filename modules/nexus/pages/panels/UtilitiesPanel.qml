@@ -137,12 +137,52 @@ PageBase {
         }
 
         ToggleRow {
-            last: true
             text: qsTr("VPN")
             subtext: qsTr("Connect or disconnect the VPN")
             disabled: !Config.utilities.cards.quickToggles
             checked: root.isToggleOn("vpn")
             onToggled: root.setToggleOn("vpn", checked)
+        }
+
+        ToggleRow {
+            text: qsTr("Quick Share")
+            subtext: qsTr("Send and receive files nearby")
+            disabled: !Config.utilities.cards.quickToggles
+            checked: root.isToggleOn("quickshare")
+            onToggled: root.setToggleOn("quickshare", checked)
+        }
+
+        ToggleRow {
+            text: qsTr("Wallpaper selector")
+            subtext: qsTr("Show the wallpaper picker menu")
+            disabled: !Config.utilities.cards.quickToggles
+            checked: root.isToggleOn("wallpaper")
+            onToggled: root.setToggleOn("wallpaper", checked)
+        }
+
+        ToggleRow {
+            text: qsTr("Bad Apple")
+            subtext: qsTr("Play the Bad Apple animation")
+            disabled: !Config.utilities.cards.quickToggles
+            checked: root.isToggleOn("badapple")
+            onToggled: root.setToggleOn("badapple", checked)
+        }
+
+        ToggleRow {
+            text: qsTr("Pause video wallpaper")
+            subtext: qsTr("Pause or resume the video wallpaper")
+            disabled: !Config.utilities.cards.quickToggles
+            checked: root.isToggleOn("pauseWallpaper")
+            onToggled: root.setToggleOn("pauseWallpaper", checked)
+        }
+
+        ToggleRow {
+            last: true
+            text: qsTr("Pause PiP")
+            subtext: qsTr("Pause or resume picture-in-picture")
+            disabled: !Config.utilities.cards.quickToggles
+            checked: root.isToggleOn("pipPause")
+            onToggled: root.setToggleOn("pipPause", checked)
         }
     }
 }

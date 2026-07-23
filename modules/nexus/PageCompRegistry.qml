@@ -254,6 +254,9 @@ QtObject {
                 Component {
                     PipPage {}
                 }
+                Component {
+                    QuickSharePage {}
+                }
             }
         },
         Component {

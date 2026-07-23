@@ -19,18 +19,25 @@ Loader {
     asynchronous: true
     anchors.fill: parent
 
-    opacity: root.props.recordingConfirmDelete ? 1 : 0
+    opacity: root.props.quickShareConfirmDeletePath ? 1 : 0
     active: opacity > 0
 
     sourceComponent: MouseArea {
         id: deleteConfirmation
 
         property string path
+        property int index
 
-        Component.onCompleted: path = root.props.recordingConfirmDelete
+        Component.onCompleted: {
+            path = root.props.quickShareConfirmDeletePath;
+            index = root.props.quickShareConfirmDeleteIndex;
+        }
 
         hoverEnabled: true
-        onClicked: root.props.recordingConfirmDelete = ""
+        onClicked: {
+            root.props.quickShareConfirmDeletePath = "";
+            root.props.quickShareConfirmDeleteIndex = -1;
+        }
 
         Item {
             anchors.fill: parent
@@ -59,7 +66,7 @@ Loader {
             color: Colours.palette.m3surfaceContainerHigh
 
             scale: 0
-            Component.onCompleted: scale = Qt.binding(() => root.props.recordingConfirmDelete ? 1 : 0)
+            Component.onCompleted: scale = Qt.binding(() => root.props.quickShareConfirmDeletePath ? 1 : 0)
 
             width: Math.min(parent.width - Tokens.padding.extraLargeIncreased, implicitWidth)
             implicitWidth: deleteConfirmationLayout.implicitWidth + Tokens.padding.extraExtraLarge
@@ -84,13 +91,13 @@ Loader {
                 spacing: Tokens.spacing.medium
 
                 StyledText {
-                    text: qsTr("Delete recording?")
+                    text: qsTr("Delete file?")
                     font: Tokens.font.body.large
                 }
 
                 StyledText {
                     Layout.fillWidth: true
-                    text: qsTr("Recording '%1' will be permanently deleted.").arg(deleteConfirmation.path)
+                    text: qsTr("File '%1' will be permanently deleted.").arg(deleteConfirmation.path)
                     color: Colours.palette.m3onSurfaceVariant
                     font: Tokens.font.body.small
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -104,15 +111,24 @@ Loader {
                     TextButton {
                         text: qsTr("Cancel")
                         type: TextButton.Text
-                        onClicked: root.props.recordingConfirmDelete = ""
+                        onClicked: {
+                            root.props.quickShareConfirmDeletePath = "";
+                            root.props.quickShareConfirmDeleteIndex = -1;
+                        }
                     }
 
                     TextButton {
                         text: qsTr("Delete")
                         type: TextButton.Text
                         onClicked: {
-                            CUtils.deleteFile(Qt.resolvedUrl(root.props.recordingConfirmDelete));
-                            root.props.recordingConfirmDelete = "";
+                            if (deleteConfirmation.path !== "") {
+                                CUtils.deleteFile(Qt.resolvedUrl("file://" + deleteConfirmation.path));
+                            }
+                            if (deleteConfirmation.index >= 0) {
+                                QuickShare.removeHistoryEntry(deleteConfirmation.index);
+                            }
+                            root.props.quickShareConfirmDeletePath = "";
+                            root.props.quickShareConfirmDeleteIndex = -1;
                         }
                     }
                 }

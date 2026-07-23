@@ -220,6 +220,13 @@ PageBase {
             onClicked: root.nState.openSubPage(5)
         }
 
+        NavRow {
+            icon: "near_me"
+            label: qsTr("Quick Share")
+            status: qsTr("Auto-start and discoverability settings")
+            onClicked: root.nState.openSubPage(6)
+        }
+
 
         SelectRow {
             Layout.fillWidth: true

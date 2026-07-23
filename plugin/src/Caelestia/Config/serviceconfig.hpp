@@ -55,6 +55,9 @@ class ServiceConfig : public ConfigObject {
     CONFIG_GLOBAL_PROPERTY(bool, pipFollowFocus, false)
     CONFIG_GLOBAL_PROPERTY(bool, pipPaused, false)
 
+    // QuickShare Settings
+    CONFIG_GLOBAL_PROPERTY(bool, quickShareAutoStart, false)
+
 public:
     explicit ServiceConfig(QObject* parent = nullptr)
         : ConfigObject(parent) {}

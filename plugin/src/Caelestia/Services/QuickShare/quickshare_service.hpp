@@ -1,0 +1,76 @@
+#pragma once
+
+#include <QObject>
+#include <QVariantList>
+#include <QVariantMap>
+#include <QTcpServer>
+#include <qqmlintegration.h>
+#include "QuickShareDiscovery.hpp"
+#include "QuickShareConnection.hpp"
+
+namespace caelestia::services {
+
+class QuickShareService : public QObject {
+    Q_OBJECT
+    QML_ELEMENT
+    QML_SINGLETON
+    
+    Q_PROPERTY(bool isEnabled READ isEnabled WRITE setEnabled NOTIFY isEnabledChanged)
+    Q_PROPERTY(bool isVisible READ isVisible WRITE setVisible NOTIFY isVisibleChanged)
+    Q_PROPERTY(QVariantList nearbyDevices READ nearbyDevices NOTIFY nearbyDevicesChanged)
+    Q_PROPERTY(QVariantList transferHistory READ transferHistory NOTIFY transferHistoryChanged)
+
+public:
+    explicit QuickShareService(QObject* parent = nullptr);
+    ~QuickShareService() override;
+
+    bool isEnabled() const;
+    void setEnabled(bool enabled);
+
+    bool isVisible() const;
+    void setVisible(bool visible);
+
+    QVariantList nearbyDevices() const;
+    QVariantList transferHistory() const;
+
+    Q_INVOKABLE void sendFile(const QString& deviceId, const QString& filePath);
+    Q_INVOKABLE void acceptIncomingTransfer();
+    Q_INVOKABLE void rejectIncomingTransfer();
+    Q_INVOKABLE void clearHistory();
+    Q_INVOKABLE void removeHistoryEntry(int index);
+
+signals:
+    void isEnabledChanged();
+    void isVisibleChanged();
+    void nearbyDevicesChanged();
+    void transferHistoryChanged();
+
+    // UI notifications
+    void incomingTransferRequested(const QString& deviceName, const QString& fileName, qint64 fileSize);
+    void incomingTransferPinReady(const QString& pinCode);
+    void transferProgress(const QString& deviceId, qint64 bytesSent, qint64 bytesTotal);
+    void transferFinished(const QString& deviceId, bool success);
+
+private slots:
+    void onDeviceFound(const QuickShareDevice& device);
+    void onDeviceLost(const QString& deviceId);
+    void onNewConnection();
+    void loadHistory();
+    void saveHistory();
+
+private:
+    bool m_isEnabled = false;
+    bool m_isVisible = false;
+
+    QuickShareDiscovery* m_discovery;
+    QTcpServer* m_server;
+    
+    QList<QuickShareDevice> m_devices;
+    QVariantList m_transferHistory;
+    
+    // Active connections
+    QMap<QString, QuickShareConnection*> m_activeConnections;
+    QuickShareConnection* m_pendingIncomingConnection = nullptr;
+};
+
+} // namespace caelestia::services

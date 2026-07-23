@@ -37,6 +37,7 @@ QtObject {
     property int urgency: NotificationUrgency.Normal
     property bool resident
     property bool hasActionIcons
+    property bool forceExpand
     property list<var> actions
 
     readonly property bool hasFullscreen: {

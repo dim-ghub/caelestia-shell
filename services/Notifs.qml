@@ -45,6 +45,21 @@ Singleton {
             toClose[i].close();
     }
 
+    function addCustomNotification(summary: string, body: string, appIcon: string, actions: list<var>, expanded: bool): NotifData {
+        const notif = notifComp.createObject(root, {
+            popup: root.shouldShowPopup(),
+            resident: true,
+            summary: summary,
+            body: body,
+            appIcon: appIcon,
+            appName: "Quick Share",
+            actions: actions,
+            forceExpand: expanded ? true : false
+        });
+        root.list = [notif, ...root.list];
+        return notif;
+    }
+
     onDndChanged: {
         if (!GlobalConfig.utilities.toasts.dndChanged)
             return;

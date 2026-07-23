@@ -27,6 +27,8 @@ Item {
         Anim {}
     }
 
+    property bool isStreaming: false
+
     Loader {
         id: content
 
@@ -37,7 +39,7 @@ Item {
         anchors.margins: CUtils.clamp(anchors.leftMargin - Config.border.thickness, 0, anchors.leftMargin)
         anchors.bottomMargin: 0
 
-        active: root.shouldBeActive || root.visible || (content.item ? content.item.sidebarStreaming : false)
+        active: root.shouldBeActive || root.visible || root.isStreaming
 
         sourceComponent: Content {
             implicitWidth: Tokens.sizes.sidebar.width - content.anchors.leftMargin - content.anchors.margins
@@ -45,6 +47,7 @@ Item {
             screenState: root.screenState
             popouts: root.popouts
             utilities: root.utilities
+            onSidebarStreamingChanged: root.isStreaming = sidebarStreaming
         }
     }
 }

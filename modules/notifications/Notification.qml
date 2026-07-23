@@ -20,7 +20,7 @@ StyledRect {
     readonly property bool hasAppIcon: modelData.appIcon.length > 0
     readonly property int bodyTextFormat: /[<*_`#\[\]]/.test(modelData.body) ? Text.MarkdownText : Text.PlainText
     readonly property int nonAnimHeight: summary.implicitHeight + (root.expanded ? Tokens.spacing.extraSmall * 2 + appName.height + body.height + actions.height + actions.anchors.topMargin : bodyPreview.height) + inner.anchors.margins * 2
-    property bool expanded: Config.notifs.openExpanded
+    property bool expanded: modelData.forceExpand || Config.notifs.openExpanded
 
     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
     radius: Tokens.rounding.large
@@ -211,7 +211,7 @@ StyledRect {
                         centerY: progressIndicator.height / 2
 
                         startAngle: -90
-                        sweepAngle: ((root.modelData.hints.value ?? 0) / 100) * 360
+                        sweepAngle: ((root.modelData.hints?.value ?? 0) / 100) * 360
 
                         Behavior on sweepAngle {
                             Anim {

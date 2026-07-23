@@ -1,3 +1,14 @@
+set(PROTO_SRCS)
+set(PROTO_HDRS)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS
+    QuickShare/proto/device_to_device_messages.proto
+    QuickShare/proto/offline_wire_formats.proto
+    QuickShare/proto/securegcm.proto
+    QuickShare/proto/securemessage.proto
+    QuickShare/proto/ukey.proto
+    QuickShare/proto/wire_format.proto
+)
+
 qml_module(caelestia-services
     URI Caelestia.Services
     SOURCES
@@ -21,13 +32,28 @@ qml_module(caelestia-services
         sessionmanager.hpp
         discordipc.cpp
         discordipc.hpp
+        QuickShare/QuickShareDiscovery.cpp
+        QuickShare/QuickShareDiscovery.hpp
+        QuickShare/QuickShareCrypto.cpp
+        QuickShare/QuickShareCrypto.hpp
+        QuickShare/QuickShareConnection.cpp
+        QuickShare/QuickShareConnection.hpp
+        QuickShare/quickshare_service.cpp
+        QuickShare/quickshare_service.hpp
+        ${PROTO_SRCS}
     LIBRARIES
-        Qt::DBus
+        Qt6::DBus
+        Qt6::Network
         PkgConfig::Pipewire
         PkgConfig::Aubio
         PkgConfig::Cava
         Sensors::Sensors
+        protobuf::libprotobuf
+        OpenSSL::Crypto
+        OpenSSL::SSL
         caelestia-core
         caelestia-config
         caelestia-internal
 )
+
+target_include_directories(caelestia-services PRIVATE QuickShare ${CMAKE_CURRENT_BINARY_DIR})

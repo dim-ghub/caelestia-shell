@@ -166,6 +166,18 @@ StyledRect {
                     }
                 }
                 DelegateChoice {
+                    roleValue: "quickshare"
+                    delegate: Toggle {
+                        icon: "near_me"
+                        checked: QuickShare.isEnabled
+                        onClicked: {
+                            const newState = !QuickShare.isEnabled;
+                            QuickShare.setEnabled(newState);
+                            QuickShare.setVisible(newState);
+                        }
+                    }
+                }
+                DelegateChoice {
                     roleValue: "badapple"
                     delegate: Toggle {
                         icon: "nutrition"

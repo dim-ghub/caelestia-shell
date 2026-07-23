@@ -1,0 +1,28 @@
+--- plugin/src/Caelestia/Services/QuickShare/quickshare_service.hpp
++++ plugin/src/Caelestia/Services/QuickShare/quickshare_service.hpp
+@@ -62,6 +62,7 @@
+     Q_INVOKABLE void acceptIncomingTransfer();
+     Q_INVOKABLE void rejectIncomingTransfer();
+     Q_INVOKABLE void clearHistory();
++    Q_INVOKABLE void removeHistoryEntry(int index);
+ 
+ private:
+     void startDiscovery();
+--- plugin/src/Caelestia/Services/QuickShare/quickshare_service.cpp
++++ plugin/src/Caelestia/Services/QuickShare/quickshare_service.cpp
+@@ -194,6 +194,15 @@
+     saveHistory();
+ }
+ 
++void QuickShareService::removeHistoryEntry(int index) {
++    if (index >= 0 && index < m_transferHistory.size()) {
++        m_transferHistory.removeAt(index);
++        emit transferHistoryChanged();
++        saveHistory();
++    }
++}
++
++
+ void QuickShareService::loadHistory() {
+     QSettings settings("Dim", "Caelestia-QuickShare");
+     m_transferHistory = settings.value("history").value<QVariantList>();
