@@ -40,6 +40,8 @@ qml_module(caelestia-services
         QuickShare/QuickShareConnection.hpp
         QuickShare/quickshare_service.cpp
         QuickShare/quickshare_service.hpp
+        QuickShare/QuickShareBle.cpp
+        QuickShare/QuickShareBle.hpp
         ${PROTO_SRCS}
     LIBRARIES
         Qt6::DBus

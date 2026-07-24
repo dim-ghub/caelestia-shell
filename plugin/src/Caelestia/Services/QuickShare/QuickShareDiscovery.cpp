@@ -11,8 +11,10 @@
 namespace caelestia::services {
 
 QuickShareDiscovery::QuickShareDiscovery(QObject* parent)
-    : QObject(parent), m_serverBrowser(nullptr), m_entryGroup(nullptr) {
+    : QObject(parent), m_serverBrowser(nullptr), m_entryGroup(nullptr), m_tempAdvertiseTimer(new QTimer(this)) {
     qDBusRegisterMetaType<QList<QByteArray>>();
+    m_tempAdvertiseTimer->setSingleShot(true);
+    connect(m_tempAdvertiseTimer, &QTimer::timeout, this, &QuickShareDiscovery::onTempAdvertiseTimeout);
 }
 
 QuickShareDiscovery::~QuickShareDiscovery() {
@@ -20,8 +22,8 @@ QuickShareDiscovery::~QuickShareDiscovery() {
     stopAdvertising();
 }
 
-void QuickShareDiscovery::startDiscovery() {
-    if (m_isDiscovering) return;
+bool QuickShareDiscovery::startDiscovery() {
+    if (m_isDiscovering) return true;
 
     QDBusInterface avahiServer(
         "org.freedesktop.Avahi",
@@ -31,7 +33,7 @@ void QuickShareDiscovery::startDiscovery() {
 
     if (!avahiServer.isValid()) {
         qWarning() << "QuickShareDiscovery: Failed to connect to Avahi server";
-        return;
+        return false;
     }
 
     QDBusReply<QDBusObjectPath> browserPath = avahiServer.call("ServiceBrowserNew",
@@ -43,7 +45,7 @@ void QuickShareDiscovery::startDiscovery() {
 
     if (!browserPath.isValid()) {
         qWarning() << "QuickShareDiscovery: Failed to create ServiceBrowser:" << browserPath.error().message();
-        return;
+        return false;
     }
 
     m_serverBrowser = new QDBusInterface(
@@ -70,6 +72,7 @@ void QuickShareDiscovery::startDiscovery() {
         SLOT(onItemRemove(int, int, const QString&, const QString&, const QString&, uint)));
 
     m_isDiscovering = true;
+    return true;
 }
 
 void QuickShareDiscovery::stopDiscovery() {
@@ -84,8 +87,10 @@ void QuickShareDiscovery::stopDiscovery() {
     m_isDiscovering = false;
 }
 
-void QuickShareDiscovery::advertise(const QString& deviceName, int port) {
-    if (m_isAdvertising) return;
+bool QuickShareDiscovery::advertise(const QString& deviceName, int port) {
+    m_tempAdvertiseTimer->stop();
+    m_isTempAdvertising = false;
+    if (m_isAdvertising) return true;
 
     QDBusInterface avahiServer(
         "org.freedesktop.Avahi",
@@ -93,10 +98,10 @@ void QuickShareDiscovery::advertise(const QString& deviceName, int port) {
         "org.freedesktop.Avahi.Server",
         QDBusConnection::systemBus());
 
-    if (!avahiServer.isValid()) return;
+    if (!avahiServer.isValid()) return false;
 
     QDBusReply<QDBusObjectPath> groupPath = avahiServer.call("EntryGroupNew");
-    if (!groupPath.isValid()) return;
+    if (!groupPath.isValid()) return false;
 
     m_entryGroup = new QDBusInterface(
         "org.freedesktop.Avahi",
@@ -153,17 +158,21 @@ void QuickShareDiscovery::advertise(const QString& deviceName, int port) {
         
     if (reply.type() == QDBusMessage::ErrorMessage) {
         qWarning() << "QuickShareDiscovery: AddService failed:" << reply.errorMessage();
-        return;
+        return false;
     }
 
     QDBusMessage commitReply = m_entryGroup->call("Commit");
     if (commitReply.type() == QDBusMessage::ErrorMessage) {
         qWarning() << "QuickShareDiscovery: Commit failed:" << commitReply.errorMessage();
+        return false;
     }
     m_isAdvertising = true;
+    return true;
 }
 
 void QuickShareDiscovery::stopAdvertising() {
+    m_tempAdvertiseTimer->stop();
+    m_isTempAdvertising = false;
     if (!m_isAdvertising) return;
     
     if (m_entryGroup) {
@@ -174,6 +183,28 @@ void QuickShareDiscovery::stopAdvertising() {
     }
     
     m_isAdvertising = false;
+}
+
+void QuickShareDiscovery::triggerTemporaryAdvertising(const QString& deviceName, int port) {
+    if (m_isAdvertising && !m_isTempAdvertising) {
+        return; // Already permanently advertising
+    }
+    
+    if (!m_isAdvertising) {
+        if (advertise(deviceName, port)) {
+            m_isTempAdvertising = true;
+        }
+    }
+    
+    if (m_isAdvertising && m_isTempAdvertising) {
+        m_tempAdvertiseTimer->start(30000); // 30 seconds
+    }
+}
+
+void QuickShareDiscovery::onTempAdvertiseTimeout() {
+    if (m_isTempAdvertising) {
+        stopAdvertising();
+    }
 }
 
 void QuickShareDiscovery::onItemNew(int interface, int protocol, const QString& name, const QString& type, const QString& domain, uint flags) {

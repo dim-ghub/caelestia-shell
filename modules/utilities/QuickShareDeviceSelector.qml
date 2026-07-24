@@ -44,6 +44,14 @@ Loader {
 
     opacity: root.props.quickShareDeviceSelectorOpen ? 1 : 0
     active: opacity > 0
+    
+    onActiveChanged: {
+        if (active) {
+            QuickShare.startBleWakeupBroadcast();
+        } else {
+            QuickShare.stopBleWakeupBroadcast();
+        }
+    }
 
     sourceComponent: MouseArea {
         id: selectorModal

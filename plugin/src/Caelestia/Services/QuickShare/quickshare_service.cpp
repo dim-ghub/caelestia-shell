@@ -12,10 +12,17 @@
 namespace caelestia::services {
 
 QuickShareService::QuickShareService(QObject* parent)
-    : QObject(parent), m_discovery(new QuickShareDiscovery(this)), m_server(new QTcpServer(this)) {
+    : QObject(parent), m_discovery(new QuickShareDiscovery(this)), 
+      m_bleAdvertiser(new QuickShareBleAdvertiser(this)),
+      m_bleScanner(new QuickShareBleScanner(this)),
+      m_server(new QTcpServer(this)) {
     
     connect(m_discovery, &QuickShareDiscovery::deviceFound, this, &QuickShareService::onDeviceFound);
     connect(m_discovery, &QuickShareDiscovery::deviceLost, this, &QuickShareService::onDeviceLost);
+    
+    connect(m_bleScanner, &QuickShareBleScanner::deviceFound, this, [this](const QString&, const QByteArray&) {
+        m_discovery->triggerTemporaryAdvertising(QSysInfo::machineHostName(), m_server->serverPort());
+    });
     
     connect(m_server, &QTcpServer::newConnection, this, &QuickShareService::onNewConnection);
     
@@ -32,16 +39,25 @@ bool QuickShareService::isEnabled() const {
 
 void QuickShareService::setEnabled(bool enabled) {
     if (m_isEnabled == enabled) return;
-    m_isEnabled = enabled;
-    emit isEnabledChanged();
     
-    if (m_isEnabled) {
-        m_discovery->startDiscovery();
+    if (enabled) {
+        if (!m_discovery->startDiscovery()) {
+            emit errorOccurred("Avahi daemon is not running. Please start avahi-daemon to use Quick Share.");
+            return;
+        }
+        m_isEnabled = true;
+        emit isEnabledChanged();
+
         if (!m_server->isListening()) {
             m_server->listen(QHostAddress::Any, 0); // Bind to any available port
         }
+        
+        m_bleScanner->startScanning();
     } else {
+        m_isEnabled = false;
+        emit isEnabledChanged();
         m_discovery->stopDiscovery();
+        m_bleScanner->stopScanning();
         m_server->close();
         setVisible(false);
     }
@@ -53,12 +69,17 @@ bool QuickShareService::isVisible() const {
 
 void QuickShareService::setVisible(bool visible) {
     if (m_isVisible == visible) return;
-    m_isVisible = visible;
-    emit isVisibleChanged();
     
-    if (m_isVisible && m_isEnabled) {
-        m_discovery->advertise(QSysInfo::machineHostName(), m_server->serverPort());
+    if (visible && m_isEnabled) {
+        if (!m_discovery->advertise(QSysInfo::machineHostName(), m_server->serverPort())) {
+            emit errorOccurred("Failed to advertise Quick Share. Avahi daemon might not be running.");
+            return;
+        }
+        m_isVisible = true;
+        emit isVisibleChanged();
     } else {
+        m_isVisible = false;
+        emit isVisibleChanged();
         m_discovery->stopAdvertising();
     }
 }
@@ -201,6 +222,18 @@ void QuickShareService::removeHistoryEntry(int index) {
         m_transferHistory.removeAt(index);
         emit transferHistoryChanged();
         saveHistory();
+    }
+}
+
+void QuickShareService::startBleWakeupBroadcast() {
+    if (m_bleAdvertiser) {
+        m_bleAdvertiser->startAdvertising();
+    }
+}
+
+void QuickShareService::stopBleWakeupBroadcast() {
+    if (m_bleAdvertiser) {
+        m_bleAdvertiser->stopAdvertising();
     }
 }
 

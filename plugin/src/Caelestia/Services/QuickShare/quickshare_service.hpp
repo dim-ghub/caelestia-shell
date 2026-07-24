@@ -7,6 +7,7 @@
 #include <qqmlintegration.h>
 #include "QuickShareDiscovery.hpp"
 #include "QuickShareConnection.hpp"
+#include "QuickShareBle.hpp"
 
 namespace caelestia::services {
 
@@ -39,11 +40,16 @@ public:
     Q_INVOKABLE void clearHistory();
     Q_INVOKABLE void removeHistoryEntry(int index);
 
+    Q_INVOKABLE void startBleWakeupBroadcast();
+    Q_INVOKABLE void stopBleWakeupBroadcast();
+
 signals:
     void isEnabledChanged();
     void isVisibleChanged();
     void nearbyDevicesChanged();
     void transferHistoryChanged();
+    
+    void errorOccurred(const QString& message);
 
     // UI notifications
     void incomingTransferRequested(const QString& deviceName, const QString& fileName, qint64 fileSize);
@@ -63,6 +69,8 @@ private:
     bool m_isVisible = false;
 
     QuickShareDiscovery* m_discovery;
+    QuickShareBleAdvertiser* m_bleAdvertiser;
+    QuickShareBleScanner* m_bleScanner;
     QTcpServer* m_server;
     
     QList<QuickShareDevice> m_devices;

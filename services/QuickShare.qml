@@ -1,5 +1,6 @@
 pragma Singleton
 import QtQuick
+import Caelestia
 import Caelestia.Config
 import Caelestia.Services
 
@@ -44,6 +45,14 @@ QtObject {
         QuickShareService.removeHistoryEntry(index)
     }
 
+    function startBleWakeupBroadcast() {
+        QuickShareService.startBleWakeupBroadcast()
+    }
+
+    function stopBleWakeupBroadcast() {
+        QuickShareService.stopBleWakeupBroadcast()
+    }
+
     // Connect to C++ signals
     Component.onCompleted: {
         QuickShareService.incomingTransferRequested.connect(function(deviceName, fileName, fileSize) {
@@ -69,6 +78,9 @@ QtObject {
             if (root.currentNotification) {
                 root.currentNotification.body = qsTr("%1 wants to share %2\nPIN: %3").arg(root.currentDeviceName).arg(root.currentFileName).arg(pinCode)
             }
+        })
+        QuickShareService.errorOccurred.connect(function(message) {
+            Toaster.toast(qsTr("Quick Share Error"), message, "error");
         })
         QuickShareService.transferFinished.connect(function(deviceId, success) {
             if (root.currentNotification) {
