@@ -34,6 +34,7 @@ ShellRoot {
     }
 
     GSFLoader {}
+    ServiceLoader {}
 
     Background {}
     BadAppleOverlay {}
