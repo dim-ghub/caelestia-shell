@@ -33,15 +33,14 @@ This fork adds the following features on top of the official shell:
 ## Installation
 
 > [!NOTE]
-> This repo is for the desktop shell of the caelestia dots. If you want installation instructions
-> for the entire dots, head to [the main repo](https://github.com/caelestia-dots/caelestia) instead.
+> This repository is a **FORK**, and can be out of date or have missing features from the [main repo](https://github.com/caelestia-dots/caelestia).
 > This fork is available at [dim-ghub/caelestia-shell](https://github.com/dim-ghub/caelestia-shell).
 
 ### Arch Linux / Manual (this fork)
 
 Dependencies:
 
--   [`caelestia-cli` (this fork is recommended and required for some features to work)](https://github.com/dim-ghub/caelestia-cli)
+-   [`dim-caelestia-cli` (this fork is recommended and required for some features to work)](https://github.com/dim-ghub/caelestia-cli)
 -   [`quickshell-git`](https://quickshell.outfoxxed.me) - this has to be the git version, not the latest tagged version
 -   [`ddcutil`](https://github.com/rockowitz/ddcutil)
 -   [`brightnessctl`](https://github.com/Hummer12007/brightnessctl)
@@ -99,6 +98,8 @@ pkgit -i .
 ```
 
 ### Nix
+> [!WARNING]
+> This repository has limited/no support for NixOS! Proceed at your own risk.
 
 You can run the shell directly via `nix run`:
 
